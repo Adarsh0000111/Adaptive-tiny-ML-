@@ -1,0 +1,51 @@
+{
+  "dataset_name": "Edge-IIoTset Cybersecurity Dataset",
+  "total_samples": 25000,
+  "total_features": 23,
+  "duplicate_rows": 0,
+  "total_missing_values": 10013,
+  "missing_by_feature": {
+    "http.file_data": 9913,
+    "flow_duration": 56,
+    "packet_rate": 44
+  },
+  "numerical_features": [
+    "flow_duration",
+    "packet_rate",
+    "byte_rate",
+    "payload_len",
+    "tcp_flags_fin",
+    "tcp_flags_syn",
+    "tcp_flags_ack",
+    "tcp_flags_psh",
+    "modbus_func",
+    "modbus_reg",
+    "http_res_code",
+    "mqtt_msg_type",
+    "failed_connections",
+    "Attack_label"
+  ],
+  "categorical_features": [
+    "frame.time",
+    "ip.src",
+    "ip.dst",
+    "arp.src.proto_ipv4",
+    "arp.dst.proto_ipv4",
+    "http.file_data",
+    "tcp.payload",
+    "protocol",
+    "Attack_type"
+  ],
+  "class_distribution": {
+    "Normal": 9913,
+    "DDoS": 5069,
+    "Scanning": 3750,
+    "SQL_Injection": 2478,
+    "Backdoor": 1981,
+    "Ransomware": 1809
+  },
+  "binary_distribution": {
+    "1": 15087,
+    "0": 9913
+  }
+}

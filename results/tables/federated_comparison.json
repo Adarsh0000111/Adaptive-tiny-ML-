@@ -1,0 +1,293 @@
+{
+  "standard_fl": {
+    "strategy": "standard",
+    "final_global_accuracy": 0.9788,
+    "final_global_f1_macro": 0.9612,
+    "total_comm_overhead_kb": 1920.0,
+    "final_avg_battery_pct": 56.0,
+    "final_min_battery_pct": 12.0,
+    "history": [
+      {
+        "round": 1,
+        "participating_clients": [
+          2,
+          3,
+          4,
+          1
+        ],
+        "global_accuracy": 0.9814,
+        "global_f1_macro": 0.9666,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 192.0
+      },
+      {
+        "round": 2,
+        "participating_clients": [
+          1,
+          0,
+          4,
+          3
+        ],
+        "global_accuracy": 0.982,
+        "global_f1_macro": 0.968,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 384.0
+      },
+      {
+        "round": 3,
+        "participating_clients": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "global_accuracy": 0.9788,
+        "global_f1_macro": 0.9612,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 576.0
+      },
+      {
+        "round": 4,
+        "participating_clients": [
+          3,
+          1,
+          2,
+          0
+        ],
+        "global_accuracy": 0.9788,
+        "global_f1_macro": 0.9612,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 768.0
+      },
+      {
+        "round": 5,
+        "participating_clients": [
+          4,
+          2,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9794,
+        "global_f1_macro": 0.9635,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 960.0
+      },
+      {
+        "round": 6,
+        "participating_clients": [
+          3,
+          1,
+          2,
+          0
+        ],
+        "global_accuracy": 0.9788,
+        "global_f1_macro": 0.9612,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1152.0
+      },
+      {
+        "round": 7,
+        "participating_clients": [
+          0,
+          3,
+          1,
+          4
+        ],
+        "global_accuracy": 0.9822,
+        "global_f1_macro": 0.968,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1344.0
+      },
+      {
+        "round": 8,
+        "participating_clients": [
+          0,
+          3,
+          4,
+          2
+        ],
+        "global_accuracy": 0.979,
+        "global_f1_macro": 0.9616,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1536.0
+      },
+      {
+        "round": 9,
+        "participating_clients": [
+          0,
+          2,
+          4,
+          3
+        ],
+        "global_accuracy": 0.9776,
+        "global_f1_macro": 0.9582,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1728.0
+      },
+      {
+        "round": 10,
+        "participating_clients": [
+          1,
+          3,
+          2,
+          0
+        ],
+        "global_accuracy": 0.9788,
+        "global_f1_macro": 0.9612,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1920.0
+      }
+    ]
+  },
+  "energy_aware_fl": {
+    "strategy": "energy_aware",
+    "final_global_accuracy": 0.9808,
+    "final_global_f1_macro": 0.9661,
+    "total_comm_overhead_kb": 1440.0,
+    "final_avg_battery_pct": 56.0,
+    "final_min_battery_pct": 12.0,
+    "history": [
+      {
+        "round": 1,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 144.0
+      },
+      {
+        "round": 2,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 288.0
+      },
+      {
+        "round": 3,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 432.0
+      },
+      {
+        "round": 4,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 576.0
+      },
+      {
+        "round": 5,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 720.0
+      },
+      {
+        "round": 6,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 864.0
+      },
+      {
+        "round": 7,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1008.0
+      },
+      {
+        "round": 8,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1152.0
+      },
+      {
+        "round": 9,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1296.0
+      },
+      {
+        "round": 10,
+        "participating_clients": [
+          3,
+          1,
+          0
+        ],
+        "global_accuracy": 0.9808,
+        "global_f1_macro": 0.9661,
+        "avg_battery_pct": 56.0,
+        "min_battery_pct": 12.0,
+        "cumulative_comm_kb": 1440.0
+      }
+    ]
+  },
+  "energy_savings_pct": 0.0
+}

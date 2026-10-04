@@ -1,0 +1,38 @@
+{
+  "proposed_adaptive_system": {
+    "name": "Proposed Adaptive Federated System",
+    "accuracy": 0.9333,
+    "total_energy_consumed_uJ": 16496.0,
+    "final_battery_pct": 99.99,
+    "avg_inference_latency_ms": 6.424,
+    "model_switches_count": 128,
+    "energy_savings_vs_heavy_pct": 83.83
+  },
+  "fixed_lightweight": {
+    "name": "Fixed Lightweight Model",
+    "accuracy": 0.9067,
+    "total_energy_consumed_uJ": 2550.0,
+    "final_battery_pct": 99.99,
+    "avg_inference_latency_ms": 0.12,
+    "model_switches_count": 0,
+    "energy_savings_vs_heavy_pct": 97.5
+  },
+  "fixed_medium": {
+    "name": "Fixed Medium Model",
+    "accuracy": 0.9867,
+    "total_energy_consumed_uJ": 18600.0,
+    "final_battery_pct": 99.99,
+    "avg_inference_latency_ms": 1.45,
+    "model_switches_count": 0,
+    "energy_savings_vs_heavy_pct": 81.76
+  },
+  "fixed_heavy": {
+    "name": "Fixed Heavy Model",
+    "accuracy": 0.9833,
+    "total_energy_consumed_uJ": 102000.0,
+    "final_battery_pct": 99.99,
+    "avg_inference_latency_ms": 8.7,
+    "model_switches_count": 0,
+    "energy_savings_vs_heavy_pct": 0.0
+  }
+}
