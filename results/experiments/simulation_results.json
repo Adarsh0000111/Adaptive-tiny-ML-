@@ -1,7 +1,7 @@
 [
   {
     "event_id": 1000,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -11,12 +11,12 @@
     "selected_model": "HEAVY",
     "model_switch": "LIGHTWEIGHT -> HEAVY",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.465,
+    "inference_latency_ms": 1.653,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1001,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 0.999,
@@ -26,12 +26,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.868,
+    "inference_latency_ms": 0.793,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1002,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 0.864,
@@ -41,12 +41,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.366,
+    "inference_latency_ms": 0.589,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1003,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.995,
@@ -56,12 +56,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.274,
+    "inference_latency_ms": 1.599,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1004,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -71,12 +71,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.267,
+    "inference_latency_ms": 2.068,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1005,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -86,12 +86,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.403,
+    "inference_latency_ms": 1.142,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1006,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -101,12 +101,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.249,
+    "inference_latency_ms": 1.083,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1007,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -116,12 +116,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.239,
+    "inference_latency_ms": 1.25,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1008,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.916,
@@ -131,12 +131,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 0.958,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1009,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -146,12 +146,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.266,
+    "inference_latency_ms": 0.986,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1010,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -161,12 +161,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.239,
+    "inference_latency_ms": 1.052,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1011,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -176,12 +176,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.231,
+    "inference_latency_ms": 2.022,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1012,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -191,12 +191,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.228,
+    "inference_latency_ms": 1.108,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1013,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -206,12 +206,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.233,
+    "inference_latency_ms": 1.09,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1014,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.999,
@@ -221,12 +221,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.262,
+    "inference_latency_ms": 0.921,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1015,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -236,12 +236,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 0.621,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1016,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -251,12 +251,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.216,
+    "inference_latency_ms": 0.493,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1017,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -266,12 +266,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.219,
+    "inference_latency_ms": 0.778,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1018,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.996,
@@ -281,12 +281,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.222,
+    "inference_latency_ms": 0.565,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1019,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -296,12 +296,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.266,
+    "inference_latency_ms": 1.317,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1020,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -311,12 +311,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.219,
+    "inference_latency_ms": 0.635,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1021,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.986,
@@ -326,12 +326,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 0.955,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1022,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "SQL_Injection",
     "confidence": 0.947,
@@ -341,12 +341,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 0.826,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1023,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -356,12 +356,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.222,
+    "inference_latency_ms": 1.259,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1024,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -371,12 +371,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.263,
+    "inference_latency_ms": 1.141,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1025,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -386,12 +386,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.219,
+    "inference_latency_ms": 0.974,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1026,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -401,12 +401,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.211,
+    "inference_latency_ms": 0.914,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1027,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -416,12 +416,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 0.855,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1028,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.998,
@@ -431,12 +431,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.216,
+    "inference_latency_ms": 0.55,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1029,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -446,12 +446,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.554,
+    "inference_latency_ms": 0.506,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1030,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -461,12 +461,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.447,
+    "inference_latency_ms": 0.524,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1031,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -476,12 +476,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.474,
+    "inference_latency_ms": 1.255,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1032,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -491,12 +491,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.44,
+    "inference_latency_ms": 1.344,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1033,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.996,
@@ -506,12 +506,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.259,
+    "inference_latency_ms": 1.244,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1034,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -521,12 +521,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.27,
+    "inference_latency_ms": 1.093,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1035,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -536,12 +536,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.248,
+    "inference_latency_ms": 0.946,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1036,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -551,12 +551,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.485,
+    "inference_latency_ms": 0.994,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1037,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -566,12 +566,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.274,
+    "inference_latency_ms": 1.07,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1038,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -581,12 +581,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.257,
+    "inference_latency_ms": 0.924,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1039,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -596,12 +596,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.239,
+    "inference_latency_ms": 0.893,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1040,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -611,12 +611,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.25,
+    "inference_latency_ms": 1.207,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1041,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -626,12 +626,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.29,
+    "inference_latency_ms": 1.953,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1042,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -641,12 +641,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.246,
+    "inference_latency_ms": 1.419,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1043,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -656,12 +656,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 0.926,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1044,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -671,12 +671,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.431,
+    "inference_latency_ms": 0.873,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1045,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -686,12 +686,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.364,
+    "inference_latency_ms": 0.595,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1046,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -701,12 +701,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.345,
+    "inference_latency_ms": 0.71,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1047,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -716,12 +716,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.263,
+    "inference_latency_ms": 1.496,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1048,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -731,12 +731,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.233,
+    "inference_latency_ms": 0.744,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1049,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -746,12 +746,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.263,
+    "inference_latency_ms": 0.569,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1050,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.992,
@@ -761,12 +761,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 1.061,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1051,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -776,12 +776,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.222,
+    "inference_latency_ms": 1.431,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1052,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -791,12 +791,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.213,
+    "inference_latency_ms": 1.048,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1053,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.997,
@@ -806,12 +806,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.213,
+    "inference_latency_ms": 1.172,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1054,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.989,
@@ -821,12 +821,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.223,
+    "inference_latency_ms": 1.532,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1055,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -836,12 +836,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.229,
+    "inference_latency_ms": 0.889,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1056,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 0.999,
@@ -851,12 +851,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.231,
+    "inference_latency_ms": 0.453,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1057,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -866,12 +866,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 0.747,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1058,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -881,12 +881,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.267,
+    "inference_latency_ms": 0.68,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1059,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -896,12 +896,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.22,
+    "inference_latency_ms": 1.288,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1060,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.997,
@@ -911,12 +911,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 1.025,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1061,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -926,12 +926,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.211,
+    "inference_latency_ms": 1.067,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1062,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -941,12 +941,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.248,
+    "inference_latency_ms": 1.034,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1063,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -956,12 +956,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.254,
+    "inference_latency_ms": 0.98,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1064,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -971,12 +971,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.252,
+    "inference_latency_ms": 0.885,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1065,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -986,12 +986,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 0.967,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1066,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1001,12 +1001,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.212,
+    "inference_latency_ms": 0.78,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1067,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1016,12 +1016,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.208,
+    "inference_latency_ms": 1.091,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1068,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1031,12 +1031,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 2.144,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1069,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1046,12 +1046,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.216,
+    "inference_latency_ms": 0.769,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1070,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -1061,12 +1061,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.267,
+    "inference_latency_ms": 0.987,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1071,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1076,12 +1076,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 0.987,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1072,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1091,12 +1091,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.229,
+    "inference_latency_ms": 0.527,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1073,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1106,12 +1106,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.305,
+    "inference_latency_ms": 0.805,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1074,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1121,12 +1121,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.495,
+    "inference_latency_ms": 1.156,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1075,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1136,12 +1136,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.403,
+    "inference_latency_ms": 1.122,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1076,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1151,12 +1151,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.261,
+    "inference_latency_ms": 1.129,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1077,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1166,12 +1166,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.319,
+    "inference_latency_ms": 1.884,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1078,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1181,12 +1181,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.245,
+    "inference_latency_ms": 1.089,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1079,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1196,12 +1196,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.236,
+    "inference_latency_ms": 1.297,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1080,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -1211,12 +1211,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 1.21,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1081,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -1226,12 +1226,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.557,
+    "inference_latency_ms": 0.83,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1082,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1241,12 +1241,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.269,
+    "inference_latency_ms": 1.176,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1083,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1256,12 +1256,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.255,
+    "inference_latency_ms": 0.777,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1084,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1271,12 +1271,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.254,
+    "inference_latency_ms": 1.083,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1085,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1286,12 +1286,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.231,
+    "inference_latency_ms": 1.218,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1086,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.992,
@@ -1301,12 +1301,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.237,
+    "inference_latency_ms": 1.319,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1087,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -1316,12 +1316,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 0.95,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1088,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1331,12 +1331,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.88,
+    "inference_latency_ms": 1.075,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1089,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1346,12 +1346,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.261,
+    "inference_latency_ms": 1.079,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1090,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1361,12 +1361,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.337,
+    "inference_latency_ms": 0.996,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1091,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -1376,12 +1376,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.281,
+    "inference_latency_ms": 0.764,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1092,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1391,12 +1391,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.268,
+    "inference_latency_ms": 1.258,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1093,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1406,12 +1406,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.227,
+    "inference_latency_ms": 0.834,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1094,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1421,12 +1421,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.213,
+    "inference_latency_ms": 0.986,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1095,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.992,
@@ -1436,12 +1436,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 2.046,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1096,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1451,12 +1451,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.214,
+    "inference_latency_ms": 1.039,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1097,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1466,12 +1466,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.227,
+    "inference_latency_ms": 0.839,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1098,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1481,12 +1481,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 1.011,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1099,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.986,
@@ -1496,12 +1496,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.535,
+    "inference_latency_ms": 0.983,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1100,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -1511,12 +1511,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.418,
+    "inference_latency_ms": 1.349,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1101,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1526,12 +1526,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.98,
+    "inference_latency_ms": 1.002,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1102,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1541,12 +1541,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.273,
+    "inference_latency_ms": 1.059,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1103,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -1556,12 +1556,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.27,
+    "inference_latency_ms": 1.043,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1104,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1571,12 +1571,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.239,
+    "inference_latency_ms": 0.996,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1105,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1586,12 +1586,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.467,
+    "inference_latency_ms": 0.648,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1106,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1601,12 +1601,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.392,
+    "inference_latency_ms": 0.759,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1107,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -1616,12 +1616,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.257,
+    "inference_latency_ms": 0.84,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1108,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -1631,12 +1631,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.24,
+    "inference_latency_ms": 1.285,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1109,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -1646,12 +1646,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.263,
+    "inference_latency_ms": 0.994,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1110,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -1661,12 +1661,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.243,
+    "inference_latency_ms": 1.074,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1111,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1676,12 +1676,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.217,
+    "inference_latency_ms": 1.212,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1112,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -1691,12 +1691,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.232,
+    "inference_latency_ms": 1.433,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1113,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1706,12 +1706,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.271,
+    "inference_latency_ms": 1.707,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1114,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "SQL_Injection",
     "confidence": 0.989,
@@ -1721,12 +1721,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.248,
+    "inference_latency_ms": 1.401,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1115,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.998,
@@ -1736,12 +1736,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.275,
+    "inference_latency_ms": 1.049,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1116,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -1751,12 +1751,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.249,
+    "inference_latency_ms": 1.254,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1117,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -1766,12 +1766,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.244,
+    "inference_latency_ms": 1.154,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1118,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1781,12 +1781,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 0.752,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1119,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1796,12 +1796,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.223,
+    "inference_latency_ms": 0.507,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1120,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.947,
@@ -1811,12 +1811,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 0.49,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1121,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -1826,12 +1826,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.217,
+    "inference_latency_ms": 0.55,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1122,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 0.962,
@@ -1841,12 +1841,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.214,
+    "inference_latency_ms": 0.491,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1123,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -1856,12 +1856,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 0.502,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1124,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.998,
@@ -1871,12 +1871,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.215,
+    "inference_latency_ms": 0.474,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1125,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 0.992,
@@ -1886,12 +1886,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.208,
+    "inference_latency_ms": 0.563,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1126,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "Ransomware",
     "confidence": 0.565,
@@ -1901,12 +1901,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.219,
+    "inference_latency_ms": 0.954,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1127,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.979,
@@ -1916,12 +1916,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.3,
+    "inference_latency_ms": 1.466,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1128,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.998,
@@ -1931,12 +1931,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 0.491,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1129,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1946,12 +1946,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.222,
+    "inference_latency_ms": 0.517,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1130,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -1961,12 +1961,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 0.909,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1131,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -1976,12 +1976,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 0.963,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1132,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.999,
@@ -1991,12 +1991,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.423,
+    "inference_latency_ms": 0.864,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1133,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2006,12 +2006,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.593,
+    "inference_latency_ms": 1.22,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1134,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2021,12 +2021,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.282,
+    "inference_latency_ms": 0.956,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1135,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2036,12 +2036,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.248,
+    "inference_latency_ms": 0.914,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1136,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2051,12 +2051,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.25,
+    "inference_latency_ms": 0.846,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1137,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2066,12 +2066,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.243,
+    "inference_latency_ms": 1.588,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1138,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.997,
@@ -2081,12 +2081,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.229,
+    "inference_latency_ms": 0.874,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1139,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -2096,12 +2096,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.22,
+    "inference_latency_ms": 1.13,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1140,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2111,12 +2111,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.217,
+    "inference_latency_ms": 1.054,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1141,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2126,12 +2126,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.243,
+    "inference_latency_ms": 0.89,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1142,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -2141,12 +2141,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.513,
+    "inference_latency_ms": 0.876,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1143,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -2156,12 +2156,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.616,
+    "inference_latency_ms": 0.873,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1144,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2171,12 +2171,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.27,
+    "inference_latency_ms": 1.001,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1145,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2186,12 +2186,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.267,
+    "inference_latency_ms": 0.964,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1146,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2201,12 +2201,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.252,
+    "inference_latency_ms": 1.391,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1147,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -2216,12 +2216,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.246,
+    "inference_latency_ms": 1.452,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1148,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2231,12 +2231,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.241,
+    "inference_latency_ms": 1.366,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1149,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2246,12 +2246,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.223,
+    "inference_latency_ms": 1.482,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1150,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2261,12 +2261,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 1.062,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1151,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 0.998,
@@ -2276,12 +2276,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.229,
+    "inference_latency_ms": 0.988,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1152,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2291,12 +2291,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.218,
+    "inference_latency_ms": 0.878,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1153,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 0.999,
@@ -2306,12 +2306,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.324,
+    "inference_latency_ms": 0.875,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1154,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2321,12 +2321,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.328,
+    "inference_latency_ms": 0.655,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1155,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2336,12 +2336,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.242,
+    "inference_latency_ms": 2.24,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1156,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.987,
@@ -2351,12 +2351,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.24,
+    "inference_latency_ms": 0.887,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1157,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2366,12 +2366,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.907,
+    "inference_latency_ms": 0.63,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1158,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2381,12 +2381,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 1.033,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1159,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.998,
@@ -2396,12 +2396,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.268,
+    "inference_latency_ms": 1.216,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1160,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 0.999,
@@ -2411,12 +2411,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.243,
+    "inference_latency_ms": 1.033,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1161,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2426,12 +2426,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 1.22,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1162,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.968,
@@ -2441,12 +2441,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.241,
+    "inference_latency_ms": 1.23,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1163,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -2456,12 +2456,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 2.214,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1164,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2471,12 +2471,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 1.386,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1165,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2486,12 +2486,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.24,
+    "inference_latency_ms": 0.935,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1166,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -2501,12 +2501,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.229,
+    "inference_latency_ms": 0.977,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1167,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.88,
@@ -2516,12 +2516,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 0.939,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1168,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2531,12 +2531,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.226,
+    "inference_latency_ms": 0.858,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1169,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.915,
@@ -2546,12 +2546,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.215,
+    "inference_latency_ms": 0.932,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1170,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.991,
@@ -2561,12 +2561,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.233,
+    "inference_latency_ms": 0.636,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1171,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2576,12 +2576,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 1.142,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1172,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2591,12 +2591,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.873,
+    "inference_latency_ms": 1.204,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1173,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.994,
@@ -2606,12 +2606,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.238,
+    "inference_latency_ms": 0.969,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1174,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.998,
@@ -2621,12 +2621,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.252,
+    "inference_latency_ms": 1.026,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1175,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:26",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2636,12 +2636,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.276,
+    "inference_latency_ms": 1.019,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1176,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.996,
@@ -2651,12 +2651,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.277,
+    "inference_latency_ms": 0.941,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1177,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -2666,12 +2666,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.634,
+    "inference_latency_ms": 0.93,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1178,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2681,12 +2681,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.303,
+    "inference_latency_ms": 0.907,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1179,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2696,12 +2696,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.29,
+    "inference_latency_ms": 0.945,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1180,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2711,12 +2711,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.238,
+    "inference_latency_ms": 1.172,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1181,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -2726,12 +2726,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.229,
+    "inference_latency_ms": 1.198,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1182,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.995,
@@ -2741,12 +2741,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.227,
+    "inference_latency_ms": 1.008,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1183,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2756,12 +2756,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.445,
+    "inference_latency_ms": 0.994,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1184,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2771,12 +2771,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.301,
+    "inference_latency_ms": 0.861,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1185,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2786,12 +2786,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.277,
+    "inference_latency_ms": 0.954,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1186,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -2801,12 +2801,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.239,
+    "inference_latency_ms": 1.433,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1187,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2816,12 +2816,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.227,
+    "inference_latency_ms": 0.733,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1188,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2831,12 +2831,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.234,
+    "inference_latency_ms": 0.57,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1189,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2846,12 +2846,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.248,
+    "inference_latency_ms": 0.494,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1190,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -2861,12 +2861,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.22,
+    "inference_latency_ms": 0.985,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1191,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -2876,12 +2876,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.23,
+    "inference_latency_ms": 1.051,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1192,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2891,12 +2891,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.216,
+    "inference_latency_ms": 1.418,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1193,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -2906,12 +2906,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.334,
+    "inference_latency_ms": 0.818,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1194,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2921,12 +2921,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.245,
+    "inference_latency_ms": 0.573,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1195,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2936,12 +2936,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.24,
+    "inference_latency_ms": 0.582,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1196,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2951,12 +2951,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.223,
+    "inference_latency_ms": 0.494,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1197,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -2966,12 +2966,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.218,
+    "inference_latency_ms": 0.479,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1198,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -2981,12 +2981,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.228,
+    "inference_latency_ms": 0.784,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1199,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -2996,12 +2996,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.46,
+    "inference_latency_ms": 0.488,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1200,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -3011,12 +3011,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.235,
+    "inference_latency_ms": 0.748,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1201,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3026,12 +3026,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.227,
+    "inference_latency_ms": 1.131,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1202,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3041,12 +3041,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.237,
+    "inference_latency_ms": 1.92,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1203,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3056,12 +3056,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.215,
+    "inference_latency_ms": 1.436,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1204,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3071,12 +3071,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 1.031,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1205,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3086,12 +3086,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.219,
+    "inference_latency_ms": 0.995,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1206,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 0.948,
@@ -3101,12 +3101,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.218,
+    "inference_latency_ms": 1.14,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1207,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.979,
@@ -3116,12 +3116,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.235,
+    "inference_latency_ms": 1.383,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1208,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3131,12 +3131,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.233,
+    "inference_latency_ms": 1.01,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1209,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3146,12 +3146,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 0.921,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1210,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -3161,12 +3161,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.219,
+    "inference_latency_ms": 1.407,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1211,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3176,12 +3176,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 1.337,
+    "inference_latency_ms": 0.972,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1212,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3191,12 +3191,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.309,
+    "inference_latency_ms": 1.153,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1213,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.994,
@@ -3206,12 +3206,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.432,
+    "inference_latency_ms": 1.038,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1214,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -3221,12 +3221,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.263,
+    "inference_latency_ms": 0.988,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1215,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.995,
@@ -3236,12 +3236,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.237,
+    "inference_latency_ms": 1.065,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1216,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.997,
@@ -3251,12 +3251,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.229,
+    "inference_latency_ms": 0.742,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1217,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.988,
@@ -3266,12 +3266,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.217,
+    "inference_latency_ms": 1.104,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1218,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.997,
@@ -3281,12 +3281,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 0.582,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1219,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3296,12 +3296,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.234,
+    "inference_latency_ms": 3.308,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1220,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3311,12 +3311,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.214,
+    "inference_latency_ms": 1.111,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1221,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -3326,12 +3326,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 1.045,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1222,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -3341,12 +3341,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.217,
+    "inference_latency_ms": 0.984,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1223,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -3356,12 +3356,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.211,
+    "inference_latency_ms": 1.512,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1224,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -3371,12 +3371,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.216,
+    "inference_latency_ms": 1.503,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1225,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -3386,12 +3386,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.219,
+    "inference_latency_ms": 0.694,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1226,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -3401,12 +3401,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.313,
+    "inference_latency_ms": 1.084,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1227,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -3416,12 +3416,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.342,
+    "inference_latency_ms": 1.411,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1228,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.987,
@@ -3431,12 +3431,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.252,
+    "inference_latency_ms": 1.064,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1229,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3446,12 +3446,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.228,
+    "inference_latency_ms": 1.076,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1230,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -3461,12 +3461,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.213,
+    "inference_latency_ms": 1.213,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1231,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -3476,12 +3476,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.211,
+    "inference_latency_ms": 1.199,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1232,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -3491,12 +3491,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.272,
+    "inference_latency_ms": 0.741,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1233,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3506,12 +3506,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.218,
+    "inference_latency_ms": 0.537,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1234,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -3521,12 +3521,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 0.499,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1235,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -3536,12 +3536,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.214,
+    "inference_latency_ms": 0.501,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1236,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3551,12 +3551,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.21,
+    "inference_latency_ms": 0.489,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1237,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3566,12 +3566,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.313,
+    "inference_latency_ms": 0.572,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1238,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -3581,12 +3581,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.239,
+    "inference_latency_ms": 0.482,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1239,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -3596,12 +3596,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.214,
+    "inference_latency_ms": 1.836,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1240,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3611,12 +3611,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.219,
+    "inference_latency_ms": 0.735,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1241,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3626,12 +3626,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.213,
+    "inference_latency_ms": 1.225,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1242,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -3641,12 +3641,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.218,
+    "inference_latency_ms": 0.981,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1243,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3656,12 +3656,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.21,
+    "inference_latency_ms": 0.837,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1244,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3671,12 +3671,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.214,
+    "inference_latency_ms": 1.241,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1245,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Normal",
     "confidence": 0.956,
@@ -3686,12 +3686,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.217,
+    "inference_latency_ms": 1.168,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1246,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3701,12 +3701,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.206,
+    "inference_latency_ms": 0.967,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1247,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.981,
@@ -3716,12 +3716,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.204,
+    "inference_latency_ms": 0.88,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1248,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.99,
@@ -3731,12 +3731,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.367,
+    "inference_latency_ms": 1.251,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1249,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 1.0,
@@ -3746,12 +3746,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.726,
+    "inference_latency_ms": 1.164,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1250,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -3761,12 +3761,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.265,
+    "inference_latency_ms": 1.281,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1251,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3776,12 +3776,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.228,
+    "inference_latency_ms": 0.747,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1252,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -3791,12 +3791,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.257,
+    "inference_latency_ms": 0.584,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1253,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3806,12 +3806,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.228,
+    "inference_latency_ms": 0.504,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1254,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -3821,12 +3821,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.218,
+    "inference_latency_ms": 0.547,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1255,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -3836,12 +3836,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.223,
+    "inference_latency_ms": 0.477,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1256,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.996,
@@ -3851,12 +3851,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 0.572,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1257,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -3866,12 +3866,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.223,
+    "inference_latency_ms": 0.487,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1258,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -3881,12 +3881,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.228,
+    "inference_latency_ms": 0.878,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1259,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.997,
@@ -3896,12 +3896,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.34,
+    "inference_latency_ms": 0.561,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1260,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -3911,12 +3911,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.319,
+    "inference_latency_ms": 0.533,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1261,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3926,12 +3926,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.24,
+    "inference_latency_ms": 0.49,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1262,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -3941,12 +3941,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.229,
+    "inference_latency_ms": 2.684,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1263,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3956,12 +3956,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.241,
+    "inference_latency_ms": 1.046,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1264,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -3971,12 +3971,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.241,
+    "inference_latency_ms": 1.228,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1265,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.997,
@@ -3986,12 +3986,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.225,
+    "inference_latency_ms": 1.043,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1266,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4001,12 +4001,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.227,
+    "inference_latency_ms": 0.702,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1267,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -4016,12 +4016,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.217,
+    "inference_latency_ms": 0.572,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1268,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4031,12 +4031,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.222,
+    "inference_latency_ms": 0.498,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1269,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4046,12 +4046,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.252,
+    "inference_latency_ms": 0.527,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1270,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Backdoor",
     "confidence": 0.69,
@@ -4061,12 +4061,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.22,
+    "inference_latency_ms": 0.483,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1271,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.997,
@@ -4076,12 +4076,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.24,
+    "inference_latency_ms": 0.559,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1272,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4091,12 +4091,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.22,
+    "inference_latency_ms": 0.474,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1273,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.999,
@@ -4106,12 +4106,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.267,
+    "inference_latency_ms": 0.713,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1274,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -4121,12 +4121,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.22,
+    "inference_latency_ms": 2.48,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1275,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -4136,12 +4136,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.217,
+    "inference_latency_ms": 1.107,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1276,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Ransomware",
     "predicted_class": "Ransomware",
     "confidence": 1.0,
@@ -4151,12 +4151,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.212,
+    "inference_latency_ms": 1.049,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1277,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -4166,12 +4166,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.22,
+    "inference_latency_ms": 0.866,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1278,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4181,12 +4181,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.221,
+    "inference_latency_ms": 1.021,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1279,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.997,
@@ -4196,12 +4196,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.211,
+    "inference_latency_ms": 0.944,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1280,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Backdoor",
     "predicted_class": "Backdoor",
     "confidence": 0.999,
@@ -4211,12 +4211,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.22,
+    "inference_latency_ms": 0.93,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1281,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4226,12 +4226,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.211,
+    "inference_latency_ms": 0.84,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1282,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 0.999,
@@ -4241,12 +4241,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.214,
+    "inference_latency_ms": 0.672,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1283,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4256,12 +4256,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.238,
+    "inference_latency_ms": 1.566,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1284,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4271,12 +4271,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 1.086,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1285,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -4286,12 +4286,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.492,
+    "inference_latency_ms": 0.96,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1286,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4301,12 +4301,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.274,
+    "inference_latency_ms": 0.907,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1287,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -4316,12 +4316,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.567,
+    "inference_latency_ms": 0.916,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1288,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4331,12 +4331,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.256,
+    "inference_latency_ms": 1.142,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1289,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -4346,12 +4346,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.239,
+    "inference_latency_ms": 1.21,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1290,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -4361,12 +4361,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.222,
+    "inference_latency_ms": 1.465,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1291,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "SQL_Injection",
     "predicted_class": "SQL_Injection",
     "confidence": 1.0,
@@ -4376,12 +4376,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.46,
+    "inference_latency_ms": 2.793,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1292,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4391,12 +4391,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.449,
+    "inference_latency_ms": 0.891,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1293,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -4406,12 +4406,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.804,
+    "inference_latency_ms": 1.171,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1294,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -4421,12 +4421,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.356,
+    "inference_latency_ms": 1.279,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1295,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -4436,12 +4436,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.28,
+    "inference_latency_ms": 1.006,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1296,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4451,12 +4451,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.252,
+    "inference_latency_ms": 0.868,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1297,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Normal",
     "predicted_class": "Normal",
     "confidence": 1.0,
@@ -4466,12 +4466,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.244,
+    "inference_latency_ms": 0.871,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1298,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "DDoS",
     "predicted_class": "DDoS",
     "confidence": 1.0,
@@ -4481,12 +4481,12 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.231,
+    "inference_latency_ms": 0.897,
     "energy_consumed_uj": 340.0
   },
   {
     "event_id": 1299,
-    "timestamp": "10:10:18",
+    "timestamp": "11:39:27",
     "true_class": "Scanning",
     "predicted_class": "Scanning",
     "confidence": 1.0,
@@ -4496,7 +4496,7 @@
     "selected_model": "HEAVY",
     "model_switch": "UNCHANGED",
     "reason": "Fixed Baseline 3",
-    "inference_latency_ms": 0.224,
+    "inference_latency_ms": 0.62,
     "energy_consumed_uj": 340.0
   }
 ]

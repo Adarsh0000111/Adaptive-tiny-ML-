@@ -109,7 +109,7 @@ class PreprocessingPipeline:
         logger.info(f"Final Preprocessed Feature Dimension: {X_train.shape[1]} features")
         
         # Save processed dataset
-        processed_path = self.config["paths"]["processed_data"]
+        processed_path = os.path.abspath(self.config["paths"]["processed_data"])
         os.makedirs(os.path.dirname(processed_path), exist_ok=True)
         np.savez_compressed(
             processed_path,

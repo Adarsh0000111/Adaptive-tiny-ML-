@@ -8,8 +8,8 @@
   "accuracy_drop_pct": -0.08,
   "original_f1_macro": 0.7717,
   "quantized_f1_macro": 0.7725,
-  "original_latency_ms": 0.00019,
-  "quantized_latency_ms": 0.00581,
+  "original_latency_ms": 0.00039,
+  "quantized_latency_ms": 0.0085,
   "esp32_ram_requirement_kb": 1.2,
   "esp32_flash_requirement_kb": 2.7,
   "esp32_compatible": true

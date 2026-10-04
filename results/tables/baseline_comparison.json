@@ -4,7 +4,7 @@
     "accuracy": 0.9333,
     "total_energy_consumed_uJ": 16496.0,
     "final_battery_pct": 99.99,
-    "avg_inference_latency_ms": 6.424,
+    "avg_inference_latency_ms": 12.828,
     "model_switches_count": 128,
     "energy_savings_vs_heavy_pct": 83.83
   },
