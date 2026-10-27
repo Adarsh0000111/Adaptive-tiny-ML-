@@ -4,7 +4,6 @@ import logging
 import time
 import pandas as pd
 import numpy as np
-import yaml
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import (
@@ -12,14 +11,11 @@ from sklearn.metrics import (
     confusion_matrix, classification_report
 )
 
+from src.config import load_config
 from src.models.factory import get_model
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 class ModelBenchmarker:
     def __init__(self, config_path="config.yaml"):

@@ -4,8 +4,8 @@ import time
 import logging
 import joblib
 import numpy as np
-import yaml
 
+from src.config import load_config
 from src.simulation.traffic_provider import DatasetTrafficProvider
 from src.energy.simulated_provider import SimulationEnergyProvider
 from src.adaptive.threat_scorer import ThreatScorer
@@ -13,10 +13,6 @@ from src.adaptive.utility_engine import AdaptiveModelSelector
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 class RealtimeIIoTSimulator:
     """

@@ -3,14 +3,11 @@ import urllib.request
 import logging
 import pandas as pd
 import numpy as np
-import yaml
+
+from src.config import load_config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 def generate_authentic_iiot_dataset(output_path, num_samples=25000, seed=42):
     """

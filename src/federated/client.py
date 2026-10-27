@@ -1,6 +1,7 @@
 import numpy as np
 import joblib
 from sklearn.base import clone
+from src.config import load_config
 from src.energy.simulated_provider import SimulationEnergyProvider
 
 class IIoTEdgeClient:

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from src.config import load_config
+
 class EnergyProvider(ABC):
     """
     Abstract Interface for Energy Measurement & Battery Monitoring.

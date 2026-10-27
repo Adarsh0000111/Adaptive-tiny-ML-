@@ -1,4 +1,4 @@
 ,model_name,model_level,accuracy,precision_macro,recall_macro,f1_macro,f1_weighted,false_positive_rate,false_negative_rate,measured_latency_ms,estimated_latency_ms,model_size_kb,est_ram_kb,est_energy_uJ,training_time_s
-lightweight,Lightweight DecisionTree,lightweight,0.9062,0.8496,0.8061,0.7717,0.8872,0.0175,0.1939,0.0006,0.12,3.79,4.5,8.5,0.1
-medium,Medium RandomForest,medium,0.9872,0.9837,0.9734,0.978,0.9871,0.0027,0.0266,0.0465,1.45,1054.65,48.0,62.0,0.15
-heavy,Heavy Deep MLP,heavy,0.9844,0.977,0.9729,0.9749,0.9844,0.0033,0.0271,0.0029,8.7,415.19,320.0,340.0,15.47
+lightweight,Lightweight DecisionTree,lightweight,0.9062,0.8496,0.8061,0.7717,0.8872,0.0175,0.1939,0.0003,0.12,3.82,4.5,8.5,0.06
+medium,Medium RandomForest,medium,0.9872,0.9837,0.9734,0.978,0.9871,0.0027,0.0266,0.052,1.45,1054.68,48.0,62.0,0.15
+heavy,Heavy Deep MLP,heavy,0.9844,0.977,0.9729,0.9749,0.9844,0.0033,0.0271,0.0044,8.7,415.19,320.0,340.0,14.04

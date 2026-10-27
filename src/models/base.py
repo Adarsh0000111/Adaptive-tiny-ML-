@@ -4,6 +4,8 @@ import sys
 import joblib
 import numpy as np
 
+from src.config import load_config
+
 class BaseIDSModel:
     def __init__(self, name, model_level, est_latency_ms, est_ram_kb, est_energy_uJ):
         self.name = name

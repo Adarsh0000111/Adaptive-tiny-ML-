@@ -4,21 +4,17 @@ import logging
 import time
 import pandas as pd
 import numpy as np
-import yaml
 import joblib
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.ensemble import RandomForestClassifier
 
+from src.config import load_config
 from src.federated.non_iid import create_non_iid_partitions
 from src.federated.client import IIoTEdgeClient
 from src.federated.energy_selection import EnergyAwareClientSelector
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 class FederatedServer:
     """

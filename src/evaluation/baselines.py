@@ -3,19 +3,15 @@ import json
 import logging
 import numpy as np
 import pandas as pd
-import yaml
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from src.config import load_config
 from src.simulation.iiot_simulator import RealtimeIIoTSimulator
 from src.models.factory import get_model
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 class BaselineExperimentSuite:
     """

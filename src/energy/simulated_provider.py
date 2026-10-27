@@ -1,9 +1,5 @@
-import yaml
+from src.config import load_config
 from src.energy.provider_base import EnergyProvider
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 class SimulationEnergyProvider(EnergyProvider):
     """

@@ -2,18 +2,15 @@ import os
 import logging
 import pandas as pd
 import numpy as np
-import yaml
 import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
 from sklearn.impute import SimpleImputer
 
+from src.config import load_config
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 class PreprocessingPipeline:
     def __init__(self, config_path="config.yaml"):

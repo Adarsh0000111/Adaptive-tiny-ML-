@@ -4,15 +4,12 @@ import logging
 import time
 import numpy as np
 import joblib
-import yaml
 from sklearn.metrics import accuracy_score, f1_score
+
+from src.config import load_config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-def load_config(config_path="config.yaml"):
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
 
 class TinyMLOptimizer:
     """
