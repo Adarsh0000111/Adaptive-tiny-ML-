@@ -1,8 +1,7 @@
 # 🔌 ESP32 & Sensor Connection Guide
 
-This guide explains how to connect physical sensors and an ESP32 edge device to the
-Adaptive Multi-Level TinyML IDS, and how to stream live telemetry to the Streamlit
-dashboard.
+This guide explains how to connect an ESP32 and INA219 sensor to the Adaptive
+Multi-Level TinyML IDS and stream live telemetry to its React frontend.
 
 ---
 
@@ -11,8 +10,8 @@ dashboard.
 ```
 +---------------------+      WiFi / MQTT      +-------------------+
 |   PC (Linux/Win)    | <===================> |   ESP32 DevKit    |
-|  Streamlit Dashboard|      (port 1883)      |   + INA219        |
-|  (Python backend)   |                       |   + (optional)    |
+|  React website      |      (MQTT)            |   + INA219        |
+|  Mosquitto broker   |      1883 / 9001       |   + (optional)    |
 |                     |                       |   DHT22 / PIR /   |
 |  subscribes to:     |                       |   MQ-2            |
 |  esp32/<id>/telemetry|                      |                   |
@@ -20,10 +19,11 @@ dashboard.
 +---------------------+                       +-------------------+
         ^
         | runs TinyML quantized model (esp32_model.h)
-        | loads config.yaml, simulates or reads real energy
+        | WebSockets to browser: port 9001
+        | ESP32 MQTT: port 1883
 ```
 
-The PC side is the **dashboard + inference backend**. The ESP32 side is the **edge sensor node** that measures battery energy, runs the TinyML model, and publishes results.
+The PC runs the **React dashboard and MQTT broker**. The ESP32 is the **edge sensor node** that reads INA219 measurements, runs the current TinyML firmware, and publishes results.
 
 ---
 
@@ -51,6 +51,7 @@ The PC side is the **dashboard + inference backend**. The ESP32 side is the **ed
 | GPIO21 | SDA | I2C data |
 
 INA219 measures:
+- Connect the source/battery positive to INA219 VIN+ and the load positive to VIN- to measure current; connect grounds together.
 - Bus voltage (battery voltage)
 - Shunt voltage → current
 - From these, the firmware computes energy consumed per inference
@@ -80,31 +81,36 @@ python -m src.tinyml.optimizer
 
 This produces `models/tinyml/esp32_model.h` — copy it into your Arduino sketch folder.
 
-### 4.3 Run the dashboard
+### 4.3 Start a local MQTT broker with WebSockets
 
 ```bash
-streamlit run dashboard/app.py
-```
-
-Then open `http://localhost:8501`.
-
-### 4.4 Connect MQTT broker (for live ESP32 telemetry)
-
-Install and run a local MQTT broker (e.g. Mosquitto):
-
-```bash
-# Ubuntu/Debian
 sudo apt install mosquitto mosquitto-clients
-sudo systemctl start mosquitto
+mosquitto -c hardware/esp32_ids/mosquitto.conf -v
 ```
 
-In the dashboard sidebar:
-- MQTT Broker Host: `localhost` (or your PC IP)
-- MQTT Port: `1883`
-- Device ID: `esp32-ids-01`
-- Click **Connect MQTT**
+This prototype config exposes unauthenticated MQTT on port `1883` and WebSockets
+on port `9001`. Use it only on a trusted private network; do not expose or
+port-forward these ports to the internet. If Mosquitto is already running as a
+system service, stop that service first or configure its existing listener.
 
-Then on the ESP32 side, set `MQTT_BROKER` to your PC's IP and upload the firmware.
+### 4.4 Run the React website
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open the Vite URL, select **Live telemetry**, leave the broker URL as
+`ws://localhost:9001/mqtt`, enter the firmware device ID, and click **Connect
+device**. A browser uses WebSockets; it cannot connect directly to raw MQTT port
+`1883`.
+
+In another terminal, verify messages with:
+
+```bash
+mosquitto_sub -h localhost -t 'esp32/esp32-ids-01/#' -v
+```
 
 ---
 
@@ -117,7 +123,6 @@ Then on the ESP32 side, set `MQTT_BROKER` to your PC's IP and upload the firmwar
    - `Adafruit INA219`
    - `PubSubClient`
    - `ArduinoJson`
-   - `DHT sensor library` (optional)
 
 ### 5.2 Add the TinyML model
 Copy `models/tinyml/esp32_model.h` into your sketch folder next to `esp32_ids.ino`.
@@ -125,10 +130,14 @@ Copy `models/tinyml/esp32_model.h` into your sketch folder next to `esp32_ids.in
 ### 5.3 Configure & upload
 Edit `hardware/esp32_ids/esp32_ids.ino`:
 - `WIFI_SSID`, `WIFI_PASSWORD`
-- `MQTT_BROKER` → your PC's IP address
-- `DEVICE_ID` → matches dashboard device id
+- `MQTT_BROKER` → your PC's LAN IPv4 address (find it with `hostname -I`)
+- `DEVICE_ID` → `esp32-ids-01`, matching the website's device ID
 
-Compile → Upload → Open Serial Monitor (115200 baud).
+The ESP32 and PC must be on the same Wi-Fi/LAN. Do not use `localhost` for
+`MQTT_BROKER`: on the ESP32 it means the ESP32 itself. Allow inbound TCP port
+`1883` through the PC firewall on the private network. The website uses
+`ws://localhost:9001/mqtt` because the browser runs on that PC. Compile and upload
+in Arduino IDE, then open Serial Monitor at `115200` baud.
 
 ---
 
@@ -140,8 +149,8 @@ Compile → Upload → Open Serial Monitor (115200 baud).
 4. **ESP32** computes a threat score and publishes JSON to MQTT:
    - `esp32/esp32-ids-01/telemetry` → `{battery_pct, bus_voltage_v, shunt_current_ma, model_tier}`
    - `esp32/esp32-ids-01/inference` → `{prediction, threat_score, severity, latency_ms, energy_uj, model}`
-5. **Dashboard** subscribes to these topics and shows live gauges, tables, and charts (Tab 1 "System Status" and Tab 7 "ESP32 & Hardware").
-6. **Dashboard → ESP32**: commands on `esp32/esp32-ids-01/command` (e.g. change model tier, sleep mode).
+5. **React website** subscribes over WebSockets to these topics and displays real device messages in **Live telemetry**.
+6. The firmware subscribes to `esp32/esp32-ids-01/command`; sending device commands from the website is not implemented yet.
 
 ---
 
@@ -208,6 +217,18 @@ print(p.get_shunt_current_ma())         # mA
 | `src/energy/provider_base.py` | Abstract energy-provider interface |
 | `models/tinyml/esp32_model.h` | Exported quantized TinyML model (C header) |
 | `hardware/esp32_ids/esp32_ids.ino` | ESP32 Arduino firmware |
-| `dashboard/app.py` | Streamlit dashboard (ESP32 tab) |
+| `frontend/src/hooks/useMqttTelemetry.js` | Browser MQTT-over-WebSocket subscriber |
+| `hardware/esp32_ids/mosquitto.conf` | Local development broker listeners |
+| `frontend/src/main.jsx` | React dashboard live telemetry view |
 | `config.yaml` | Energy, battery, model settings |
+
+## 11. Sensor and model limitations
+
+The current firmware reads and publishes INA219 battery percentage, bus voltage,
+and shunt current. DHT22, PIR, and MQ-2 are not yet read by this sketch; its
+temperature and humidity features are placeholders. Network-traffic features
+are also placeholders, and the model input scaling is not applied. The site can
+show real INA219 measurements, but do not treat the firmware's intrusion
+predictions as validated sensor-based detections until those features and
+training-time scaling are implemented.
 

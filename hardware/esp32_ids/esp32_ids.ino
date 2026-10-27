@@ -35,7 +35,7 @@
 // -------------------- WiFi / MQTT settings -----------------------------------
 const char* WIFI_SSID     = "YOUR_WIFI_SSID";
 const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
-const char* MQTT_BROKER   = "192.168.1.100";   // PC running the Streamlit dashboard
+const char* MQTT_BROKER   = "192.168.1.100";   // PC LAN IP running the MQTT broker
 const uint16_t MQTT_PORT  = 1883;
 const char* DEVICE_ID     = "esp32-ids-01";
 
