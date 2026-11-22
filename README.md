@@ -115,10 +115,32 @@ Run all 13 phases + advanced features:
 python -m src.main
 ```
 
-### 3. Launch Technical Dashboard
+### 3. Launch the Website Frontend (React)
+
+The main website frontend is in `frontend/`. From the repository root:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open the local URL printed by Vite (typically `http://localhost:5173/`). Keep
+the terminal running while you use the site. The frontend includes Overview,
+Live Telemetry, Model Tiers, Device List, and Research Results pages. Its
+experiment and benchmark views use the project's saved result files; Live
+Telemetry displays actual MQTT messages only after a device publishes them.
+
+### 4. Optional: Run the Legacy Streamlit Dashboard
+
+The Python Streamlit dashboard is still available separately:
+
 ```bash
 python -m streamlit run dashboard/app.py
 ```
+
+This opens the older Streamlit interface; use the React steps above for the
+current website frontend.
 
 ---
 
@@ -142,7 +164,13 @@ The architecture uses clean interface abstractions (`EnergyProvider`) so physica
 | GPIO34 (ADC) | MQ-2 | Gas / smoke (optional) |
 | WiFi | MQTT broker | Telemetry + inference → dashboard |
 
-Data flow: ESP32 reads INA219 → runs `predict_tinyml_int8()` → publishes JSON telemetry/inference to MQTT → Streamlit dashboard subscribes and displays live gauges & charts. The dashboard can also send commands back (`model_tier`, `sleep_mode`) via `esp32/<id>/command`.
+Data flow: ESP32 reads INA219 → publishes JSON telemetry/inference to MQTT →
+the React website's **Live Telemetry** page subscribes and displays received
+device readings. In the browser, connect to the broker's WebSocket listener
+(default `ws://localhost:9001/mqtt`); the ESP32 connects to standard MQTT on
+port `1883`. Configure the firmware's `MQTT_BROKER` as the PC's LAN IP, not
+`localhost`. The firmware listens for commands, but website-to-device commands
+are not currently implemented.
 
 See `HARDWARE_CONNECTION_GUIDE.md` for step-by-step wiring, Mosquitto broker setup, flashing instructions, and feature-scaling requirements.
 
@@ -153,7 +181,7 @@ See `HARDWARE_CONNECTION_GUIDE.md` for step-by-step wiring, Mosquitto broker set
 python -m pytest tests/ -v
 ```
 
-## 📊 Improved Dashboard
+## 📊 Legacy Streamlit Dashboard
 
 Launch with `streamlit run dashboard/app.py`. New features:
 - Interactive Plotly charts (threat score, model switching, FL convergence, energy)
