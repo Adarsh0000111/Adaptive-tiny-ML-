@@ -16,16 +16,18 @@ export default function useBackendApi() {
   const [usbResult, setUsbResult] = useState(null);
   const [usbRunning, setUsbRunning] = useState(false);
   const [ablationResult, setAblationResult] = useState(null);
+  const [networkedFederated, setNetworkedFederated] = useState(null);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
     try {
-      const [healthData, modelsData, usbData] = await Promise.all([
-        getJson("/api/health"), getJson("/api/models"), getJson("/api/device/usb/status"),
+      const [healthData, modelsData, usbData, flData] = await Promise.all([
+        getJson("/api/health"), getJson("/api/models"), getJson("/api/device/usb/status"), getJson("/api/federated/networked/status"),
       ]);
       setHealth(healthData);
       setModels(modelsData);
       setUsbDevice(usbData);
+      setNetworkedFederated(flData);
       if (usbData.last_run) setUsbResult(usbData.last_run);
       else setUsbResult(null);
       setStatus("connected");
@@ -99,5 +101,5 @@ export default function useBackendApi() {
     "/api/experiments/sensor-ablation", { count: 100, sample_start: 0 }, "Sensor ablation failed", false,
   ).then((result) => { if (result) setAblationResult(result); return result; });
 
-  return { status, health, models, usbDevice, usbResult, usbRunning, runUsbLiveCapture, runUsbReplay, runSensorAblation, ablationResult, error, refresh };
+  return { status, health, models, usbDevice, usbResult, usbRunning, runUsbLiveCapture, runUsbReplay, runSensorAblation, ablationResult, networkedFederated, error, refresh };
 }

@@ -28,6 +28,7 @@ from src.data.live_sniffer import RealTimeNetworkSniffer
 from src.data.edge_packet_schema import SCHEMA_VERSION
 from src.sara import CrossLayerRiskEngine, SARAEngine
 from src.federated.torch_fedavg import TorchFedAvgExperiment
+from src.federated.networked import NetworkedFedAvgCoordinator
 
 app = FastAPI(title="AdaptiveML SARA-IDS API", version="1.0.0", description="Inference, telemetry, resource monitoring, and security-constrained model selection for the 18-feature packet schema.")
 origins = [part.strip() for part in os.getenv("ADAPTIVEML_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if part.strip()]
@@ -131,6 +132,23 @@ class FederatedTrainRequest(BaseModel):
     client_topology: Literal["simulated_host", "physical_esp32", "networked"] = "simulated_host"
 
 
+class NetworkedFederatedStartRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    node_ids: list[str] = Field(min_length=2, max_length=32)
+    rounds: int = Field(default=3, ge=1, le=100)
+    local_epochs: int = Field(default=1, ge=1, le=5)
+    min_clients: int = Field(default=2, ge=2, le=32)
+    timeout_seconds: int = Field(default=300, ge=30, le=3600)
+
+
+class NetworkedFederatedUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    round: int = Field(ge=1)
+    sample_count: int = Field(ge=1, le=10_000_000)
+    local_loss: float = Field(ge=0, le=1_000_000)
+    state_dict: dict[str, Any]
+
+
 class USBReplayRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     port: str | None = Field(default=None, min_length=1, max_length=128)
@@ -157,6 +175,7 @@ def startup() -> None:
     app.state.store = EventStore(Path(os.getenv("ADAPTIVEML_DB", str(ROOT / "data/runtime/adaptiveml.sqlite3"))))
     app.state.offloader = TrustedNodeRouter()
     app.state.federated = TorchFedAvgExperiment()
+    app.state.networked_federated = NetworkedFedAvgCoordinator()
     app.state.usb_replay = USBReplayService()
     app.state.host_metrics = HostMetricsSampler()
     app.state.energy_by_node = {}
@@ -617,6 +636,25 @@ def probe_network(request: NetworkProbeRequest):
         "probe_wall_time_ms": elapsed_ms,
         "note": "RTT is round-trip time; jitter is the mean absolute difference between successive successful RTT samples. This is not a one-way latency measurement and does not produce IDS features.",
     }
+    # Pair an explicit ICMP measurement with a very recent passive capture so SARA
+    # can use measured latency/loss together with its measured link utilization.
+    latest_capture = app.state.network_stats.get("laptop-capture")
+    if latest_capture and latest_capture.get("source") == "capture" and latest_capture.get("bandwidth_utilization_pct") is not None:
+        try:
+            capture_age = time.time() - datetime.fromisoformat(latest_capture["timestamp"]).timestamp()
+        except (KeyError, TypeError, ValueError):
+            capture_age = float("inf")
+        if 0 <= capture_age <= 30:
+            latest_capture["round_trip_latency_ms"] = result["rtt_ms"]["mean"]
+            latest_capture["packet_loss_pct"] = loss_pct
+            latest_capture["jitter_ms"] = result["jitter_ms"]
+            latest_capture["timestamp"] = datetime.now(timezone.utc).isoformat()
+            latest_capture["network_measurement_note"] = "Fresh passive capture counters/link utilization paired with explicit ICMP RTT/loss/jitter probe."
+            result["paired_with_fresh_capture"] = True
+        else:
+            result["paired_with_fresh_capture"] = False
+    else:
+        result["paired_with_fresh_capture"] = False
     if completed.returncode not in (0, 1) and loss_pct is None:
         result["error"] = output.strip()[-500:]
     return result
@@ -652,6 +690,56 @@ def federated_rounds():
 @app.get("/api/federated/schedule")
 def federated_schedule():
     return {"items": app.state.federated_schedule_log[:100], "latest": app.state.federated_schedule_log[0] if app.state.federated_schedule_log else None}
+
+
+@app.get("/api/federated/networked/status")
+def networked_federated_status():
+    return app.state.networked_federated.status()
+
+
+@app.post("/api/federated/networked/start", status_code=202)
+def start_networked_federated(request: NetworkedFederatedStartRequest, authorization: str | None = Header(default=None)):
+    expected = os.getenv("SARA_FL_COORDINATOR_TOKEN", "")
+    supplied = authorization.removeprefix("Bearer ") if authorization else ""
+    import hmac
+    if not expected or not hmac.compare_digest(expected, supplied):
+        raise HTTPException(401, "Invalid coordinator credentials")
+    resources = app.state.host_metrics.sample()
+    schedule = app.state.sara.schedule_federated(resources, sensor_snapshot=app.state.usb_sensor_snapshot,
+                                                 network_stats=list(app.state.network_stats.values()),
+                                                 security_context=app.state.last_live_security_context,
+                                                 client_topology="networked")
+    app.state.federated_schedule_log.insert(0, {"timestamp": datetime.now(timezone.utc).isoformat(), **schedule})
+    app.state.federated_schedule_log[:] = app.state.federated_schedule_log[:100]
+    if not schedule["schedule"]:
+        raise HTTPException(409, {"message": "SARA deferred networked federated training", "schedule_decision": schedule})
+    try:
+        status = app.state.networked_federated.start(request.node_ids, request.rounds, request.local_epochs, request.min_clients, request.timeout_seconds)
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(409 if isinstance(exc, RuntimeError) else 422, str(exc)) from exc
+    return {"accepted": True, "status": status, "schedule_decision": schedule,
+            "message": "Network FedAvg started; clients train locally and upload parameter updates only."}
+
+
+@app.get("/api/federated/networked/assignment/{node_id}")
+def networked_federated_assignment(node_id: str, authorization: str | None = Header(default=None)):
+    from fastapi import HTTPException
+    try:
+        return app.state.networked_federated.assignment(node_id, authorization.removeprefix("Bearer ") if authorization else None)
+    except PermissionError as exc:
+        raise HTTPException(401, str(exc)) from exc
+
+
+@app.post("/api/federated/networked/update/{node_id}")
+def networked_federated_update(node_id: str, request: NetworkedFederatedUpdate, authorization: str | None = Header(default=None)):
+    from fastapi import HTTPException
+    try:
+        return app.state.networked_federated.submit(node_id, authorization.removeprefix("Bearer ") if authorization else None,
+                                                   request.round, request.sample_count, request.state_dict, request.local_loss)
+    except PermissionError as exc:
+        raise HTTPException(401, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
 
 
 @app.post("/api/federated/train", status_code=202)
