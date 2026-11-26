@@ -1,0 +1,82 @@
+{
+  "schema_version": "edge-iiotset-live-packet-18-v2",
+  "source_path": "/mnt/9A50FC8350FC6801/PROJECTS/.codex-adapt-arduino/datasets/edge-iiotset/ML-EdgeIIoT-dataset.csv",
+  "source_sha256": "53101fad091af20bee815860962a5016b802ee45d456a141042f6183094c3c1a",
+  "source_dataset": "Edge-IIoTset ML-EdgeIIoT-dataset.csv",
+  "source_attribution": "Mohamed Amine Ferrag et al., Edge-IIoTset; DOI: 10.1109/ACCESS.2022.3165809",
+  "source_license": "CC BY-NC-SA 4.0",
+  "split": {
+    "seed": 42,
+    "train": 25579,
+    "validation": 3654,
+    "test": 7309
+  },
+  "features": [
+    "tcp.connection.fin",
+    "tcp.connection.rst",
+    "tcp.connection.syn",
+    "tcp.connection.synack",
+    "tcp.flags.ack",
+    "tcp.flags",
+    "tcp.len",
+    "tcp.dstport",
+    "udp.time_delta",
+    "dns.qry.name.len",
+    "http.response",
+    "mqtt.msgtype",
+    "mqtt.len",
+    "protocol_http",
+    "protocol_mqtt",
+    "protocol_other",
+    "protocol_tcp",
+    "protocol_udp"
+  ],
+  "classes": [
+    "Access_Compromise",
+    "DDoS",
+    "Normal",
+    "Ransomware",
+    "Scanning",
+    "Web_Attack"
+  ],
+  "preprocessing": {
+    "source_rows": 157800,
+    "unknown_label_rows_dropped": 0,
+    "conflicting_feature_rows_dropped": 63439,
+    "duplicate_rows_dropped": 57819,
+    "label_mapping": {
+      "Backdoor": "Access_Compromise",
+      "MITM": "Access_Compromise",
+      "Password": "Access_Compromise",
+      "DDoS_HTTP": "DDoS",
+      "DDoS_ICMP": "DDoS",
+      "DDoS_TCP": "DDoS",
+      "DDoS_UDP": "DDoS",
+      "Normal": "Normal",
+      "Ransomware": "Ransomware",
+      "Fingerprinting": "Scanning",
+      "OS_Fingerprinting": "Scanning",
+      "Port_Scanning": "Scanning",
+      "Vulnerability_scanner": "Scanning",
+      "SQL_injection": "Web_Attack",
+      "Uploading": "Web_Attack",
+      "XSS": "Web_Attack"
+    },
+    "class_counts": {
+      "Access_Compromise": 4271,
+      "DDoS": 5433,
+      "Normal": 9773,
+      "Ransomware": 431,
+      "Scanning": 6268,
+      "Web_Attack": 10366
+    },
+    "protocol_counts": {
+      "http": 24145,
+      "mqtt": 9368,
+      "other": 5,
+      "tcp": 2945,
+      "udp": 79
+    }
+  },
+  "evaluation_caveat": "Packet-level stratified random split; dataset has no capture/session identifier, so session-independent generalization is not established."
+}

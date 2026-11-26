@@ -7,32 +7,40 @@
 #ifndef ESP32_TINYML_IDS_H
 #define ESP32_TINYML_IDS_H
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
+#define PROGMEM
+#endif
 #include <stdint.h>
+#include <math.h>
 
-#define TINYML_NUM_NODES 23
+#define TINYML_NUM_NODES 19
 #define TINYML_NUM_FEATURES 18
 #define TINYML_NUM_CLASSES 6
 #define TINYML_SCALE_FACTOR 1000.000000f
 
-static const int32_t PROGMEM TREE_THRESHOLDS[23] = { -411, -571, 0, -848, -2, -2, 408, -2, -2, -618, -2, -27, -2, -2, -618, -2, -512, -463, -2, -2, 383, -2, -2 };
-static const uint8_t PROGMEM TREE_FEATURES[23] = { 1, 12, 3, 6, 254, 254, 3, 254, 254, 3, 254, 10, 254, 254, 3, 254, 3, 12, 254, 254, 3, 254, 254 };
-static const int16_t PROGMEM TREE_LEFT[23] = { 1, 2, 3, 4, -1, -1, 7, -1, -1, 10, -1, 12, -1, -1, 15, -1, 17, 18, -1, -1, 21, -1, -1 };
-static const int16_t PROGMEM TREE_RIGHT[23] = { 14, 9, 6, 5, -1, -1, 8, -1, -1, 11, -1, 13, -1, -1, 16, -1, 20, 19, -1, -1, 22, -1, -1 };
+static const int32_t PROGMEM TREE_THRESHOLDS[19] = { 500, -1756, 291, 500, -2, -2, -2307, -2, -2, 291, 184, -2, -2, 500, -2, -2, 322, -2, -2 };
+static const uint8_t PROGMEM TREE_FEATURES[19] = { 14, 7, 1, 13, 254, 254, 7, 254, 254, 1, 6, 254, 254, 16, 254, 254, 7, 254, 254 };
+static const int16_t PROGMEM TREE_LEFT[19] = { 1, 2, 3, 4, -1, -1, 7, -1, -1, 10, 11, -1, -1, 14, -1, -1, 17, -1, -1 };
+static const int16_t PROGMEM TREE_RIGHT[19] = { 16, 9, 6, 5, -1, -1, 8, -1, -1, 13, 12, -1, -1, 15, -1, -1, 18, -1, -1 };
+static const uint8_t PROGMEM TREE_CLASSES[19] = { 5, 5, 4, 4, 0, 4, 4, 1, 4, 5, 5, 5, 4, 1, 1, 5, 2, 2, 2 };
+static const char* const TINYML_CLASS_NAMES[TINYML_NUM_CLASSES] = { "Access_Compromise", "DDoS", "Normal", "Ransomware", "Scanning", "Web_Attack" };
 
 /* Predict function for ESP32 microcontrollers */
-static inline int predict_tinyml_int8(const float* features_float) {
+static inline int predict_tinyml_fixed_point(const float* features_float) {
     int16_t node = 0;
     while (TREE_LEFT[node] != -1) {
         uint8_t f_idx = TREE_FEATURES[node];
         int32_t thresh = TREE_THRESHOLDS[node];
-        int32_t f_val = (int32_t)(features_float[f_idx] * TINYML_SCALE_FACTOR);
+        int32_t f_val = (int32_t)lrintf(features_float[f_idx] * TINYML_SCALE_FACTOR);
         if (f_val <= thresh) {
             node = TREE_LEFT[node];
         } else {
             node = TREE_RIGHT[node];
         }
     }
-    return node; // Returns leaf node index
+    return TREE_CLASSES[node]; // Encoded class index from the trained tree
 }
 
 #endif // ESP32_TINYML_IDS_H

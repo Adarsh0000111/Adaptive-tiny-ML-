@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import time
+import shutil
 import numpy as np
 import joblib
 from sklearn.metrics import accuracy_score, f1_score
@@ -13,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 class TinyMLOptimizer:
     """
-    Performs INT8 quantization and memory compression on ML models for ESP32 edge deployment.
+    Exports a fixed-point decision tree for ESP32. This is threshold/input
+    quantization, not INT8 quantization of a neural network.
     """
     def __init__(self, config_path="config.yaml"):
         self.config = load_config(config_path)
@@ -22,9 +24,9 @@ class TinyMLOptimizer:
         self.figures_dir = self.config["paths"]["figures_dir"]
         self.tables_dir = self.config["paths"]["tables_dir"]
         
-    def quantize_tree_to_int8(self, tree_model, X_ref):
+    def quantize_tree_fixed_point(self, tree_model, X_ref):
         """
-        Quantizes floating point decision thresholds and feature values to 16-bit fixed point integers.
+        Quantizes decision thresholds and preprocessed inputs at 0.001 resolution.
         """
         tree = tree_model.tree_
         thresholds = tree.threshold
@@ -46,6 +48,7 @@ class TinyMLOptimizer:
             "children_left": tree.children_left.astype(np.int16),
             "children_right": tree.children_right.astype(np.int16),
             "values": np.round(tree.value * 10000.0).astype(np.int32),
+            "classes": np.argmax(tree.value[:, 0, :], axis=1).astype(np.uint8),
             "scale_factor": scale_factor,
             "max_val": max_val
         }
@@ -76,8 +79,12 @@ class TinyMLOptimizer:
             
         return np.array(preds)
 
+    def quantize_tree_to_int8(self, tree_model, X_ref):
+        """Backward-compatible name; returns fixed-point tables, not INT8 weights."""
+        return self.quantize_tree_fixed_point(tree_model, X_ref)
+
     def optimize_and_benchmark(self):
-        logger.info("Executing TinyML INT8 Quantization and Edge Optimization...")
+        logger.info("Exporting a fixed-point decision tree (not INT8 neural-network quantization)...")
         
         # Load lightweight decision tree model
         light_path = os.path.join(self.models_dir, "lightweight", "model.joblib")
@@ -102,8 +109,8 @@ class TinyMLOptimizer:
         orig_acc = accuracy_score(y_test, y_pred_orig)
         orig_f1 = f1_score(y_test, y_pred_orig, average="macro", zero_division=0)
         
-        # 2. Perform INT8/INT16 Quantization
-        q_tree = self.quantize_tree_to_int8(tree_model, X_test)
+        # 2. Fixed-point threshold serialization (not INT8 quantization)
+        q_tree = self.quantize_tree_fixed_point(tree_model, X_test)
         
         start_q_t = time.perf_counter()
         y_pred_quant = self.predict_quantized_tree(q_tree, X_test)
@@ -111,18 +118,20 @@ class TinyMLOptimizer:
         quant_acc = accuracy_score(y_test, y_pred_quant)
         quant_f1 = f1_score(y_test, y_pred_quant, average="macro", zero_division=0)
         
-        # Estimate compressed binary size in C header array format
+        # Count all exported table bytes and embedded class-name strings.
         c_bytes = (
             q_tree["thresholds_int32"].nbytes +
             q_tree["features_uint8"].nbytes +
             q_tree["children_left"].nbytes +
-            q_tree["children_right"].nbytes
+            q_tree["children_right"].nbytes +
+            q_tree["classes"].nbytes +
+            sum(len(str(name).encode("utf-8")) + 1 for name in class_names)
         )
         quant_size_kb = c_bytes / 1024.0
         size_reduction_pct = ((orig_size_kb - quant_size_kb) / orig_size_kb) * 100.0
         
         results = {
-            "model_name": "TinyML INT8 Quantized Decision Tree",
+            "model_name": "TinyML Fixed-Point Decision Tree",
             "original_size_kb": round(float(orig_size_kb), 2),
             "quantized_size_kb": round(float(quant_size_kb), 2),
             "size_reduction_pct": round(float(size_reduction_pct), 2),
@@ -133,9 +142,13 @@ class TinyMLOptimizer:
             "quantized_f1_macro": round(float(quant_f1), 4),
             "original_latency_ms": round(float(orig_latency_ms), 5),
             "quantized_latency_ms": round(float(quant_latency_ms), 5),
-            "esp32_ram_requirement_kb": 1.2,
-            "esp32_flash_requirement_kb": round(float(quant_size_kb + 2.5), 2),
-            "esp32_compatible": True
+            "latency_measurement_source": "Python fixed-point simulator on current host; not MCU latency",
+            "exported_array_payload_bytes": int(c_bytes),
+            "estimated_ram_requirement_kb": 1.2,
+            "estimated_flash_requirement_kb": round(float(quant_size_kb + 2.5), 2),
+            "c_header_generated": True,
+            "hardware_compiled": False,
+            "hardware_validated": False
         }
         
         logger.info(f"Original Size: {orig_size_kb:.2f} KB -> Quantized Size: {quant_size_kb:.2f} KB (Reduction: {size_reduction_pct:.1f}%)")
@@ -150,7 +163,11 @@ class TinyMLOptimizer:
         c_header_path = os.path.join(self.models_dir, "tinyml", "esp32_model.h")
         os.makedirs(os.path.dirname(c_header_path), exist_ok=True)
         self.export_c_header(q_tree, feature_names, class_names, c_header_path)
-        logger.info(f"Exported ESP32-compatible C header to {c_header_path}")
+        for hardware_folder in ("esp32_ids", "esp32_usb_ids"):
+            hardware_path = os.path.join("hardware", hardware_folder, "esp32_model.h")
+            if os.path.isdir(os.path.dirname(hardware_path)):
+                shutil.copy2(c_header_path, hardware_path)
+        logger.info(f"Exported fixed-point C header (hardware not validated) to {c_header_path}")
         
         return results
 
@@ -161,6 +178,7 @@ class TinyMLOptimizer:
         left = q_tree["children_left"]
         right = q_tree["children_right"]
         vals = q_tree["values"]
+        classes = q_tree["classes"]
         scale = q_tree["scale_factor"]
         
         num_nodes = len(thresh)
@@ -174,7 +192,13 @@ class TinyMLOptimizer:
 #ifndef ESP32_TINYML_IDS_H
 #define ESP32_TINYML_IDS_H
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
+#define PROGMEM
+#endif
 #include <stdint.h>
+#include <math.h>
 
 #define TINYML_NUM_NODES {num_nodes}
 #define TINYML_NUM_FEATURES {len(feature_names)}
@@ -185,21 +209,23 @@ static const int32_t PROGMEM TREE_THRESHOLDS[{num_nodes}] = {{ {', '.join(map(st
 static const uint8_t PROGMEM TREE_FEATURES[{num_nodes}] = {{ {', '.join(map(str, feats))} }};
 static const int16_t PROGMEM TREE_LEFT[{num_nodes}] = {{ {', '.join(map(str, left))} }};
 static const int16_t PROGMEM TREE_RIGHT[{num_nodes}] = {{ {', '.join(map(str, right))} }};
+static const uint8_t PROGMEM TREE_CLASSES[{num_nodes}] = {{ {', '.join(map(str, classes))} }};
+static const char* const TINYML_CLASS_NAMES[TINYML_NUM_CLASSES] = {{ {', '.join(json.dumps(str(name)) for name in class_names)} }};
 
 /* Predict function for ESP32 microcontrollers */
-static inline int predict_tinyml_int8(const float* features_float) {{
+static inline int predict_tinyml_fixed_point(const float* features_float) {{
     int16_t node = 0;
     while (TREE_LEFT[node] != -1) {{
         uint8_t f_idx = TREE_FEATURES[node];
         int32_t thresh = TREE_THRESHOLDS[node];
-        int32_t f_val = (int32_t)(features_float[f_idx] * TINYML_SCALE_FACTOR);
+        int32_t f_val = (int32_t)lrintf(features_float[f_idx] * TINYML_SCALE_FACTOR);
         if (f_val <= thresh) {{
             node = TREE_LEFT[node];
         }} else {{
             node = TREE_RIGHT[node];
         }}
     }}
-    return node; // Returns leaf node index
+    return TREE_CLASSES[node]; // Encoded class index from the trained tree
 }}
 
 #endif // ESP32_TINYML_IDS_H

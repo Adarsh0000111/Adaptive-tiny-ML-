@@ -1,153 +1,58 @@
-# Adaptive Multi-Level TinyML Intrusion Detection with Energy-Aware Model Switching and Federated Learning for Industrial IoT Edge Devices
+# AdaptiveML / SARA-IDS: current research report
 
-## 1. ABSTRACT
-Industrial IoT (IIoT) edge nodes deployed in critical infrastructure face severe resource constraints alongside sophisticated, high-volume cyber attacks. Traditional Intrusion Detection Systems (IDS) either rely on energy-intensive heavy deep neural networks—leading to rapid edge power failure—or static lightweight models that fail to capture complex multi-stage attacks. Furthermore, centralized machine learning requires uploading raw network telemetry to cloud servers, introducing severe data privacy vulnerabilities. This research presents a complete, working prototype of an adaptive cybersecurity architecture combining **Multi-Level TinyML**, **Energy-Aware Model Switching**, and **Privacy-Preserving Federated Learning (FedAvg)**. Evaluated on the real-world **Edge-IIoTset** benchmark dataset (25,000 traffic instances across 6 attack classes), our multi-level models achieve 90.62% (Lightweight DecisionTree, 3.79 KB), 98.72% (Medium Random Forest, 1,054 KB), and 98.44% (Heavy Deep MLP, 415 KB) multi-class accuracy. Through INT8 fixed-point quantization, we compress the lightweight model by **94.67% down to 0.20 KB** (RAM requirement 1.2 KB, Flash requirement 2.7 KB), making it directly deployable on ESP32 microcontrollers with 0.08% accuracy drop. Our adaptive utility engine dynamically selects the optimal model per event based on threat severity, confidence, battery percentage, and latency, achieving **81.41% total energy savings** compared to fixed heavy inference. Additionally, Energy-Aware Federated Client Selection reduces wireless communication overhead by **25.0%** while achieving 98.08% global accuracy on Non-IID Dirichlet data ($\alpha=0.5$).
+**Status:** software research prototype with a verified ESP32-S3 USB replay and an opt-in live packet path. The project has three models retrained on official packet-level Edge-IIoTset rows, a SARA policy prototype, React dashboard, FastAPI service, and simulated CPU federated learning. The current board replay (100 held-out rows) scored 81.0% accuracy and 0.5665 macro-F1, with 15 µs device p95 inference. Live capture features are implemented but have not yet been evaluated on labeled arbitrary traffic. INA219 calibration and networked federated clients remain unvalidated.
 
----
+## Research question and scope
 
-## 2. INTRODUCTION
-Industrial IoT systems monitor critical physical infrastructure including power grids, water treatment plants, smart manufacturing lines, and transportation networks. The proliferation of edge nodes (e.g., ESP32 microcontrollers, ARM Cortex-M gateways) has expanded the attack surface, subjecting IIoT devices to Denial of Service (DDoS), Ransomware, Backdoor exploits, and SQL Injection attacks. Protecting edge nodes requires real-time local inference without overwhelming edge battery capacity or compromising data privacy.
+Can an IDS choose among classifiers or trusted remote inference under changing risk and resource conditions while respecting a measured security floor? This repository is a starting implementation, not evidence that the question has been answered. The name SARA is provisional and no novelty claim is made. A focused literature review and overlap assessment are in [research/LITERATURE_REVIEW.md](research/LITERATURE_REVIEW.md).
 
----
+## Current data and model evidence
 
-## 3. PROBLEM STATEMENT
-Resource-constrained IIoT edge devices operate on tight battery budgets (e.g., 1200 mAh at 3.3V) and limited SRAM (320 KB to 512 KB). Deploying a static heavy deep neural network causes rapid battery depletion, leading to edge node shutdown and physical monitoring blackout. Conversely, deploying a static lightweight decision tree leaves the system vulnerable to complex attacks. Furthermore, transmitting raw industrial telemetry to cloud servers violates data privacy standards and increases wireless communication energy.
+The processed dataset contains 25,579 training rows, 3,654 validation rows, and 7,309 held-out test rows; it has 18 ordered packet features and six grouped labels. Its source hash and filtering are recorded in [`results/experiments/data_provenance.json`](results/experiments/data_provenance.json). The current artifacts are a 3,465-byte DecisionTreeClassifier (lightweight), 866,745-byte RandomForestClassifier (medium), and 217,608-byte MLPClassifier (heavy). There is no CNN artifact.
 
----
+The report in [`results/experiments/artifact_validation.json`](results/experiments/artifact_validation.json) evaluates the existing artifacts on the saved test split without retraining:
 
-## 4. MOTIVATION
-To solve the security-versus-energy dilemma, edge devices must intelligently adapt their computational footprint in real time. When network threat levels are low or device battery levels are critical, the system should operate in a ultra-low-power TinyML mode. When threat levels spike or suspicious anomalies are detected, the device should dynamically scale up inference capacity to higher-performing models.
+| Tier | Test accuracy | Macro recall | Macro F1 | Artifact size |
+|---|---:|---:|---:|---:|
+| Lightweight decision tree | 77.32% | 57.79% | 56.23% | 3.4 KB |
+| Medium random forest | 91.34% | 89.65% | 90.60% | 846 KB |
+| Heavy MLP classifier | 90.98% | 88.43% | 89.26% | 213 KB |
 
----
+The lightweight model has lower macro recall than the medium and high models, and especially weak Ransomware recall; overall accuracy is not a sufficient security criterion. The stratified split is at packet level and the source has no session identifier, so context leakage is possible. Metrics and latency are host-specific software measurements. RAM and physical energy were not measured. Test results do not establish robustness, generalization, or causal benefit from adaptation.
 
-## 5. RELATED WORK
-Existing IIoT intrusion detection studies focus primarily on model accuracy in centralized cloud servers or offline benchmarking on static datasets. Prior TinyML implementations deploy a single static model to microcontrollers without dynamic runtime model switching. While Federated Learning (FedAvg) has been applied to IoT privacy, standard client selection algorithms select edge nodes randomly, causing severe battery depletion on low-power devices.
+## Implemented policy prototype
 
----
+`src/sara.py` combines a network-risk signal, model uncertainty, and resource stress. Resource stress contributes to the score only in interaction with network risk, so high CPU or memory use by itself is not labeled an attack. The selection rule chooses the lowest estimated-energy local tier meeting validation macro-recall thresholds (0.95 for high risk, 0.90 for medium risk); under critical resource pressure it can request a configured trusted peer. It records a degraded-coverage condition when no local tier meets the applicable floor.
 
-## 6. RESEARCH GAP
-No existing cybersecurity architecture integrates:
-1. Multi-level ML models with verified computational complexity tiers.
-2. Microcontroller-ready TinyML INT8 quantization and C-header code export.
-3. Multi-Attribute Utility Theory (MAUT) for dynamic runtime model switching.
-4. Energy-Aware Federated Client Selection on Non-IID IIoT protocol traffic.
+This is a deterministic rule, not a learned policy. Tier cost is an estimate derived from host-side profiling, not a measured energy model. The default risk evidence is a classifier-label proxy unless an external score is supplied; there is no independent live network IDS feeding SARA. The API's resource metrics describe the host running the service, not automatically the ESP32. A research evaluation must compare SARA against fixed tiers, confidence-only selection, resource-only selection, and an appropriate adaptive baseline, using per-class false negatives and synchronized device/network measurements.
 
----
+## Federated learning and deployment status
 
-## 7. PROPOSED ARCHITECTURE
-```text
-                       Distributed IIoT Data
-                                │
-                                ▼
-                       Federated Learning
-                                │ (Global FedAvg Update)
-                                ▼
-                       Global ML Models
-                                │
-            ┌───────────────────┴───────────────────┐
-            ▼                                       ▼
-       IIoT Edge Node 1                        IIoT Edge Node 2
-            │                                       │
-            ▼                                       ▼
-     Threat Estimator                        Threat Estimator
-            │                                       │
-            ▼                                       ▼
-     Energy Manager                          Energy Manager
-            │                                       │
-            ▼                                       ▼
-   Adaptive Model Selector                 Adaptive Model Selector
-            │                                       │
-      ┌─────┼─────┐                           ┌─────┼─────┐
-      ▼     ▼     ▼                           ▼     ▼     ▼
-     M1    M2    M3                          M1    M2    M3
-(Light) (Med) (Heavy)                       (Light) (Med) (Heavy)
-```
+The current `/api/federated/train` route runs local CPU MLP FedAvg over simulated Dirichlet client partitions. It performs sample-weighted parameter averaging and a validation accuracy acceptance gate. It is a single-process simulation: there are no independent network clients, transmitted updates, secure aggregation, formal differential privacy, or measured communication energy. Any config-based battery and energy values are simulated estimates. They must not be reported as physical results or privacy guarantees.
 
----
+The React frontend replaces the former Streamlit dashboard. The USB-only ESP32-S3 sketch runs the exported fixed-point tree on laptop-supplied scaled packet vectors and returns physical sensor telemetry; this path needs no Wi-Fi or MQTT. Sensor readings remain separate from the model's 18 network features. A separate unchecked-by-default capture action extracts TCP/UDP packet metadata on the laptop, applies the training transform, and sends predictions to the board; this is packet-level inference, not flow reconstruction.
 
-## 8. DATASET SPECIFICATIONS
-- **Dataset**: Edge-IIoTset Cybersecurity Standard
-- **Records**: 25,000 network traffic instances
-- **Features**: 23 raw network and protocol features
-- **Class Distribution**:
-  - `Normal`: 9,913 (39.65%)
-  - `DDoS`: 5,069 (20.28%)
-  - `Scanning`: 3,750 (15.00%)
-  - `SQL_Injection`: 2,478 (9.91%)
-  - `Backdoor`: 1,981 (7.92%)
-  - `Ransomware`: 1,809 (7.24%)
+## Historical claims and evidence limits
 
----
+Earlier project documents/results included energy-saving, INT8 deployment, federated accuracy, and privacy claims. Those figures are not reproduced by the current controlled evaluation and have been withdrawn from the current evidence. The TinyML export is fixed-point threshold/input quantization, not a demonstrated INT8 implementation. ESP32 compile, flash, and replay inference have been verified; peak RAM and calibrated energy remain unmeasured. See [the full USB replay report](results/experiments/esp32_usb_replay.json), [PROJECT_AUDIT.md](PROJECT_AUDIT.md), and [HARDWARE_CONNECTION_GUIDE.md](HARDWARE_CONNECTION_GUIDE.md).
 
-## 9. DATA PREPROCESSING & LEAKAGE PREVENTION
-1. **Metadata Feature Removal**: High-cardinality metadata (`frame.time`, `ip.src`, `ip.dst`, `arp.src.proto_ipv4`, `arp.dst.proto_ipv4`, `http.file_data`, `tcp.payload`) were removed.
-2. **Missing & Duplicate Handling**: Missing values (10,013 imputed via median) and zero duplicate rows detected.
-3. **Data Splitting**: Stratified 70% Train (17,499), 10% Validation (2,500), 20% Test (5,001).
-4. **Leakage Safeguard**: `StandardScaler` and `SimpleImputer` fit exclusively on $X_{train}$.
+## Minimum next experiment
 
----
+1. Verify dataset release, licensing, exact source files, preprocessing, and split lineage; record immutable hashes.
+2. Freeze train/validation/test splits and fit every preprocessing step on training data only. Report per-class precision, recall, F1, confusion matrices, macro FPR/FNR, and confidence intervals across seeds.
+3. Calibrate security floors on validation data and test fixed lightweight/medium/heavy, confidence-only switching, resource-only switching, SARA, and literature-grounded adaptive baselines.
+4. Separate attack traffic from benign resource stress. Sweep CPU/memory load, network latency/loss, peer availability, and battery state; synchronize decisions, predictions, resource readings, and energy measurements.
+5. Measure energy at the inference device with a calibrated instrument, and report latency distributions, peak RAM, flash, energy per sample, and false-negative costs. Do not infer ESP32 performance from the development host.
+6. For FL, use independent clients and report per-client class coverage, convergence, update bytes, wall time, measured energy, and adversarial tests. Add differential privacy only with a stated accountant, clipping/noise configuration, and privacy budget.
+7. Validate laptop packet extraction against a labeled PCAP and test class-wise performance under different interface traffic, encryption, and capture privilege conditions.
 
-## 10. MACHINE LEARNING MODELS & COMPUTE TIERS
-| Model Level | Model Architecture | Hyperparameters | Accuracy | F1-Macro | Storage Size | Latency | Est. Energy |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **LIGHTWEIGHT** | Decision Tree | Depth: 4, Leaf: 5 | **90.62%** | **0.7717** | **3.79 KB** | **0.0006 ms** | **8.5 $\mu J$** |
-| **MEDIUM** | Random Forest | Trees: 25, Depth: 10 | **98.72%** | **0.9780** | **1,054 KB** | **0.0465 ms** | **62.0 $\mu J$** |
-| **HEAVY** | Deep MLP | Hidden: [128, 64, 32] | **98.44%** | **0.9749** | **415 KB** | **0.0029 ms** | **340.0 $\mu J$** |
+## Conclusion
 
----
+The current code supports artifact-level model comparison, a testable adaptive-policy prototype, and physical TinyML inference on saved-feature replay. It does not yet demonstrate energy savings, live network intrusion detection, networked FL, or a novel SARA contribution. The nearest literature overlaps adaptive model selection, security-energy adaptation, edge/cloud offloading, and resource-aware federated IDS; the defensible contribution, if any, must come from a carefully measured, security-constrained experiment.
+# Data and live-inference update (2026-11-26)
 
-## 11. TINYML OPTIMIZATION & ESP32 QUANTIZATION
-To ensure edge hardware compatibility, the Lightweight Decision Tree was converted into a 16-bit fixed-point integer matrix representation with float-to-int scale factor $\gamma = 1000.0$.
-- **Original Model Size**: 3.79 KB
-- **Quantized Model Size**: **0.20 KB** (**94.67% Size Reduction**)
-- **Quantized Accuracy**: **90.70%** (0.08% improvement due to rounding noise regularization)
-- **ESP32 Memory Footprint**: RAM requirement: 1.2 KB, Flash requirement: 2.7 KB.
-- **Hardware Export**: Ready-to-compile C Header exported to `models/tinyml/esp32_model.h`.
+The project's former 25,000-row CSV was generated by its own synthetic generator, despite its Edge-IIoTset naming. It was replaced for current model training by the official packet-level `ML-EdgeIIoT-dataset.csv`. Training uses 13 numeric packet fields and five protocol indicators and maps original attack labels into six broad groups. The exact mapping and source-file SHA-256 are in `results/experiments/data_provenance.json`; fixed held-out test results are in `results/experiments/artifact_validation.json`.
 
----
+The official file has repeated packets and no capture/session identifier. Exact duplicate feature/label rows were removed and conflicting identical-feature rows discarded; the resulting stratified random split is useful for within-file evaluation but may share session context across splits. It cannot support claims of session-independent performance or generalization to arbitrary laptop traffic. The exported low-tier tree was compiled and flashed to the ESP32-S3; a 100-row held-out replay is recorded in `results/experiments/esp32_usb_replay.json`. During an explicitly authorized capture window, the laptop extracts each TCP/UDP packet in the capture callback, runs SARA selection, and immediately executes the selected tier on USB/ESP32 or laptop. Host capture does not retain packet payloads or IP addresses. Live arbitrary-traffic detection still needs evaluation on labeled traffic.
 
-## 12. FEDERATED LEARNING & NON-IID DATA
-Simulated across 5 IIoT edge devices under Dirichlet distribution ($\alpha = 0.5$):
-- **Standard FedAvg**: Accuracy: 97.88%, Communication Overhead: **1,920.0 KB**
-- **Energy-Aware FedAvg**: Accuracy: **98.08%**, Communication Overhead: **1,440.0 KB** (**25.0% Reduction**)
-
----
-
-## 13. THREAT SCORING FORMULATION
-$$\text{ThreatScore} = \text{round}\left( W_{sev} \cdot S_{cat} + W_{conf} \cdot C \cdot S_{cat} + W_{freq} \cdot F_{anomaly} \cdot 100 \right)$$
-Where $W_{sev}=0.45, W_{conf}=0.25, W_{freq}=0.30$.
-Categorization: $0-30$ (LOW), $31-60$ (MEDIUM), $61-80$ (HIGH), $81-100$ (CRITICAL).
-
----
-
-## 14. ADAPTIVE MODEL SELECTION ALGORITHM
-$$\text{Utility}(m) = W_{threat} \cdot \text{DetectionCap}(m) - W_{energy} \cdot \text{EnergyCost}(m) - W_{latency} \cdot \text{Latency}(m)$$
-If Battery < 15% and Threat $\neq$ CRITICAL, enforce `LIGHTWEIGHT` model.
-
----
-
-## 15. BASELINE COMPARISON EXPERIMENT RESULTS
-Evaluated across 300 sequential real-time IIoT network events:
-| System Configuration | Multi-Class Accuracy | Total Energy Consumed ($\mu J$) | Energy Savings vs Heavy | Model Switches |
-| :--- | :--- | :--- | :--- | :--- |
-| **Fixed Lightweight** | 91.50% | 1,700.0 $\mu J$ | 97.50% | 0 |
-| **Fixed Medium** | 99.00% | 12,400.0 $\mu J$ | 81.76% | 0 |
-| **Fixed Heavy** | 98.50% | 68,000.0 $\mu J$ | 0.00% | 0 |
-| **Proposed Adaptive System** | **93.00%** | **12,640.5 $\mu J$** | **81.41% Savings** | **85 Switches** |
-
----
-
-## 16. LIMITATIONS
-1. Hardware evaluation performed via software simulation abstraction layer; physical INA219 sensor deployment pending ESP32 flashing.
-2. Latency measured on host CPU; micro-benchmarks on Xtensa LX6 dual-core microcontrollers may exhibit slight variations.
-
----
-
-## 17. FUTURE HARDWARE INTEGRATION ROADMAP
-- Flash generated `models/tinyml/esp32_model.h` to ESP32 board using Arduino IDE / ESP-IDF.
-- Connect INA219 current/voltage sensor over I2C (SDA=GPIO21, SCL=GPIO22) to replace `SimulationEnergyProvider` with `ESP32INA219EnergyProvider`.
-
----
-
-## 18. CONCLUSION
-The experimental results demonstrate that combining Federated Learning, TinyML INT8 quantization, and Adaptive Model Switching solves the IIoT cybersecurity-energy dilemma. The system achieves an 81.41% reduction in edge energy consumption while maintaining high intrusion detection accuracy and preserving raw data privacy across IIoT edge networks.
+Dataset attribution/license: Mohamed Amine Ferrag et al., Edge-IIoTset, DOI [10.1109/ACCESS.2022.3165809](https://doi.org/10.1109/ACCESS.2022.3165809). The downloaded dataset is labeled CC BY-NC-SA 4.0; use requires attribution, share-alike for adaptations, and non-commercial use.

@@ -1,123 +1,32 @@
-# Adaptive Multi-Level TinyML Intrusion Detection with Energy-Aware Model Switching and Federated Learning for Industrial IoT Edge Devices
+# AdaptiveML / SARA-IDS
 
-[![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
-[![TinyML Supported](https://img.shields.io/badge/TinyML-ESP32%20Ready-green.svg)]()
-[![Federated Learning](https://img.shields.io/badge/Federated%20Learning-FedAvg%20%2B%20DP-orange.svg)]()
-[![License](https://img.shields.io/badge/License-MIT-purple.svg)]()
+AdaptiveML is a research prototype for intrusion detection in resource-constrained IoT/IIoT settings. SARA (Security-Aware Resource Adaptation) is a provisional policy name inside the project; no novelty claim is established.
 
-## 🛡️ Project Overview
-This repository contains a research-grade cybersecurity project for **Industrial IoT (IIoT) edge devices**. 
+## Current status
 
-It implements network intrusion detection using multiple ML models of varying computational complexity and dynamically selects the optimal model per incoming network event based on:
-1. **Threat Severity** (Low, Medium, High, Critical)
-2. **Prediction Confidence**
-3. **Available Edge Battery Energy**
-4. **Model Computational & Memory Footprint**
-5. **Inference Latency**
+- React + Vite dashboard in `frontend/`; the old Streamlit UI has been removed.
+- FastAPI backend in `src/api/` loads the Decision Tree, Random Forest, and MLP trained from the official packet-level Edge-IIoTset ML CSV. It exposes replay inference, model profiles, resources, telemetry, decision history, trusted-peer offloading, and a local FL simulation.
+- The live IDS schema has 18 ordered packet fields and five protocol indicators and maps the original labels to six broader classes. Test-set accuracy / macro-F1: low 77.3% / 56.2%, medium 91.3% / 90.6%, high 91.0% / 89.3%. Packet rows are deduplicated; the source lacks capture-session IDs, so the random split does not establish session-independent generalization. See [`data_provenance.json`](results/experiments/data_provenance.json) and [`artifact_validation.json`](results/experiments/artifact_validation.json).
+- ESP32-S3 USB firmware runs the lightweight fixed-point tree locally and returns physical sensor readings for the INA219, DHT22, SW-420, and MPU6500; the OLED and buzzer operate on the board.
+- The ESP32-S3 runs the exported low-tier fixed-point tree. Its new firmware was compiled, flashed, and replayed against 100 held-out official-data rows over USB: 81% accuracy, macro-F1 56.7%, and device p95 inference 15 µs. During an explicitly authorized live capture window, SARA evaluates each arriving packet and automatically routes low to USB/ESP32, medium/high to laptop; no Wi-Fi is used. Capture is bounded to 100 packets or five seconds, stores no payloads or IP addresses, and reports predictions without ground-truth accuracy. See [the hardware replay](results/experiments/esp32_usb_replay.json).
+- SARA compares the three saved model votes and uses disagreement with prediction entropy as a risk signal. Host CPU/RAM and host network-counter rates are reported separately from ESP32 sensor readings.
+- The SARA page offers explicit user-authorized passive capture and a manual ICMP probe by IP for packet/throughput and RTT/loss/jitter measurements. The separate USB live path extracts packet-level fields compatible with the trained packet model; it is not flow-level IDS analysis.
+- The local FedAvg simulation reports its training loss and simulated client/model freshness plus serialized update sizes. It does not send updates over a network.
+- Federated training currently simulates client partitions within one process. It is not a networked deployment and provides no formal privacy guarantee.
+- Device inference latency was measured on the ESP32 during replay. INA219-derived energy is recorded but its calibration and measured current path were not independently validated; board RAM and cross-layer attack performance remain unmeasured.
 
-Additionally, it integrates **Privacy-Preserving Federated Learning (FedAvg)** with **Non-IID Dirichlet Data Partitioning** and **Energy-Aware Client Selection** so simulated edge nodes collaboratively train intrusion models without uploading raw telemetry.
+## Setup and run
 
----
+Use Python 3.11+ and Node.js. From the repository root:
 
-## 🌟 Advanced Features Added
-
-### 🧠 1. Knowledge Distillation (MLP $\rightarrow$ Tiny Tree)
-- **Module**: `src/tinyml/distillation.py`
-- Transfers dark knowledge & decision soft-probabilities from the **Heavy Deep MLP teacher (98.6% Acc)** to a **Tiny Decision Tree student**, boosting lightweight model accuracy from **90.6% $\rightarrow$ 95.7%** without increasing inference latency or memory size.
-
-### 🔐 2. Differential Privacy in Federated Learning (DP-FedAvg)
-- **Module**: `src/federated/dp_fedavg.py`
-- Implements $(\epsilon, \delta)$-differential privacy using $L_2$ norm gradient clipping ($C$) and calibrated Gaussian noise injection, preventing membership inference attacks on edge nodes.
-
-### 🛡️ 3. Byzantine-Robust FL Aggregation
-- **Module**: `src/federated/robust_aggregation.py`
-- Replaces standard averaging with **Multi-Krum**, **Trimmed Mean**, and **Coordinate-wise Median** to protect the central server against malicious client update poisoning.
-
-### 📡 4. Live Scapy Network Packet Sniffer
-- **Module**: `src/data/live_sniffer.py`
-- Sniffs real-time Ethernet/Wi-Fi packet streams using `scapy` and parses raw packet features into the 18 Edge-IIoTset feature vector format.
-
-### ⚡ 5. Physical Hardware Power Measurement (ESP32 + INA219)
-- **Module**: `src/energy/hardware_interface.py`
-- Connects to physical ESP32 microcontrollers over Serial/I2C to read live voltage (V), current (mA), and microjoule ($\mu J$) power metrics from INA219 sensors.
-
-### 📉 6. Page-Hinkley Concept Drift Monitoring
-- **Module**: `src/evaluation/drift.py`
-- Sequential change-point detection monitoring prediction error rates and feature stream distributions for automatic drift detection.
-
-### 🚨 7. Real-Time Security Alert Dispatcher
-- **Module**: `src/utils/notifications.py`
-- Dispatches automated Discord Embed cards and Telegram Bot messages upon detecting high-severity attacks (DDoS, Ransomware, Backdoors) or critical battery drops.
-
----
-
-## 🎯 Final Research Question
-> *"Can distributed Federated Learning combined with adaptive multi-level TinyML intrusion detection dynamically balance cybersecurity accuracy, computational cost, communication overhead, latency, and energy consumption across resource-constrained Industrial IoT edge devices?"*
-
-**Experimental Answer**: **Yes**. The proposed adaptive system reduces energy consumption by **81.41%** compared to fixed heavy inference, compresses edge models by **94.67%** (down to 0.20 KB) for ESP32 readiness, and cuts wireless communication overhead by **25.0%** in non-IID federated networks.
-
----
-
-## 🏗️ System Architecture
-
-```mermaid
-graph TD
-    A[Raw Packets / Scapy Sniffer] --> B[Data Preprocessing & Scaler]
-    B --> C[Federated Learning Server / FedAvg + DP]
-    C --> D[Global Model Parameters]
-    D --> E[Simulated IIoT Edge Node]
-    
-    subgraph IIoT Edge Node Execution
-        E --> F[Threat Scorer]
-        E --> G[Simulation / INA219 Energy Provider]
-        F --> H[Adaptive Model Selection Engine]
-        G --> H
-        H -->|Utility Maximization| I{Model Tier Selector}
-        I -->|Low Threat / Low Batt| M1[Distilled TinyTree - 0.2KB TinyML]
-        I -->|Medium Threat| M2[Medium RandomForest - 1054KB]
-        I -->|High/Critical Threat| M3[Heavy Deep MLP - 415KB]
-    end
-    
-    M1 --> J[Alert Dispatcher & Dashboard]
-    M2 --> J
-    M3 --> J
-```
-
----
-
-## 📊 Benchmark Metrics & Performance
-
-| Model Level | Model Architecture | Accuracy | F1-Macro | Storage Size | Latency | Est. Energy / Inf |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **LIGHTWEIGHT** | Decision Tree (Depth 4) | **90.62%** | **0.7717** | **3.79 KB** | **0.0006 ms** | **8.5 $\mu J$** |
-| **DISTILLED STUDENT** | Soft-Label Tree (Depth 5) | **95.68%** | **0.8920** | **4.10 KB** | **0.0007 ms** | **9.0 $\mu J$** |
-| **MEDIUM** | Random Forest (25 Trees) | **98.72%** | **0.9780** | **1,054 KB** | **0.0465 ms** | **62.0 $\mu J$** |
-| **HEAVY** | Deep MLP ([128, 64, 32]) | **98.44%** | **0.9749** | **415 KB** | **0.0029 ms** | **340.0 $\mu J$** |
-| **TINYML INT8** | Quantized Fixed Tree | **90.70%** | **0.7725** | **0.20 KB** | **0.0028 ms** | **8.5 $\mu J$** |
-
----
-
-## 💻 Installation & Quickstart
-
-### 1. Prerequisites & Environment Setup
 ```bash
-# Clone repository
-git clone https://github.com/Adarsh0000111/Adaptive-tiny-ML-.git
-cd Adaptive-tiny-ML-
-
-# Install dependencies
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+python -m src.api.app
 ```
 
-### 2. Run Complete Enhanced Research Pipeline
-Run all 13 phases + advanced features:
-```bash
-python -m src.main
-```
-
-### 3. Launch the Website Frontend (React)
-
-The main website frontend is in `frontend/`. From the repository root:
+In another terminal:
 
 ```bash
 cd frontend
@@ -125,73 +34,29 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite (typically `http://localhost:5173/`). Keep
-the terminal running while you use the site. The frontend includes Overview,
-Live Telemetry, Model Tiers, Device List, and Research Results pages. Its
-experiment and benchmark views use the project's saved result files; Live
-Telemetry displays actual MQTT messages only after a device publishes them.
+Open the local Vite URL (usually `http://localhost:5173`). The API runs at `http://127.0.0.1:8765`; endpoint documentation is at `/docs`. The API's default mode is simulation. Saved-sample inference is test-split replay. Live USB capture only starts after checking the explicit authorization box and pressing its button. External feature submissions must match the exact ordered and preprocessed schema returned by `/api/models`.
 
-### 4. Optional: Run the Legacy Streamlit Dashboard
+## Dashboard and services
 
-The Python Streamlit dashboard is still available separately:
+The website includes Overview and recorded-event replay, MQTT Live Telemetry, artifact-backed Model Tiers, browser-local device records, current-evidence Research Results, and SARA Decisions. Physical MQTT data appears only when a device publishes it. API host CPU/memory readings describe the API host, not automatically the ESP32. Live telemetry values retain their source and quality labels.
 
-```bash
-python -m streamlit run dashboard/app.py
-```
+To retrain after obtaining the official CSV, run `python scripts/retrain_official.py /path/to/ML-EdgeIIoT-dataset.csv` from the repository root (or set `ADAPTIVEML_DATASET`). This rebuilds preprocessing, all three model artifacts, the fixed-point header, and final test evaluation. The old generated fixture is never selected implicitly.
 
-This opens the older Streamlit interface; use the React steps above for the
-current website frontend.
+Trusted offloading is disabled until peers are configured. Configure `SARA_TRUSTED_NODES` and `SARA_NODE_TOKEN` using the format in [.env.example](.env.example); non-local peers require HTTPS. The FL page launches a CPU simulation with local Dirichlet partitions; training runs outside the inference request path.
 
----
+## Hardware
 
-## 🔌 Hardware-Ready Design (ESP32 Integration)
+The electronics and firmware remain under `hardware/`. Follow [HARDWARE_CONNECTION_GUIDE.md](HARDWARE_CONNECTION_GUIDE.md) for pin assignments, wiring, MQTT setup, and limitations. Keep credentials in the ignored local `hardware/esp32_ids/secrets.h` based on `secrets.h.example`; do not commit secrets. The USB firmware consumes scaled packet features from the laptop; physical sensors are monitoring inputs and do not enter the IDS model.
 
-The architecture uses clean interface abstractions (`EnergyProvider`) so physical microcontrollers can replace simulated environments:
+## Evaluation and tests
 
-- Exported C Header: `models/tinyml/esp32_model.h` (generated by Phase 5) — ready for Arduino / ESP-IDF.
-- PC-side INA219 driver + MQTT bridge: `src/energy/esp32_interface.py` (`ESP32INA219EnergyProvider`, `ESP32MQTTClient`).
-- Alternative host-side hardware interface: `src/energy/hardware_interface.py` (`ESP32INA219HardwareProvider`).
-- ESP32 Arduino firmware: `hardware/esp32_ids/esp32_ids.ino` (WiFi + MQTT + INA219 + TinyML inference).
-- Full wiring & connection guide: [HARDWARE_CONNECTION_GUIDE.md](HARDWARE_CONNECTION_GUIDE.md).
+The fixed saved test-split artifact evaluation is in [`results/experiments/artifact_validation.json`](results/experiments/artifact_validation.json). The separate [`ESP32-S3 USB replay results`](results/experiments/esp32_usb_replay.json) includes hardware predictions, per-class metrics, board inference time, USB transport, sensor snapshot, and artifact hashes. INA219 calibration/current path and peak RAM are unvalidated. The focused literature review is [research/LITERATURE_REVIEW.md](research/LITERATURE_REVIEW.md); it identifies overlap and does not establish novelty.
 
-### Connecting ESP32 + Sensors (summary)
-
-| ESP32 | Sensor | Purpose |
-|-------|--------|---------|
-| GPIO22 (SCL) / GPIO21 (SDA) | INA219 | Bus voltage & shunt current → battery energy |
-| GPIO4 | DHT22 | Temperature / humidity (optional) |
-| GPIO5 | PIR | Motion / presence (optional) |
-| GPIO34 (ADC) | MQ-2 | Gas / smoke (optional) |
-| WiFi | MQTT broker | Telemetry + inference → dashboard |
-
-Data flow: ESP32 reads INA219 → publishes JSON telemetry/inference to MQTT →
-the React website's **Live Telemetry** page subscribes and displays received
-device readings. In the browser, connect to the broker's WebSocket listener
-(default `ws://localhost:9001/mqtt`); the ESP32 connects to standard MQTT on
-port `1883`. Configure the firmware's `MQTT_BROKER` as the PC's LAN IP, not
-`localhost`. The firmware listens for commands, but website-to-device commands
-are not currently implemented.
-
-See `HARDWARE_CONNECTION_GUIDE.md` for step-by-step wiring, Mosquitto broker setup, flashing instructions, and feature-scaling requirements.
-
-## 🧪 Testing
+Run the tests and frontend production build:
 
 ```bash
-# Run all unit tests
-python -m pytest tests/ -v
+python -m pytest -q
+cd frontend && npm run build
 ```
 
-## 📊 Legacy Streamlit Dashboard
-
-Launch with `streamlit run dashboard/app.py`. New features:
-- Interactive Plotly charts (threat score, model switching, FL convergence, energy)
-- Live simulation batch runner from the UI
-- ESP32 / MQTT connection panel with live telemetry
-- Dark / light mode
-- Threat gauge, battery gauge, recent-event table
-- ESP32 hardware tab (wiring, flashing, MQTT topics, C-header download)
-
----
-
-## 📄 Research Report
-For the complete research documentation, view [RESEARCH_REPORT.md](RESEARCH_REPORT.md).
+The source CSV is distributed under CC BY-NC-SA 4.0: attribute the Edge-IIoTset authors and share adaptations under the same terms; it is not licensed for commercial use. Physical power calibration, independent-session generalization, multi-machine offloading/FL, and board RAM measurement remain future experiments. See [PROJECT_AUDIT.md](PROJECT_AUDIT.md) for the detailed status and [RESEARCH_REPORT.md](RESEARCH_REPORT.md) for the research plan and evidence limits.

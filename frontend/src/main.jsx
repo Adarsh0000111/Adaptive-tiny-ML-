@@ -2,30 +2,29 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity, Bell, Check, ChevronRight, Cpu, Gauge, LayoutDashboard, Menu,
-  Moon, Network, Pause, Play, Radio, ShieldAlert, ShieldCheck, Sparkles,
+  Moon, Network, Pause, Play, Radio, Server, ShieldAlert, ShieldCheck, Sparkles,
   Sun, Trash2, UserRound, X, Zap,
 } from "lucide-react";
 import GradientButton from "./components/kokonutui/gradient-button";
-import { events, federated, measured, models, readLocal, tinyml, writeLocal } from "./data";
-import useMqttTelemetry from "./hooks/useMqttTelemetry";
+import { events, measured, models, readLocal, writeLocal } from "./data";
+import useBackendApi from "./hooks/useBackendApi";
+import LiveIdsPage from "./pages/LiveIdsPage";
+import ModelTiersPage from "./pages/ModelTiersPage";
 import "./styles.css";
 
 const pages = [
-  { id: "overview", label: "Overview", icon: LayoutDashboard },
-  { id: "telemetry", label: "Live telemetry", icon: Radio },
+  { id: "sara", label: "Live IDS", icon: ShieldCheck },
   { id: "models", label: "Model tiers", icon: Cpu },
-  { id: "devices", label: "Device list", icon: Network },
-  { id: "research", label: "Research results", icon: Gauge },
 ];
 const incidents = events.filter((event) => ["HIGH", "CRITICAL"].includes(event.severity));
 const notificationEvents = [...incidents].reverse();
 const latestModel = events.at(-1)?.selected_model?.toLowerCase() ?? models[0]?.key ?? "";
 
 function App() {
-  const mqttConnection = useMqttTelemetry();
+  const backend = useBackendApi();
   const [page, setPage] = useState(() => {
     const requestedPage = window.location.hash.slice(1);
-    return pages.some((item) => item.id === requestedPage) ? requestedPage : "overview";
+    return pages.some((item) => item.id === requestedPage) ? requestedPage : "sara";
   });
   const [profile, setProfile] = useState(() => {
     const saved = readLocal("adaptive-profile", null);
@@ -86,7 +85,7 @@ function App() {
   useEffect(() => {
     const syncPage = () => {
       const requestedPage = window.location.hash.slice(1);
-      setPage(pages.some((item) => item.id === requestedPage) ? requestedPage : "overview");
+      setPage(pages.some((item) => item.id === requestedPage) ? requestedPage : "sara");
       setSelectedEvent(null);
     };
     window.addEventListener("popstate", syncPage);
@@ -127,7 +126,7 @@ function App() {
     <div className={`app-shell ${theme === "light" ? "light-theme" : ""}`}>
       {mobileOpen && <button className="mobile-scrim" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
       <aside className={`sidebar ${mobileOpen ? "mobile-open" : ""}`}>
-        <button className="brand" onClick={() => navigate("overview")} aria-label="Go to overview">
+        <button className="brand" onClick={() => navigate("sara")} aria-label="Go to live IDS">
           <span className="brand-mark"><Sparkles size={18} /></span>
           <span><strong>Adaptive<span>ML</span></strong><small>IIoT command center</small></span>
         </button>
@@ -137,50 +136,19 @@ function App() {
             <Icon size={17} /><span>{label}</span><ChevronRight className="nav-chevron" size={14} />
           </button>)}
         </nav>
-        <div className="sidebar-footer"><span className={`status-dot ${mqttConnection.status === "connected" ? "connected" : ""}`} /><span><strong>{mqttConnection.status === "connected" ? "ESP32 connected" : "MQTT disconnected"}</strong><small>{mqttConnection.deviceId || "Configure in Live telemetry"}</small></span></div>
+        <div className="sidebar-footer"><span className={`status-dot ${backend.status === "connected" ? "connected" : ""}`} /><span><strong>{backend.status === "connected" ? "IDS API connected" : "IDS API disconnected"}</strong><small>{backend.usbDevice?.ports?.find((port) => port.accessible)?.port || "ESP32 USB not detected"}</small></span></div>
       </aside>
 
       <main className="main-content">
         <header className="topbar">
           <button className="mobile-menu icon-button" aria-label="Open navigation" onClick={() => setMobileOpen(true)}><Menu size={19} /></button>
-          <div className="crumb">Security operations <span>/</span> {pages.find((item) => item.id === page)?.label}</div>
-          <div className="top-actions">
-            <div className="popover-anchor">
-              <button className={`icon-button notification-trigger ${notificationsOpen ? "active" : ""}`} aria-label={`Notifications, ${unreadCount} unread`} aria-expanded={notificationsOpen} onClick={() => { setNotificationsOpen((open) => !open); setAccountOpen(false); }}>
-                <Bell size={18} />{unreadCount > 0 && <i className="notification-count">{unreadCount > 9 ? "9+" : unreadCount}</i>}
-              </button>
-              {notificationsOpen && <div className="popover notification-popover">
-                <div className="popover-heading"><span><strong>Experiment alerts</strong><small>{unreadCount} unread from recorded data</small></span><button className="quiet-button" onClick={markAllRead} disabled={!unreadCount}>Mark all read</button></div>
-                {notificationEvents.slice(0, 8).map((event) => <button className={`notification-item ${readNotifications.includes(event.event_id) ? "read" : ""}`} key={event.event_id} onClick={() => { markRead(event.event_id); navigate("telemetry"); setSelectedEvent(event); }}>
-                  <span className={`severity-dot ${event.severity.toLowerCase()}`} /><span><strong>{event.severity} · {event.predicted_class.replaceAll("_", " ")}</strong><small>Event {event.event_id} · threat {event.threat_score}</small></span><ChevronRight size={15} />
-                </button>)}
-                {!notificationEvents.length && <p className="empty-note">No high severity events in this experiment.</p>}
-              </div>}
-            </div>
-            <div className="popover-anchor">
-              <button className="account-trigger" aria-label="Open account profile" aria-expanded={accountOpen} onClick={() => { setAccountOpen((open) => !open); setNotificationsOpen(false); }}>
-                <span className="avatar">{profile?.name?.trim() ? initials(profile.name) : <UserRound size={16} />}</span>
-                <span className="account-label">{profile?.name?.trim() || "Set up profile"}</span>
-              </button>
-              {accountOpen && <div className="popover account-popover"><span className="account-popover-label">BROWSER PROFILE</span>
-                <strong>{profile?.name?.trim() || "Profile not set up"}</strong><small>{profile?.email || "No email saved"}</small>
-                <button className="popover-action" onClick={() => { setModal({ type: "profile" }); setAccountOpen(false); }}>Edit profile <ChevronRight size={15} /></button>
-                <button className="popover-action" onClick={() => setTheme((current) => current === "dark" ? "light" : "dark")}>{theme === "dark" ? <Sun size={15} /> : <Moon size={15} />} Switch to {theme === "dark" ? "light" : "dark"} theme</button>
-              </div>}
-            </div>
-          </div>
+          <div className="crumb">AdaptiveML <span>/</span> {pages.find((item) => item.id === page)?.label}</div>
+          <div className="top-actions"><span className={`connection-badge ${backend.status === "connected" ? "connected" : "checking"}`}><i />{backend.status === "connected" ? "API ready" : "API offline"}</span><span className={`connection-badge ${backend.usbDevice?.ports?.some((port) => port.accessible) ? "connected" : "checking"}`}><i />{backend.usbDevice?.ports?.find((port) => port.accessible)?.port || "ESP32 offline"}</span></div>
         </header>
 
         <section className="page-content">
-          {page === "overview" && <OverviewPage events={events} activeModel={activeModel} deviceCount={devices.length} selectedEventCount={selectedEventCount} onCountChange={setSelectedEventCount} onNavigate={navigate} onReplay={startReplay} onSelectEvent={(event) => { navigate("telemetry"); setSelectedEvent(event); }} />}
-          {page === "telemetry" && <TelemetryPage events={events} visibleEvents={visibleEvents} playing={playing} replayIndex={replayIndex} selectedEvent={selectedEvent} mqtt={mqttConnection} settings={mqttSettings} onSettingsChange={setMqttSettings} onToggle={() => {
-            if (!playing && replayIndex >= events.length - 1) setReplayIndex(-1);
-            if (!playing && replayIndex < 0) setReplayIndex(0);
-            setPlaying((current) => !current);
-          }} onSelectEvent={setSelectedEvent} />}
-          {page === "models" && <ModelsPage activeModel={activeModel} onSelect={(model) => { setPreferredModel(model.key); setNotice(`${model.name} saved as your preferred model.`); }} />}
-          {page === "devices" && <DevicesPage devices={devices} onAdd={() => setModal({ type: "device" })} onRemove={(device) => setModal({ type: "remove-device", device })} />}
-          {page === "research" && <ResearchPage />}
+          {page === "sara" && <LiveIdsPage backend={backend} />}
+          {page === "models" && <ModelTiersPage apiModels={backend.models} />}
         </section>
       </main>
 
@@ -190,7 +158,7 @@ function App() {
   );
 }
 
-function OverviewPage({ events: records, activeModel, deviceCount, selectedEventCount, onCountChange, onNavigate, onReplay, onSelectEvent }) {
+function OverviewPage({ events: records, activeModel, deviceCount, selectedEventCount, onCountChange, onNavigate, onReplay, onSelectEvent, backend }) {
   const sample = records.slice(-selectedEventCount);
   const criticalCount = sample.filter((event) => ["HIGH", "CRITICAL"].includes(event.severity)).length;
   const meanThreat = mean(sample.map((event) => event.threat_score));
@@ -203,12 +171,85 @@ function OverviewPage({ events: records, activeModel, deviceCount, selectedEvent
   ];
   const alerts = [...sample].filter((event) => ["HIGH", "CRITICAL"].includes(event.severity)).slice(-5).reverse();
   return <>
+    <BackendInferencePanel backend={backend} onOpenPolicy={() => onNavigate("sara")} />
     <div className="page-intro"><div><p className="eyebrow"><span className="pulse" /> EXPERIMENT OVERVIEW</p><h1>Adaptive edge monitor</h1><p>Explore measured intrusion events and model performance from the saved simulation.</p></div><GradientButton label="Open event replay" variant="emerald" icon={<Play size={15} />} className="primary-button" onClick={onReplay} /></div>
     <div className="data-source-banner"><ShieldCheck size={15} /><span>Recorded experiment data</span><b>{formatNumber(measured.eventCount)} events</b><span className="banner-separator">·</span><span>mean threat score {meanThreat.toFixed(1)} / 100</span></div>
     <div className="metric-grid">{metricCards.map(({ label, value, note, icon: Icon, page }) => <button className="metric-card" key={label} onClick={() => onNavigate(page)}><span className="metric-icon"><Icon size={18} /></span><span className="metric-copy"><span>{label}</span><strong>{value}</strong><small>{note}</small></span><ChevronRight className="metric-chevron" size={15} /></button>)}</div>
     <div className="section-heading"><div><h2>Threat score across events</h2><p>Values from the selected portion of the experiment</p></div><div className="tabs">{[10, 25, records.length].filter((count, index, all) => count > 0 && all.indexOf(count) === index).map((count) => <button key={count} className={selectedEventCount === count ? "selected" : ""} onClick={() => onCountChange(count)}>{count === records.length ? "All" : `Last ${count}`}</button>)}</div></div>
-    <div className="dashboard-grid"><div className="panel chart-panel"><PanelHeading title="Event threat scores" subtitle={`${sample.length} recorded events`} /><ThreatChart events={sample} /></div><div className="panel activity-panel"><PanelHeading title="Selected model" subtitle="Latest recorded inference" /><div className="model-summary"><span className="tier-orb"><Cpu size={19} /></span><span><small>Most recent event used</small><strong>{records.at(-1)?.selected_model || "No model data"}</strong></span><button className="quiet-button" onClick={() => onNavigate("models")}>Compare</button></div><div className="status-list"><Status label="Prediction match rate" value="From experiment labels" valueRight={`${(measured.matchedPredictions * 100).toFixed(1)}%`} /><Status label="TinyML size reduction" value="Quantized vs original" valueRight={`${Number(tinyml.size_reduction_pct).toFixed(1)}%`} /><Status label="Registered devices" value="Stored in this browser" valueRight={formatNumber(deviceCount)} /></div></div></div>
+    <div className="dashboard-grid"><div className="panel chart-panel"><PanelHeading title="Event threat scores" subtitle={`${sample.length} recorded events`} /><ThreatChart events={sample} /></div><div className="panel activity-panel"><PanelHeading title="Selected model" subtitle="Latest recorded inference" /><div className="model-summary"><span className="tier-orb"><Cpu size={19} /></span><span><small>Most recent event used</small><strong>{records.at(-1)?.selected_model || "No model data"}</strong></span><button className="quiet-button" onClick={() => onNavigate("models")}>Compare</button></div><div className="status-list"><Status label="Prediction match rate" value="From historical experiment replay" valueRight={`${(measured.matchedPredictions * 100).toFixed(1)}%`} /><Status label="Model profiles" value="Loaded from saved artifacts" valueRight={formatNumber(backend.models?.model_count || 0)} /><Status label="Registered devices" value="Stored in this browser" valueRight={formatNumber(deviceCount)} /></div></div></div>
     <div className="bottom-grid"><div className="panel"><div className="panel-title"><PanelHeading title="High severity events" subtitle="Select an event to inspect its recorded details" /><button className="text-button" onClick={() => onNavigate("telemetry")}>All events <ChevronRight size={14} /></button></div><div className="alerts">{alerts.map((event) => <EventRow key={event.event_id} event={event} onClick={() => onSelectEvent(event)} />)}{!alerts.length && <p className="empty-note">No high severity events in this selection.</p>}</div></div><div className="panel quick-panel"><PanelHeading title="Quick actions" subtitle="Open a real project view" /><button className="action" onClick={onReplay}><Play size={17} /><span><strong>Replay experiment</strong><small>Step through saved events</small></span><ChevronRight size={15} /></button><button className="action" onClick={() => onNavigate("devices")}><Network size={17} /><span><strong>Manage device list</strong><small>{formatNumber(deviceCount)} saved in this browser</small></span><ChevronRight size={15} /></button></div></div>
+  </>;
+}
+
+function BackendInferencePanel({ backend, onOpenPolicy }) {
+  const result = backend.latestInference;
+  const modelCount = backend.models?.model_count;
+  return <section className="panel api-inference-panel">
+    <div className="api-panel-heading"><span><p className="eyebrow"><span className={`pulse ${backend.status === "connected" ? "" : "muted-pulse"}`} /> BACKEND INFERENCE</p><h2>Run a saved test sample through SARA</h2><p>Uses the checked-in six-class models and saved test split. This is replay data, not live network capture.</p></span><span className={`connection-badge ${backend.status === "connected" ? "connected" : backend.status}`}><i />{backend.status === "connected" ? "API connected" : backend.status}</span></div>
+    <div className="api-panel-actions"><button className="primary-button" disabled={backend.status !== "connected" || backend.running} onClick={backend.runInference}>{backend.running ? "Running inference…" : "Run saved sample inference"}</button><button className="quiet-button" onClick={onOpenPolicy}>View SARA policy <ChevronRight size={14} /></button><span className="api-model-count">{modelCount == null ? "Model registry unavailable" : `${modelCount} trained model artifacts loaded`}</span></div>
+    {result && <div className="api-result-row"><span className="metric-icon"><ShieldCheck size={17} /></span><span><small>Latest replay prediction</small><strong>{result.prediction} · {result.model}</strong><small>True label: {result.true_label} · sample {result.sample_index} · {Number(result.inference_ms).toFixed(3)} ms on this host</small></span><span className="api-result-risk">Risk {Number(result.adaptive?.risk?.score ?? 0).toFixed(2)}</span></div>}
+    {backend.error && <p className="form-error" role="status">{backend.status === "disconnected" ? `Backend unavailable: ${backend.error}. Start it with python -m src.api.app.` : backend.error}</p>}
+  </section>;
+}
+
+function SaraPage({ backend }) {
+  const [captureInterface, setCaptureInterface] = useState("");
+  const [captureAuthorized, setCaptureAuthorized] = useState(false);
+  const [usbLiveAuthorized, setUsbLiveAuthorized] = useState(false);
+  const [probeTarget, setProbeTarget] = useState("");
+  const decision = backend.latestInference?.adaptive?.decision;
+  const risk = backend.latestInference?.adaptive?.risk;
+  const resource = backend.resources;
+  const cards = [
+    ["API mode", backend.health?.mode || "—", backend.health?.mode_source || "Waiting for API"],
+    ["Current action", decision?.action || backend.adaptive?.current_model || "—", decision?.reason || "Run an inference to generate a decision"],
+    ["Cross-layer risk", risk ? `${(risk.score * 100).toFixed(1)}%` : "—", risk?.explanation || "No risk assessment yet"],
+    ["Model disagreement", risk?.model_disagreement == null ? "—" : `${(risk.model_disagreement * 100).toFixed(1)}%`, "Vote disagreement among all three saved models"],
+    ["Host CPU", resource?.cpu_percent == null ? "Unavailable" : `${resource.cpu_percent.toFixed(1)}%`, resource?.source || "Waiting for API"],
+    ["Host memory", resource?.memory_percent == null ? "Unavailable" : `${resource.memory_percent.toFixed(1)}%`, resource?.available_memory_mb == null ? "No memory reading" : `${resource.available_memory_mb.toFixed(0)} MB available`],
+    ["Trusted offloading", backend.offloading?.available ? `${backend.offloading.trusted_nodes.length} node(s)` : "Not configured", backend.offloading?.reason || "Configured peers are used only when local constraints trigger offloading"],
+  ];
+  const latestCapture = backend.networkStats?.items?.find((item) => item.source === "capture");
+  return <>
+    <PageHeading eyebrow="SECURITY-AWARE RESOURCE ADAPTATION" title="SARA decisions" description="The policy uses validation performance to enforce a recall floor. Resource stress affects feasibility, not attack evidence by itself." />
+    <div className="tier-grid sara-cards">{cards.map(([label, value, detail]) => <article className="panel sara-card" key={label}><small>{label}</small><strong>{value}</strong><p>{detail}</p></article>)}</div>
+    <div className="panel sara-detail-panel"><PanelHeading title="Latest decision trace" subtitle={backend.latestInference ? `Saved test sample ${backend.latestInference.sample_index}` : "No inference has been run in this browser session"} />
+      {decision ? <><div className="inference-values"><div><small>Selected model</small><strong>{backend.latestInference.model}</strong></div><div><small>Required macro recall</small><strong>{Number(decision.required_macro_recall).toFixed(2)}</strong></div><div><small>Validation recall</small><strong>{Number(decision.validation_macro_recall).toFixed(3)}</strong></div><div><small>Coverage status</small><strong>{decision.security_coverage_degraded ? "DEGRADED" : "Within floor"}</strong></div><div><small>Prediction confidence</small><strong>{backend.latestInference.model_diagnostics?.prediction_confidence == null ? "—" : percent(backend.latestInference.model_diagnostics.prediction_confidence)}</strong></div><div><small>Model votes</small><strong>{Object.values(backend.latestInference.model_diagnostics?.model_predictions || {}).join(" · ") || "—"}</strong></div></div><p className="sara-reason">{decision.reason}</p><p className="empty-note">Network evidence: {Number(risk.network_evidence).toFixed(3)} · Resource stress: {Number(risk.resource_stress).toFixed(3)} · Entropy: {Number(risk.model_uncertainty).toFixed(3)} · Model disagreement: {Number(risk.model_disagreement).toFixed(3)}</p>{decision.rejected_actions?.length > 0 && <div className="sara-rejected"><strong>Rejected actions</strong>{decision.rejected_actions.map((item) => <p key={item.action}>{item.action}: {item.reason}</p>)}</div>}</> : <div className="empty-state"><Server size={25} /><p>Connect the Python API and run a saved sample to inspect the real decision trace.</p></div>}
+    </div>
+    <div className="panel sara-detail-panel"><PanelHeading title="Network measurements" subtitle="Host rates, optional authorized capture, and explicit RTT probe" />
+      <div className="inference-values"><div><small>Host traffic rate</small><strong>{resource?.network_rates?.bytes_per_second == null ? "Collecting baseline" : `${formatDecimal(resource.network_rates.bytes_per_second)} B/s`}</strong></div><div><small>Host packet rate</small><strong>{resource?.network_rates?.packets_per_second == null ? "—" : `${formatDecimal(resource.network_rates.packets_per_second)} pkt/s`}</strong></div><div><small>Observed bandwidth</small><strong>{resource?.network_rates?.bandwidth_bps == null ? "—" : `${formatDecimal(resource.network_rates.bandwidth_bps / 1e6)} Mbps`}</strong></div><div><small>Active probe</small><strong>{backend.networkProbe ? `${backend.networkProbe.target_ip} · ${backend.networkProbe.packets_received}/${backend.networkProbe.packets_sent} replies` : "Not run"}</strong></div></div>
+      <form className="mqtt-fields" onSubmit={(event) => { event.preventDefault(); backend.probeNetwork({ targetIp: probeTarget, packets: 5 }); }}><label className="form-label">Target IP for RTT/loss/jitter probe<input inputMode="decimal" value={probeTarget} onChange={(event) => setProbeTarget(event.target.value)} placeholder="Enter an IP you are authorized to probe" /></label><button className="secondary-button" disabled={backend.networkRunning || !probeTarget.trim()} type="submit">{backend.networkRunning ? "Measuring…" : "Run 5-packet ping probe"}</button></form>
+      {backend.networkProbe && <p className="empty-note">Measured round-trip latency: {backend.networkProbe.rtt_ms.mean == null ? "no replies" : `${formatDecimal(backend.networkProbe.rtt_ms.mean)} ms`} · loss: {backend.networkProbe.packet_loss_pct == null ? "unavailable" : `${formatDecimal(backend.networkProbe.packet_loss_pct)}%`} · jitter: {backend.networkProbe.jitter_ms == null ? "unavailable" : `${formatDecimal(backend.networkProbe.jitter_ms)} ms`}. {backend.networkProbe.note}</p>}
+      <form className="mqtt-fields" onSubmit={(event) => { event.preventDefault(); backend.captureNetwork({ interfaceName: captureInterface, authorized: captureAuthorized }); }}><label className="form-label">Interface (blank uses OS default)<input value={captureInterface} onChange={(event) => setCaptureInterface(event.target.value)} placeholder="e.g. wlan0" /></label><label className="checkbox-label"><input type="checkbox" checked={captureAuthorized} onChange={(event) => setCaptureAuthorized(event.target.checked)} /> I am authorized to monitor this interface</label><button className="secondary-button" disabled={backend.networkRunning || !captureAuthorized} type="submit">{backend.networkRunning ? "Capturing for up to 10 seconds…" : "Capture up to 500 local packets"}</button></form>
+      {latestCapture && <p className="empty-note">Latest authorized capture: {latestCapture.packets} packets · avg size {latestCapture.average_packet_size_bytes == null ? "—" : `${formatDecimal(latestCapture.average_packet_size_bytes)} B`} · {formatDecimal(latestCapture.packets_per_second)} pkt/s · {formatDecimal(latestCapture.bandwidth_bps / 1e6)} Mbps observed · TCP SYN rate {formatDecimal(latestCapture.connection_frequency_per_second)}/s · protocols {latestCapture.protocol_types.join(", ") || "none"} · utilization {latestCapture.bandwidth_utilization_pct == null ? "unknown (link capacity unavailable)" : `${formatDecimal(latestCapture.bandwidth_utilization_pct)}%`}. RTT/loss/jitter require the separate probe. These aggregates are not passed to the IDS model.</p>}
+      {backend.error && <p className="form-error" role="status">{backend.error}</p>}
+    </div>
+    <div className="panel sara-detail-panel"><PanelHeading title="Offline ESP32 inference over USB" subtitle="No Wi-Fi or MQTT required" />
+      <p>The laptop captures up to 100 TCP/UDP packet headers for five seconds, applies the saved training transform, then sends feature vectors over USB. The ESP32 runs the fixed-point decision tree and returns predictions. Payloads and endpoint addresses are not retained; Wi-Fi is not used. Live predictions have no ground-truth labels, so accuracy is not reported.</p>
+      <div className="inference-values"><div><small>Detected serial port</small><strong>{backend.usbDevice?.ports?.[0]?.port || "Not detected"}</strong></div><div><small>Port access</small><strong>{backend.usbDevice?.ports?.[0]?.accessible ? "Available" : backend.usbDevice?.ports?.length ? "Permission denied" : "—"}</strong></div><div><small>Transport</small><strong>USB · 115200 baud</strong></div><div><small>Board Wi-Fi</small><strong>Not used</strong></div></div>
+      <button className="secondary-button" disabled={backend.usbRunning || backend.status !== "connected" || !backend.usbDevice?.ports?.length || !backend.usbDevice?.ports?.[0]?.accessible} onClick={backend.runUsbReplay}>{backend.usbRunning ? "Running 100 samples on ESP32…" : "Run 100 samples on ESP32"}</button>
+      <form className="mqtt-fields" onSubmit={(event) => { event.preventDefault(); backend.runUsbLiveCapture({ interfaceName: captureInterface, authorized: usbLiveAuthorized }); }}><label className="checkbox-label"><input type="checkbox" checked={usbLiveAuthorized} onChange={(event) => setUsbLiveAuthorized(event.target.checked)} /> I am authorized to monitor this interface and explicitly approve this capture now</label><button className="secondary-button" disabled={backend.usbRunning || backend.status !== "connected" || !usbLiveAuthorized || !backend.usbDevice?.ports?.some((port) => port.accessible)} type="submit">{backend.usbRunning ? "Capturing and sending packets…" : "Capture packets and infer on ESP32"}</button></form>
+      {backend.usbResult?.device_telemetry && (() => {
+        const telemetry = backend.usbResult.device_telemetry;
+        const sensorCards = [
+          ["Voltage", telemetry.voltage_v == null ? "—" : `${formatDecimal(telemetry.voltage_v)} V`, "INA219"],
+          ["Current", telemetry.current_a == null ? "—" : `${formatDecimal(telemetry.current_a * 1000)} mA`, "INA219"],
+          ["Power", telemetry.power_w == null ? "—" : `${formatDecimal(telemetry.power_w)} W`, "INA219 · raw direction retained"],
+          ["Energy", telemetry.energy_j == null ? "—" : `${formatDecimal(telemetry.energy_j)} J`, "INA219 integration"],
+          ["Temperature", telemetry.temperature_ambient_c == null ? "—" : `${formatDecimal(telemetry.temperature_ambient_c)} °C`, "DHT22"],
+          ["Humidity", telemetry.humidity_pct == null ? "—" : `${formatDecimal(telemetry.humidity_pct)}%`, "DHT22"],
+          ["Vibration", telemetry.vibration ? "DETECTED" : "Normal", "SW-420"],
+          ["Movement", telemetry.movement ? "DETECTED" : "Stable", "MPU6500"],
+          ["Acceleration", [telemetry.accel_x_g, telemetry.accel_y_g, telemetry.accel_z_g].some((value) => value == null) ? "—" : `${formatDecimal(telemetry.accel_x_g)}, ${formatDecimal(telemetry.accel_y_g)}, ${formatDecimal(telemetry.accel_z_g)} g`, "MPU6500 · X / Y / Z"],
+          ["Buzzer alert", telemetry.alert ? "ACTIVE" : "Normal", "Physical board output"],
+        ];
+        return <><div className="section-heading"><div><h3>Physical sensor readings</h3><p>Measured on the ESP32 and returned over USB · {new Date(telemetry.timestamp * 1000).toLocaleTimeString()}</p></div><span className={`connection-badge ${telemetry.quality === "good" ? "connected" : "checking"}`}><i />{telemetry.quality}</span></div><div className="metric-grid live-metric-grid">{sensorCards.map(([label, value, source]) => <div className="metric-card live-metric" key={label}><span className="metric-copy"><span>{label}</span><strong>{value}</strong><small>{source}</small></span></div>)}</div><p className="empty-note">OLED capability: {telemetry.sensor_status?.oled ? "detected" : "not detected"} · onboard alert uses vibration or temperature ≥ 40 °C. Sensors stay out of the IDS features; SARA uses qualified supply voltage for ESP32 execution placement and logs ambient/motion as non-security context.</p></>;
+      })()}
+      {backend.usbResult && <div className="federated-rounds"><div><strong>{backend.usbResult.mode?.includes("live") ? "ESP32 live packet predictions" : "ESP32 replay result"}</strong>{backend.usbResult.accuracy == null ? <span>Accuracy unavailable for unlabeled live packets</span> : <><span>Accuracy {percent(backend.usbResult.accuracy)}</span><span>Macro F1 {percent(backend.usbResult.macro_f1)}</span></>}<span>Packets {backend.usbResult.samples}</span></div><div><strong>Measured on this run</strong><span>Device p95 {formatDecimal(backend.usbResult.device_inference_us.p95)} µs</span><span>USB total {formatDecimal(backend.usbResult.usb_round_trip_ms.total)} ms</span><span>Energy from INA219 since boot: {formatDecimal(backend.usbResult.device_telemetry?.energy_j)} J</span></div>{backend.usbResult.predictions?.map((item) => <span key={item.packet_index}>Packet {item.packet_index + 1}: {item.prediction}</span>)}</div>}
+      {backend.error && <p className="form-error" role="status">{backend.error}</p>}
+      <p className="empty-note">Flash <code>hardware/esp32_usb_ids/esp32_usb_ids.ino</code> first. This path uses the compatible lightweight tree; the other sklearn tiers are laptop models.</p>
+    </div>
+    {backend.federated && <div className="panel sara-detail-panel"><PanelHeading title="Federated learning" subtitle={backend.federated.algorithm} /><p>{backend.federated.message || (backend.federated.simulated ? "Client partitions are simulated locally; no independent network clients are connected." : "Federated service unavailable.")}</p>{backend.federated.history?.length > 0 && <div className="federated-rounds">{backend.federated.history.map((round) => <div key={round.round}><strong>Round {round.round}</strong><span>Accuracy {percent(round.global_accuracy)}</span><span>Macro F1 {percent(round.global_macro_f1)}</span><span>Mean local loss {formatDecimal(round.mean_local_training_loss)}</span><span>Selected clients {round.selected_clients?.length ?? 0}/{Object.keys(round.client_availability || {}).length}</span><span>Model age {Object.keys(round.model_freshness?.client_model_age_rounds || {}).length ? "0 rounds (simulated)" : "—"}</span><span>Simulated comm. {formatSize(round.simulated_total_communication_bytes || 0)}</span><span>{round.accepted ? "Accepted" : "Rolled back"}</span></div>)}</div>}<button className="secondary-button" disabled={backend.federated.running || backend.status !== "connected"} onClick={backend.startFederatedTraining}>{backend.federated.running ? `Training round ${backend.federated.round}/${backend.federated.rounds}…` : "Run 3-round FedAvg simulation"}</button><p className="empty-note">Local loss and serialized communication bytes are measured in the simulation; client freshness, availability, and data partitions are simulated. No network transfer, real client availability, or energy is measured.</p></div>}
   </>;
 }
 
@@ -219,10 +260,12 @@ function TelemetryPage({ events: records, visibleEvents, playing, replayIndex, s
     {mqtt.telemetry || mqtt.inference ? <>
       <div className="data-source-banner"><Radio size={15} /><span>Live MQTT data</span><b>{mqtt.deviceId}</b><span className="banner-separator">·</span><span>{mqtt.lastMessageAt ? `Last message ${new Date(mqtt.lastMessageAt).toLocaleTimeString()}` : "Waiting for first message"}</span></div>
       <div className="metric-grid live-metric-grid">{[
-        { label: "Battery", value: mqtt.telemetry?.battery_pct == null ? "—" : `${formatDecimal(mqtt.telemetry.battery_pct)}%`, unit: "from ESP32", icon: Zap },
-        { label: "Bus voltage", value: mqtt.telemetry?.bus_voltage_v == null ? "—" : `${formatDecimal(mqtt.telemetry.bus_voltage_v)} V`, unit: "INA219", icon: Gauge },
-        { label: "Shunt current", value: mqtt.telemetry?.shunt_current_ma == null ? "—" : `${formatDecimal(mqtt.telemetry.shunt_current_ma)} mA`, unit: "INA219", icon: Activity },
-        { label: "Model tier", value: mqtt.telemetry?.model_tier || mqtt.inference?.model || "—", unit: "reported by device", icon: Cpu },
+        { label: "Temperature", value: mqtt.telemetry?.temperature_c == null ? "—" : `${formatDecimal(mqtt.telemetry.temperature_c)} °C`, unit: "DHT22", icon: Gauge },
+        { label: "Humidity", value: mqtt.telemetry?.humidity_pct == null ? "—" : `${formatDecimal(mqtt.telemetry.humidity_pct)}%`, unit: "DHT22", icon: Activity },
+        { label: "Vibration", value: mqtt.telemetry?.vibration == null ? "—" : mqtt.telemetry.vibration ? "DETECTED" : "Normal", unit: "SW-420", icon: ShieldAlert },
+        { label: "Movement", value: mqtt.telemetry?.movement == null ? "—" : mqtt.telemetry.movement ? "DETECTED" : "Stable", unit: "MPU-6500", icon: Network },
+        { label: "Acceleration", value: mqtt.telemetry?.accel_x_g == null ? "—" : `${formatDecimal(mqtt.telemetry.accel_x_g)}, ${formatDecimal(mqtt.telemetry.accel_y_g)}, ${formatDecimal(mqtt.telemetry.accel_z_g)} g`, unit: "MPU-6500 X / Y / Z", icon: Gauge },
+        { label: "Alert", value: mqtt.telemetry?.alert == null ? "—" : mqtt.telemetry.alert ? "ACTIVE" : "Normal", unit: "Buzzer status", icon: Zap },
       ].map(({ label, value, unit, icon: Icon }) => <div className="metric-card live-metric" key={label}><span className="metric-icon"><Icon size={18} /></span><span className="metric-copy"><span>{label}</span><strong>{value}</strong><small>{unit}</small></span></div>)}</div>
       <div className="panel inference-panel"><PanelHeading title="Latest device inference" subtitle={mqtt.inference ? `Received ${mqtt.lastMessageAt ? new Date(mqtt.lastMessageAt).toLocaleTimeString() : "just now"}` : "No inference message received yet"} />{mqtt.inference ? <div className="inference-values"><div><small>Prediction</small><strong>{mqtt.inference.prediction || "—"}</strong></div><div><small>Severity</small><strong className={`severity-label ${(mqtt.inference.severity || "").toLowerCase()}`}>{mqtt.inference.severity || "—"}</strong></div><div><small>Threat score</small><strong>{mqtt.inference.threat_score == null ? "—" : `${formatDecimal(mqtt.inference.threat_score)} / 100`}</strong></div><div><small>Inference latency</small><strong>{mqtt.inference.latency_ms == null ? "—" : `${formatDecimal(mqtt.inference.latency_ms)} ms`}</strong></div></div> : <p className="empty-note">The device’s inference topic has not published a message.</p>}</div>
     </> : <div className="panel empty-state live-empty"><Radio size={26} /><h2>{mqtt.status === "connected" ? "Waiting for ESP32 messages" : "No live sensor data yet"}</h2><p>{mqtt.status === "connected" ? `Subscribed to esp32/${mqtt.deviceId}/telemetry and /inference. Power the device and check that it is publishing.` : "Connect to your MQTT broker above. Readings appear here only after the physical device publishes them."}</p></div>}
@@ -243,9 +286,13 @@ function MqttConnectionPanel({ mqtt, settings, onSettingsChange }) {
   </form>;
 }
 
-function ModelsPage({ activeModel, onSelect }) {
+function ModelsPage({ activeModel, apiModels, onSelect }) {
   return <>
     <PageHeading eyebrow="MEASURED MODEL RESULTS" title="Compare model tiers." description="Metrics below are loaded from the benchmark files committed with this project." />
+    <div className="section-heading"><div><h2>Loaded artifacts · validation split</h2><p>Metrics computed from the saved 2,500-row validation split when the API starts. Latency is measured on the API host.</p></div></div>
+    {apiModels?.models && <div className="tier-grid">{Object.entries(apiModels.models).map(([key, model]) => <article className="panel tier-card" key={key}><div className="tier-card-heading"><span className="metric-icon"><Cpu size={18} /></span><span className="healthy">{model.name}</span></div><div className="model-stat"><span>Accuracy</span><strong>{percent(model.metrics.accuracy)}</strong></div><div className="model-stat"><span>Macro precision</span><strong>{percent(model.metrics.macro_precision)}</strong></div><div className="model-stat"><span>Macro recall</span><strong>{percent(model.metrics.macro_recall)}</strong></div><div className="model-stat"><span>Macro F1</span><strong>{percent(model.metrics.macro_f1)}</strong></div><div className="model-stat"><span>Measured p95 host latency</span><strong>{formatDecimal(model.latency_ms.p95)} ms</strong></div><div className="model-stat"><span>Artifact size</span><strong>{formatSize(model.artifact_size_bytes / 1024)}</strong></div><small className="local-state-note">{model.evaluation.samples} validation records · energy is a historical estimate, not a measurement</small></article>)}</div>}
+    {!apiModels && <div className="data-source-banner"><Server size={14} /><span>Python API unavailable; live artifact profiling is not loaded.</span></div>}
+    <div className="section-heading"><div><h2>Saved historical benchmark</h2><p>Previous committed results; latency and energy mix measured and estimated values.</p></div></div>
     <div className="data-source-banner"><Cpu size={15} /><span>Preferred tier</span><b>{activeModel?.name || "Not selected"}</b><span className="banner-separator">·</span><span>Preference is saved in this browser</span></div>
     <div className="tier-grid">{models.map((model) => <article className={`panel tier-card ${activeModel?.key === model.key ? "active-tier" : ""}`} key={model.key}><div className="tier-card-heading"><span className="metric-icon"><Cpu size={18} /></span>{activeModel?.key === model.key && <span className="healthy"><Check size={12} /> Preferred</span>}</div><h2>{model.name}</h2><div className="model-stat"><span>Accuracy</span><strong>{percent(model.accuracy)}</strong></div><div className="model-stat"><span>Macro F1</span><strong>{percent(model.f1)}</strong></div><div className="model-stat"><span>Estimated latency</span><strong>{formatDecimal(model.latency)} ms</strong></div><div className="model-stat"><span>Model size</span><strong>{formatSize(model.size)}</strong></div><button className="secondary-button" disabled={activeModel?.key === model.key} onClick={() => onSelect(model)}>{activeModel?.key === model.key ? "Current preference" : "Set preferred tier"}</button></article>)}</div>
     <p className="local-state-note">Changing this preference updates this browser only. Connecting it to physical devices requires the project’s MQTT/backend connection.</p>
@@ -260,12 +307,12 @@ function DevicesPage({ devices, onAdd, onRemove }) {
   </>;
 }
 
-function ResearchPage() {
-  const energy = federated.energy_aware_fl;
-  const standard = federated.standard_fl;
+function ResearchPage({ backend }) {
   return <>
-    <PageHeading eyebrow="PROJECT RESULTS" title="Research at a glance." description="Summary values are read from the TinyML and federated-learning result files." />
-    <div className="research-grid"><article className="panel research-card"><span className="metric-icon"><Zap size={18} /></span><h2>{tinyml.model_name}</h2><div className="model-stat"><span>Original size</span><strong>{formatSize(tinyml.original_size_kb)}</strong></div><div className="model-stat"><span>Quantized size</span><strong>{formatSize(tinyml.quantized_size_kb)}</strong></div><div className="model-stat"><span>Size reduction</span><strong>{percent(tinyml.size_reduction_pct / 100)}</strong></div><div className="model-stat"><span>Quantized accuracy</span><strong>{percent(tinyml.quantized_accuracy)}</strong></div><div className="model-stat"><span>ESP32 compatible</span><strong>{tinyml.esp32_compatible ? "Yes" : "No"}</strong></div></article><article className="panel research-card"><span className="metric-icon"><Network size={18} /></span><h2>Federated learning</h2>{[["Energy-aware accuracy", energy.final_global_accuracy], ["Standard accuracy", standard.final_global_accuracy], ["Energy-aware macro F1", energy.final_global_f1_macro], ["Average battery", energy.final_avg_battery_pct / 100]].map(([label, value]) => <div className="model-stat" key={label}><span>{label}</span><strong>{percent(value)}</strong></div>)}<div className="model-stat"><span>Communication overhead</span><strong>{formatDecimal(energy.total_comm_overhead_kb)} KB</strong></div></article></div>
+    <PageHeading eyebrow="CURRENT EVIDENCE" title="Research results." description="Current saved-artifact evaluation and implementation limits. Historical simulation claims are excluded from these figures." />
+    <div className="data-source-banner"><Cpu size={15} /><span>Evaluation</span><b>Fixed held-out test split · no retraining</b><span className="banner-separator">·</span><span>5,001 samples · energy and device RAM not measured</span></div>
+    {backend.models?.models ? <div className="tier-grid">{Object.entries(backend.models.models).map(([key, model]) => <article className="panel research-card" key={key}><span className="metric-icon"><Cpu size={18} /></span><h2>{model.name}</h2>{[["Validation accuracy", model.metrics.accuracy], ["Validation macro recall", model.metrics.macro_recall], ["Validation macro F1", model.metrics.macro_f1]].map(([label, value]) => <div className="model-stat" key={label}><span>{label}</span><strong>{percent(value)}</strong></div>)}<div className="model-stat"><span>Artifact size</span><strong>{formatSize(model.artifact_size_bytes / 1024)}</strong></div><div className="model-stat"><span>API host p95 latency</span><strong>{formatDecimal(model.latency_ms.p95)} ms</strong></div><small className="local-state-note">Validation profile; host timing is not ESP32 timing. Energy not measured.</small></article>)}</div> : <div className="data-source-banner"><Server size={14} /><span>Start the Python API to load artifact evaluation profiles.</span></div>}
+    <div className="panel sara-detail-panel"><PanelHeading title="Evidence gaps" subtitle="What remains before deployment or a research claim" /><p>The policy has not been evaluated against controlled adaptive baselines. ESP32 model inference works for saved feature replay, but a live packet-to-model feature extractor is still missing. Federated learning currently runs as an in-process simulation without network clients or formal privacy guarantees. See the project audit and literature review in the repository.</p></div>
   </>;
 }
 

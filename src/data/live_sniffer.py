@@ -1,110 +1,136 @@
-import time
-import logging
-import numpy as np
-import pandas as pd
+"""Optional, privacy-conscious packet counters for authorized capture.
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+These observations intentionally do not claim compatibility with the fitted
+Edge-IIoTset model schema. Payloads and endpoint addresses are not retained.
+"""
+
+from __future__ import annotations
+
+import logging
+import time
+from collections import Counter
+
+import pandas as pd
+from src.data.edge_packet_schema import packet_features_from_scapy
+
 logger = logging.getLogger(__name__)
 
+
 class RealTimeNetworkSniffer:
-    """
-    Live Network Traffic Sniffer & Feature Extractor.
-    Captures live packets or converts streaming network buffers into the 18 Edge-IIoTset feature format.
-    """
-    def __init__(self, interface=None):
+    def __init__(self, interface: str | None = None):
         self.interface = interface
-        self.packet_count = 0
-        self.scapy_available = False
-        
         try:
             import scapy.all as scapy
-            self.scapy = scapy
-            self.scapy_available = True
-            logger.info("Scapy library successfully loaded for live packet capture.")
         except ImportError:
-            logger.warning("Scapy library not installed. Live sniffer will run in synthetic stream mode.")
+            scapy = None
+        self.scapy = scapy
+        self.scapy_available = scapy is not None
 
-    def parse_packet_to_features(self, packet):
-        """
-        Parses raw Scapy packet into feature dictionary matching IIoT dataset schema.
-        """
-        if not self.scapy_available or not packet:
+    def parse_packet_to_features(self, packet) -> dict | None:
+        """Return directly observable counters without invented feature values."""
+        if not self.scapy_available or packet is None:
             return None
-
-        # Basic packet layer inspection
-        flow_duration = round(float(time.time() % 10), 4)
-        payload_len = len(packet)
-        
-        tcp_flags_fin = 1 if packet.haslayer(self.scapy.TCP) and 'F' in packet[self.scapy.TCP].flags else 0
-        tcp_flags_syn = 1 if packet.haslayer(self.scapy.TCP) and 'S' in packet[self.scapy.TCP].flags else 0
-        tcp_flags_ack = 1 if packet.haslayer(self.scapy.TCP) and 'A' in packet[self.scapy.TCP].flags else 0
-        tcp_flags_psh = 1 if packet.haslayer(self.scapy.TCP) and 'P' in packet[self.scapy.TCP].flags else 0
-        
-        # Protocol detection
-        if packet.haslayer(self.scapy.UDP) and (packet[self.scapy.UDP].dport == 502 or packet[self.scapy.UDP].sport == 502):
-            protocol = "modbus"
-        elif packet.haslayer(self.scapy.TCP) and (packet[self.scapy.TCP].dport == 1883 or packet[self.scapy.TCP].sport == 1883):
-            protocol = "mqtt"
-        elif packet.haslayer(self.scapy.TCP) and (packet[self.scapy.TCP].dport == 80 or packet[self.scapy.TCP].sport == 80):
-            protocol = "http"
-        elif packet.haslayer(self.scapy.TCP):
+        scapy = self.scapy
+        protocol = "other"
+        if packet.haslayer(scapy.TCP):
             protocol = "tcp"
-        else:
+        elif packet.haslayer(scapy.UDP):
             protocol = "udp"
-
-        self.packet_count += 1
-        return {
+        elif packet.haslayer(scapy.IP):
+            protocol = "ip"
+        record = {
+            "timestamp_epoch_s": float(getattr(packet, "time", time.time())),
+            "packet_bytes": int(len(packet)),
             "protocol": protocol,
-            "flow_duration": flow_duration,
-            "packet_rate": round(float(np.random.gamma(2, 50)), 2),
-            "byte_rate": round(float(payload_len * 100), 2),
-            "payload_len": payload_len,
-            "tcp_flags_fin": tcp_flags_fin,
-            "tcp_flags_syn": tcp_flags_syn,
-            "tcp_flags_ack": tcp_flags_ack,
-            "tcp_flags_psh": tcp_flags_psh,
-            "modbus_func": 3 if protocol == "modbus" else 0,
-            "modbus_reg": 10 if protocol == "modbus" else 0,
-            "http_res_code": 200 if protocol == "http" else 0,
-            "mqtt_msg_type": 3 if protocol == "mqtt" else 0,
-            "failed_connections": 0
+            "tcp_fin": 0,
+            "tcp_syn": 0,
+            "tcp_ack": 0,
+            "tcp_rst": 0,
+            "source": "authorized_live_capture",
+            "model_compatible": False,
         }
+        if packet.haslayer(scapy.TCP):
+            flags = str(packet[scapy.TCP].flags)
+            record.update({"tcp_fin": int("F" in flags), "tcp_syn": int("S" in flags), "tcp_ack": int("A" in flags), "tcp_rst": int("R" in flags)})
+        return record
 
-    def capture_live_stream(self, max_packets=100, timeout=10):
-        """
-        Captures live packets up to max_packets.
-        """
-        logger.info(f"Starting live traffic sniffer (Interface: {self.interface or 'Default'}, Max: {max_packets})...")
+    def capture_live_stream(self, max_packets: int = 100, timeout: int = 10) -> pd.DataFrame:
+        if not self.scapy_available:
+            raise RuntimeError("Scapy is not installed; live capture is unavailable. No synthetic packet records were generated.")
+        if max_packets < 1 or timeout < 1:
+            raise ValueError("max_packets and timeout must be positive")
         records = []
-        
-        if self.scapy_available:
-            def process_pkt(pkt):
-                feat = self.parse_packet_to_features(pkt)
-                if feat:
-                    records.append(feat)
+        start = time.time()
 
-            self.scapy.sniff(iface=self.interface, prn=process_pkt, count=max_packets, timeout=timeout)
-        else:
-            logger.info("Generating live synthetic IIoT network stream...")
-            protocols = ["http", "modbus", "mqtt", "tcp", "udp"]
-            for i in range(max_packets):
-                records.append({
-                    "protocol": np.random.choice(protocols),
-                    "flow_duration": round(float(np.random.exponential(1.0)), 4),
-                    "packet_rate": round(float(np.random.gamma(2, 100)), 2),
-                    "byte_rate": round(float(np.random.normal(500, 100)), 2),
-                    "payload_len": int(np.random.randint(64, 1500)),
-                    "tcp_flags_fin": int(np.random.rand() < 0.1),
-                    "tcp_flags_syn": int(np.random.rand() < 0.2),
-                    "tcp_flags_ack": int(np.random.rand() < 0.8),
-                    "tcp_flags_psh": int(np.random.rand() < 0.3),
-                    "modbus_func": 0,
-                    "modbus_reg": 0,
-                    "http_res_code": 200,
-                    "mqtt_msg_type": 0,
-                    "failed_connections": 0
-                })
+        def process(packet):
+            record = self.parse_packet_to_features(packet)
+            if record is not None:
+                records.append(record)
 
-        df_live = pd.DataFrame(records)
-        logger.info(f"Captured {len(df_live)} live IIoT packets successfully.")
-        return df_live
+        logger.warning("Starting packet capture on %s. Capture only networks for which you have authorization.", self.interface or "default interface")
+        self.scapy.sniff(iface=self.interface, prn=process, count=max_packets, timeout=timeout, store=False)
+        elapsed = max(time.time() - start, 1e-9)
+        protocols = Counter(row["protocol"] for row in records)
+        totals = {
+            "timestamp_epoch_s": time.time(),
+            "window_seconds": elapsed,
+            "packets": len(records),
+            "bytes": sum(row["packet_bytes"] for row in records),
+            "packets_per_second": len(records) / elapsed,
+            "bytes_per_second": sum(row["packet_bytes"] for row in records) / elapsed,
+            "tcp_syn": sum(row["tcp_syn"] for row in records),
+            "tcp_fin": sum(row["tcp_fin"] for row in records),
+            "tcp_rst": sum(row["tcp_rst"] for row in records),
+            "protocol_counts": dict(protocols),
+            "source": "authorized_live_capture",
+            "model_compatible": False,
+        }
+        return pd.DataFrame([totals])
+
+    def capture_model_packets(self, max_packets: int = 100, timeout: int = 10) -> list[dict]:
+        """Capture bounded packet-derived model rows; retain no packet bytes or endpoints."""
+        if not self.scapy_available:
+            raise RuntimeError("Scapy is not installed; live capture is unavailable.")
+        if max_packets < 1 or timeout < 1:
+            raise ValueError("max_packets and timeout must be positive")
+        rows: list[dict] = []
+        state: dict = {}
+
+        def process(packet):
+            row = packet_features_from_scapy(packet, self.scapy, state)
+            if row is not None:
+                rows.append(row)
+
+        logger.warning("Starting authorized packet feature capture on %s", self.interface or "default interface")
+        self.scapy.sniff(iface=self.interface, prn=process, count=max_packets, timeout=timeout, store=False)
+        return rows
+
+    def capture_with_handler(self, handler, max_packets: int = 100, timeout: int = 5) -> dict:
+        """Extract and handle each packet inside Scapy's live callback, then discard it."""
+        if not self.scapy_available:
+            raise RuntimeError("Scapy is not installed; live capture is unavailable.")
+        if max_packets < 1 or timeout < 1:
+            raise ValueError("max_packets and timeout must be positive")
+        state: dict = {}
+        captured = 0
+        failures: list[Exception] = []
+        started = time.perf_counter()
+
+        def process(packet):
+            nonlocal captured
+            if failures:
+                return
+            try:
+                row = packet_features_from_scapy(packet, self.scapy, state)
+                if row is not None:
+                    handler(row)
+                    captured += 1
+            except Exception as exc:  # Surface callback failures after sniff returns.
+                if not failures:
+                    failures.append(exc)
+
+        logger.warning("Processing authorized packets live on %s", self.interface or "default interface")
+        self.scapy.sniff(iface=self.interface, prn=process, count=max_packets, timeout=timeout, store=False)
+        if failures:
+            raise failures[0]
+        return {"packets_processed": captured, "window_seconds": time.perf_counter() - started}

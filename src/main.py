@@ -14,12 +14,9 @@ from src.evaluation.baselines import BaselineExperimentSuite
 
 # New Advanced Modules
 from src.tinyml.distillation import KnowledgeDistiller
-from src.federated.dp_fedavg import DifferentiallyPrivateFedAvg
-from src.federated.robust_aggregation import RobustAggregator
 from src.evaluation.drift import ConceptDriftMonitor
 from src.data.live_sniffer import RealTimeNetworkSniffer
 from src.energy.hardware_interface import ESP32INA219HardwareProvider
-from src.utils.notifications import AlertDispatcher
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -58,7 +55,7 @@ def run_complete_pipeline():
     distiller.save_student("models/tinyml/distilled_student_tree.joblib")
     
     # PHASE 5: TinyML Optimization
-    logger.info("[PHASE 5] TinyML INT8 Optimization & ESP32 Code Export...")
+    logger.info("[PHASE 5] Fixed-point tree export & ESP32 code generation...")
     opt = TinyMLOptimizer()
     tinyml_results = opt.optimize_and_benchmark()
     
@@ -67,22 +64,24 @@ def run_complete_pipeline():
     fed_server = FederatedServer()
     fl_results = fed_server.run_comparison_experiment()
     
-    # ADVANCED FEATURE B: Differential Privacy & Byzantine Robust FL Simulation
-    logger.info("[ADVANCED FEATURE B] Differential Privacy & Byzantine-Robust Aggregation Testing...")
-    dp_fed = DifferentiallyPrivateFedAvg(clipping_threshold=1.0, noise_multiplier=0.1)
-    eps, delta = dp_fed.estimate_privacy_budget(total_rounds=10, sample_rate=0.8)
-    logger.info(f"Estimated Privacy Budget: epsilon = {eps}, delta = {delta}")
-    
-    robust_agg = RobustAggregator()
+    # Live capture is opt-in and requires explicit authorization for the chosen network.
+    live_df = None
+    if os.getenv("ADAPTIVEML_ENABLE_LIVE_CAPTURE", "false").lower() == "true":
+        interface = os.getenv("ADAPTIVEML_CAPTURE_INTERFACE") or None
+        logger.warning("Live packet capture explicitly enabled on interface %s; capture only authorized networks.", interface or "default")
+        try:
+            live_df = RealTimeNetworkSniffer(interface=interface).capture_live_stream(max_packets=50, timeout=2)
+        except (RuntimeError, OSError) as exc:
+            logger.warning("Live capture unavailable: %s", exc)
+    else:
+        logger.info("Live packet capture skipped; set ADAPTIVEML_ENABLE_LIVE_CAPTURE=true only for an authorized interface.")
 
-    # ADVANCED FEATURE C: Live Network Sniffer & INA219 Power Reading Test
-    logger.info("[ADVANCED FEATURE C] Testing Live Network Sniffer & INA219 Sensor Integration...")
-    sniffer = RealTimeNetworkSniffer()
-    live_df = sniffer.capture_live_stream(max_packets=50, timeout=2)
-    
-    hardware_power = ESP32INA219HardwareProvider()
-    power_reading = hardware_power.read_power_metrics()
-    logger.info(f"Hardware/Emulated INA219 Power Reading: {power_reading}")
+    hardware_port = os.getenv("ADAPTIVEML_HARDWARE_PORT")
+    if hardware_port:
+        hardware_power = ESP32INA219HardwareProvider(port=hardware_port)
+        logger.info("Physical power measurement status: %s", hardware_power.read_power_metrics())
+    else:
+        logger.info("Physical power measurement skipped; set ADAPTIVEML_HARDWARE_PORT after connecting an ESP32 sensor.")
 
     # ADVANCED FEATURE D: Concept Drift Monitor Test
     logger.info("[ADVANCED FEATURE D] Testing Concept Drift Monitor...")
@@ -90,10 +89,7 @@ def run_complete_pipeline():
     sample_feat = data_dict["X_test"][0]
     drift_status = drift_mon.monitor_event(sample_feat, prediction_error=0)
 
-    # ADVANCED FEATURE E: Alert Notifications System
-    logger.info("[ADVANCED FEATURE E] Security Alert Notification Dispatcher Ready.")
-    dispatcher = AlertDispatcher()
-    dispatcher.dispatch_threat_alert("DDoS_Flood", 90, "Heavy MLP", 0.985, 85.0)
+    logger.info("External alert dispatch was not triggered with fabricated sample values.")
 
     # PHASE 7, 9, 11, 13, 16: Real-time Simulation & Baseline Experiments
     logger.info("[PHASE 7, 9, 11, 13, 16] Real-Time IIoT Simulation & Baseline Experiments...")
@@ -110,7 +106,7 @@ def run_complete_pipeline():
         "exploration": explore_summary,
         "benchmarking": bench_results,
         "distillation": distill_results,
-        "dp_privacy": {"epsilon": eps, "delta": delta},
+        "dp_privacy": {"implemented_and_validated": False, "reason": "The current clipping/noise prototype is not connected to a compatible federated aggregation path and has no validated privacy accountant."},
         "tinyml": tinyml_results,
         "federated": fl_results,
         "baselines": baseline_results

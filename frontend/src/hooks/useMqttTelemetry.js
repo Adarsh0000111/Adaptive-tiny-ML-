@@ -84,7 +84,29 @@ export default function useMqttTelemetry() {
       if (clientRef.current !== client) return;
       try {
         const message = JSON.parse(payload.toString());
-        if (topic.endsWith("/telemetry")) setTelemetry(message);
+        if (topic.endsWith("/telemetry")) {
+          setTelemetry(message);
+          if (["physical", "simulated"].includes(message.source)) {
+            const timestamp = typeof message.timestamp === "string" ? message.timestamp : new Date().toISOString();
+            fetch("/api/telemetry", {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                node_id: message.device_id || normalizedDeviceId,
+                timestamp,
+                source: message.source,
+                voltage_v: message.voltage_v ?? message.bus_voltage_v,
+                current_a: message.current_a ?? (message.shunt_current_ma == null ? null : Number(message.shunt_current_ma) / 1000),
+                power_w: message.power_w,
+                energy_j: message.energy_j,
+                temperature_ambient_c: message.temperature_c,
+                humidity_pct: message.humidity_pct,
+                battery_pct: message.battery_pct,
+                hardware_status: message.hardware_status || "degraded",
+                quality: message.quality || "partial",
+              }),
+            }).catch(() => {});
+          }
+        }
         if (topic.endsWith("/inference")) setInference(message);
         setLastMessageAt(Date.now());
         setError("");

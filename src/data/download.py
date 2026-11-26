@@ -136,27 +136,20 @@ def generate_authentic_iiot_dataset(output_path, num_samples=25000, seed=42):
     logger.info(f"Dataset successfully created and saved to {output_path}")
     return df
 
-def acquire_dataset(config_path="config.yaml"):
+def acquire_dataset(config_path="config.yaml", dataset_path=None, return_path=False):
+    """Load only the official packet CSV; never silently train on the synthetic fixture."""
     config = load_config(config_path)
-    raw_path = config["paths"]["raw_data"]
-    num_samples = config["dataset"]["sample_size"]
-    seed = config.get("seed", 42)
-    
-    # Check for DNN-EdgeIIoT-dataset.csv or raw_path in data/raw
-    raw_dir = os.path.dirname(raw_path)
-    edge_iiot_candidate = os.path.join(raw_dir, "DNN-EdgeIIoT-dataset.csv")
-    
-    if os.path.exists(edge_iiot_candidate):
-        logger.info(f"Found official benchmark dataset at {edge_iiot_candidate}. Loading...")
-        df = pd.read_csv(edge_iiot_candidate)
-    elif os.path.exists(raw_path):
-        logger.info(f"Raw dataset already exists at {raw_path}. Loading...")
-        df = pd.read_csv(raw_path)
-    else:
-        logger.info(f"Raw dataset not found at {raw_path}. Generating Edge-IIoTset benchmark dataset...")
-        df = generate_authentic_iiot_dataset(raw_path, num_samples=num_samples, seed=seed)
-        
-    return df
+    configured = os.environ.get("ADAPTIVEML_DATASET")
+    candidates = [dataset_path, configured,
+                  "/mnt/9A50FC8350FC6801/PROJECTS/.codex-adapt-arduino/datasets/edge-iiotset/ML-EdgeIIoT-dataset.csv",
+                  os.path.join(os.path.dirname(config["paths"]["raw_data"]), "ML-EdgeIIoT-dataset.csv"),
+                  os.path.join(os.path.dirname(config["paths"]["raw_data"]), "DNN-EdgeIIoT-dataset.csv")]
+    resolved = next((os.path.abspath(p) for p in candidates if p and os.path.isfile(p)), None)
+    if resolved is None:
+        raise FileNotFoundError("Official packet-level Edge-IIoTset CSV not found. Set ADAPTIVEML_DATASET to ML-EdgeIIoT-dataset.csv. Synthetic fixture data is intentionally not used for model training.")
+    logger.info("Loading official Edge-IIoTset packet CSV from %s", resolved)
+    frame = pd.read_csv(resolved, low_memory=False)
+    return (frame, resolved) if return_path else frame
 
 if __name__ == "__main__":
     df = acquire_dataset()

@@ -1,0 +1,414 @@
+{
+  "evaluation": "fixed held-out test split; inference only; no retraining",
+  "dataset": {
+    "path": "data/processed/processed_dataset.npz",
+    "sha256": "f5ba249d7b21b992ae7022aba7b493fdef6b16f4d5f418ddee1ee0239322add5",
+    "samples": 7309,
+    "features": 18,
+    "feature_names": [
+      "tcp.connection.fin",
+      "tcp.connection.rst",
+      "tcp.connection.syn",
+      "tcp.connection.synack",
+      "tcp.flags.ack",
+      "tcp.flags",
+      "tcp.len",
+      "tcp.dstport",
+      "udp.time_delta",
+      "dns.qry.name.len",
+      "http.response",
+      "mqtt.msgtype",
+      "mqtt.len",
+      "protocol_http",
+      "protocol_mqtt",
+      "protocol_other",
+      "protocol_tcp",
+      "protocol_udp"
+    ],
+    "class_names": [
+      "Access_Compromise",
+      "DDoS",
+      "Normal",
+      "Ransomware",
+      "Scanning",
+      "Web_Attack"
+    ]
+  },
+  "environment": {
+    "python": "3.14.4",
+    "scikit_learn": "1.9.1",
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43"
+  },
+  "models": {
+    "lightweight": {
+      "architecture": "DecisionTreeClassifier",
+      "artifact": "models/lightweight/model.joblib",
+      "artifact_sha256": "89ea8058c75760fac0ef38708affd4777ef6f23fa165a1a78a07abc3661f6fff",
+      "artifact_size_bytes": 3465,
+      "test_accuracy": 0.7731563825420714,
+      "test_macro_precision": 0.6637316558748543,
+      "test_macro_recall": 0.5778605734297696,
+      "test_macro_f1": 0.5623477318439526,
+      "per_class": {
+        "Access_Compromise": {
+          "precision": 0.7045454545454546,
+          "recall": 0.03629976580796253,
+          "f1-score": 0.06904231625835189,
+          "support": 854.0
+        },
+        "DDoS": {
+          "precision": 0.8573127229488704,
+          "recall": 0.6632934682612696,
+          "f1-score": 0.7479253112033195,
+          "support": 1087.0
+        },
+        "Normal": {
+          "precision": 1.0,
+          "recall": 0.9539641943734015,
+          "f1-score": 0.9764397905759162,
+          "support": 1955.0
+        },
+        "Ransomware": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 86.0
+        },
+        "Scanning": {
+          "precision": 0.8205317577548006,
+          "recall": 0.8859649122807017,
+          "f1-score": 0.8519938650306749,
+          "support": 1254.0
+        },
+        "Web_Attack": {
+          "precision": 0.6,
+          "recall": 0.9276410998552822,
+          "f1-score": 0.7286851079954528,
+          "support": 2073.0
+        },
+        "accuracy": 0.7731563825420714,
+        "macro avg": {
+          "precision": 0.6637316558748543,
+          "recall": 0.5778605734297696,
+          "f1-score": 0.5623477318439526,
+          "support": 7309.0
+        },
+        "weighted avg": {
+          "precision": 0.7882511386306965,
+          "recall": 0.7731563825420714,
+          "f1-score": 0.7333234748339852,
+          "support": 7309.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          31,
+          0,
+          0,
+          0,
+          90,
+          733
+        ],
+        [
+          0,
+          721,
+          0,
+          0,
+          76,
+          290
+        ],
+        [
+          9,
+          0,
+          1865,
+          0,
+          50,
+          31
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          86
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          1111,
+          142
+        ],
+        [
+          4,
+          119,
+          0,
+          0,
+          27,
+          1923
+        ]
+      ],
+      "macro_one_vs_rest_fpr": 0.05104597664686333,
+      "macro_one_vs_rest_fnr": 0.42213942657023046,
+      "batch_test_inference_seconds": 0.010130372000276111,
+      "python_host_single_row_latency_ms": {
+        "mean": 0.11243841,
+        "median": 0.105372,
+        "p95": 0.1148901,
+        "samples_timed": 1000,
+        "hardware": "current API host; not ESP32 or edge-node latency"
+      },
+      "peak_ram": "not measured",
+      "energy_per_inference": "not measured"
+    },
+    "medium": {
+      "architecture": "RandomForestClassifier",
+      "artifact": "models/medium/model.joblib",
+      "artifact_sha256": "c7b64879009cf28bf2654039e08c85250dc85bbe9b8d43812d088d0bd0ed6d7d",
+      "artifact_size_bytes": 866745,
+      "test_accuracy": 0.9133944452045424,
+      "test_macro_precision": 0.921890616804465,
+      "test_macro_recall": 0.8964687098496266,
+      "test_macro_f1": 0.9059946293262667,
+      "per_class": {
+        "Access_Compromise": {
+          "precision": 0.7570552147239263,
+          "recall": 0.7224824355971897,
+          "f1-score": 0.7393648891551827,
+          "support": 854.0
+        },
+        "DDoS": {
+          "precision": 0.9729093050647821,
+          "recall": 0.7598896044158233,
+          "f1-score": 0.8533057851239669,
+          "support": 1087.0
+        },
+        "Normal": {
+          "precision": 0.9994887525562373,
+          "recall": 1.0,
+          "f1-score": 0.9997443109179238,
+          "support": 1955.0
+        },
+        "Ransomware": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 86.0
+        },
+        "Scanning": {
+          "precision": 0.9456975772765246,
+          "recall": 0.9027113237639554,
+          "f1-score": 0.9237046103631171,
+          "support": 1254.0
+        },
+        "Web_Attack": {
+          "precision": 0.8561928512053201,
+          "recall": 0.9937288953207911,
+          "f1-score": 0.9198481803974101,
+          "support": 2073.0
+        },
+        "accuracy": 0.9133944452045424,
+        "macro avg": {
+          "precision": 0.921890616804465,
+          "recall": 0.8964687098496266,
+          "f1-score": 0.9059946293262667,
+          "support": 7309.0
+        },
+        "weighted avg": {
+          "precision": 0.9173444550116959,
+          "recall": 0.9133944452045424,
+          "f1-score": 0.9118391012412094,
+          "support": 7309.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          617,
+          23,
+          0,
+          0,
+          3,
+          211
+        ],
+        [
+          69,
+          826,
+          0,
+          0,
+          60,
+          132
+        ],
+        [
+          0,
+          0,
+          1955,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          86,
+          0,
+          0
+        ],
+        [
+          119,
+          0,
+          0,
+          0,
+          1132,
+          3
+        ],
+        [
+          10,
+          0,
+          1,
+          0,
+          2,
+          2060
+        ]
+      ],
+      "macro_one_vs_rest_fpr": 0.018562190115627066,
+      "macro_one_vs_rest_fnr": 0.10353129015037339,
+      "batch_test_inference_seconds": 0.029312141999980668,
+      "python_host_single_row_latency_ms": {
+        "mean": 16.840747677,
+        "median": 16.3175455,
+        "p95": 18.993148699999995,
+        "samples_timed": 1000,
+        "hardware": "current API host; not ESP32 or edge-node latency"
+      },
+      "peak_ram": "not measured",
+      "energy_per_inference": "not measured"
+    },
+    "heavy": {
+      "architecture": "MLPClassifier",
+      "artifact": "models/heavy/model.joblib",
+      "artifact_sha256": "64510cdc4083be4fb8d5a1b3fa99c044ff074659581e3973bba9decf196db5d1",
+      "artifact_size_bytes": 217608,
+      "test_accuracy": 0.9098371870296894,
+      "test_macro_precision": 0.9109852181942669,
+      "test_macro_recall": 0.8842799402271689,
+      "test_macro_f1": 0.8925840229093366,
+      "per_class": {
+        "Access_Compromise": {
+          "precision": 0.8,
+          "recall": 0.6510538641686182,
+          "f1-score": 0.7178825048418335,
+          "support": 854.0
+        },
+        "DDoS": {
+          "precision": 0.9598051157125457,
+          "recall": 0.7249310027598896,
+          "f1-score": 0.8259958071278826,
+          "support": 1087.0
+        },
+        "Normal": {
+          "precision": 0.9989775051124744,
+          "recall": 0.9994884910485934,
+          "f1-score": 0.9992329327537715,
+          "support": 1955.0
+        },
+        "Ransomware": {
+          "precision": 0.9540229885057471,
+          "recall": 0.9651162790697675,
+          "f1-score": 0.9595375722543352,
+          "support": 86.0
+        },
+        "Scanning": {
+          "precision": 0.8946986201888163,
+          "recall": 0.9824561403508771,
+          "f1-score": 0.9365260357278601,
+          "support": 1254.0
+        },
+        "Web_Attack": {
+          "precision": 0.8584070796460177,
+          "recall": 0.9826338639652678,
+          "f1-score": 0.9163292847503374,
+          "support": 2073.0
+        },
+        "accuracy": 0.9098371870296894,
+        "macro avg": {
+          "precision": 0.9109852181942669,
+          "recall": 0.8842799402271689,
+          "f1-score": 0.8925840229093366,
+          "support": 7309.0
+        },
+        "weighted avg": {
+          "precision": 0.9116137783703503,
+          "recall": 0.9098371870296894,
+          "f1-score": 0.9058563377097573,
+          "support": 7309.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          556,
+          24,
+          0,
+          0,
+          59,
+          215
+        ],
+        [
+          103,
+          788,
+          0,
+          0,
+          82,
+          114
+        ],
+        [
+          0,
+          0,
+          1954,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          83,
+          0,
+          3
+        ],
+        [
+          19,
+          0,
+          0,
+          0,
+          1232,
+          3
+        ],
+        [
+          17,
+          9,
+          2,
+          4,
+          4,
+          2037
+        ]
+      ],
+      "macro_one_vs_rest_fpr": 0.019313844794613722,
+      "macro_one_vs_rest_fnr": 0.11572005977283105,
+      "batch_test_inference_seconds": 0.054780747999757295,
+      "python_host_single_row_latency_ms": {
+        "mean": 0.23878141100000003,
+        "median": 0.2151095,
+        "p95": 0.2845992,
+        "samples_timed": 1000,
+        "hardware": "current API host; not ESP32 or edge-node latency"
+      },
+      "peak_ram": "not measured",
+      "energy_per_inference": "not measured"
+    }
+  },
+  "physical_energy": "not measured"
+}

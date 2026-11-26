@@ -10,6 +10,9 @@ htmlcov/
 node_modules/
 frontend/dist/
 frontend/.vite/
+.pio/
+**/.pio/
+.tools/
 
 # Environments
 .venv
@@ -21,3 +24,11 @@ env/
 .DS_Store
 .vscode/
 .idea/
+
+# Local runtime state and credentials
+.env
+data/runtime/
+hardware/esp32_ids/secrets.h
+models/federated/sara_mlp_global.pt
+models/federated/sara_mlp_global.previous.pt
+results/experiments/federated_sara_history.json

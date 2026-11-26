@@ -1,0 +1,153 @@
+{
+  "evaluation": "ESP32-S3 hardware replay of 100 rows from the held-out official packet dataset; model is inference-only; no retraining during replay",
+  "dataset_source": "Edge-IIoTset ML-EdgeIIoT-dataset.csv",
+  "dataset_sha256": "53101fad091af20bee815860962a5016b802ee45d456a141042f6183094c3c1a",
+  "firmware_build": "PlatformIO Espressif32/Arduino core, esp32-s3-devkitc-1; uploaded to detected ESP32-S3 at /dev/ttyACM0",
+  "firmware_binary_sha256": "30a8eb886f598501e72486c6789b76a52a34625da6b9abf8c1b9d4eb5bef09d4",
+  "firmware_compiled_ram_bytes": 24552,
+  "firmware_compiled_flash_bytes": 353933,
+  "hardware_result": {
+    "transport": "USB serial",
+    "port": "/dev/ttyACM0",
+    "firmware": "READY,SARA-ESP32-USB,features=18,classes=6,ina219=1,dht22=1,mpu6500=1,oled=1",
+    "model": "lightweight fixed-point decision tree",
+    "model_artifact": "models/lightweight/model.joblib",
+    "feature_schema": "edge-iiotset-live-packet-18-v2",
+    "mode": "saved_test_replay_on_esp32",
+    "wifi_used": false,
+    "samples": 100,
+    "sample_start": 0,
+    "accuracy": 0.81,
+    "macro_f1": 0.5665462187201317,
+    "per_class": {
+      "Access_Compromise": {
+        "precision": 1.0,
+        "recall": 0.125,
+        "f1-score": 0.2222222222222222,
+        "support": 8.0
+      },
+      "DDoS": {
+        "precision": 0.8571428571428571,
+        "recall": 0.4,
+        "f1-score": 0.5454545454545454,
+        "support": 15.0
+      },
+      "Normal": {
+        "precision": 1.0,
+        "recall": 0.96875,
+        "f1-score": 0.9841269841269841,
+        "support": 32.0
+      },
+      "Ransomware": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "Scanning": {
+        "precision": 0.8,
+        "recall": 0.9411764705882353,
+        "f1-score": 0.8648648648648649,
+        "support": 17.0
+      },
+      "Web_Attack": {
+        "precision": 0.6585365853658537,
+        "recall": 0.9642857142857143,
+        "f1-score": 0.782608695652174,
+        "support": 28.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        1,
+        0,
+        0,
+        0,
+        1,
+        6
+      ],
+      [
+        0,
+        6,
+        0,
+        0,
+        2,
+        7
+      ],
+      [
+        0,
+        0,
+        31,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        16,
+        1
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        27
+      ]
+    ],
+    "predictions": null,
+    "device_inference_us": {
+      "mean": 6.45,
+      "median": 3.0,
+      "p95": 15.0
+    },
+    "usb_startup_ms": 1728.5781230002613,
+    "usb_round_trip_ms": {
+      "mean": 31.17462914002317,
+      "median": 29.830167499312665,
+      "p95": 39.65354714873683,
+      "total": 3136.4817890007544
+    },
+    "serial_protocol_retries": 0,
+    "energy": "not measured; USB-powered board has no calibrated power measurement in this test",
+    "input_note": "Features are preprocessed saved test rows sent by laptop; this is hardware inference replay, not live traffic detection.",
+    "device_telemetry": {
+      "node_id": "esp32-s3-usb",
+      "timestamp": 1795691690.432968,
+      "source": "physical",
+      "uptime_ms": 4748,
+      "voltage_v": 0.852,
+      "current_a": -0.00048,
+      "power_w": -0.00041,
+      "energy_j": 0.0,
+      "temperature_ambient_c": 28.6,
+      "humidity_pct": 68.8,
+      "vibration": false,
+      "movement": false,
+      "accel_x_g": 1.009,
+      "accel_y_g": 0.0696,
+      "accel_z_g": 0.282,
+      "alert": false,
+      "sensor_status": {
+        "ina219": true,
+        "dht22": true,
+        "mpu6500": true,
+        "oled": true
+      },
+      "quality": "good"
+    },
+    "completed_at_unix": 1795691690.4568372
+  }
+}
