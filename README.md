@@ -108,6 +108,47 @@ This verifies the coordinator/client protocol using two separate client processe
 
 6. Watch the **Networked federated learning** panel on the website or query `GET /api/federated/networked/status`. A successful run reaches `complete`, records both participants for each round, and saves `models/federated/sara_mlp_networked.pt`. The checkpoint is separate; SARA does not automatically load it into its low/medium/high inference tiers.
 
+#### One-computer network demo
+
+For a basic networking demonstration, the coordinator and two client processes can run on one computer. This uses real HTTP requests and parameter updates over loopback, but does not demonstrate communication across a LAN/WAN or use live traffic/ESP32 evidence. It is enabled only by setting `SARA_FL_ALLOW_LOCAL_DEMO=true`, sending `local_demo: true`, and binding the API to `127.0.0.1`. The regular networked path retains SARA's fresh live IDS and link-quality gate.
+
+Create two local training shards:
+
+```bash
+python scripts/make_fl_shards.py --outdir data/runtime/fl_client_shards --nodes 2
+```
+
+In one terminal, set three different secret values and start the API bound to loopback:
+
+```bash
+export SARA_FL_COORDINATOR_TOKEN='your-admin-secret'
+export SARA_FL_NODE_TOKENS='{"node-a":"your-node-a-secret","node-b":"your-node-b-secret"}'
+export SARA_FL_ALLOW_LOCAL_DEMO=true
+uvicorn src.api.app:app --host 127.0.0.1 --port 8765
+```
+
+Start the two-round demo from another terminal, using the same coordinator secret:
+
+```bash
+curl -X POST http://127.0.0.1:8765/api/federated/networked/start \
+  -H "Authorization: Bearer $SARA_FL_COORDINATOR_TOKEN" -H 'Content-Type: application/json' \
+  -d '{"node_ids":["node-a","node-b"],"rounds":2,"local_epochs":1,"min_clients":2,"local_demo":true}'
+```
+
+Run each client in a separate terminal, setting its matching node token:
+
+```bash
+export SARA_FL_NODE_TOKEN='your-node-a-secret'
+python -m src.federated.client --coordinator http://127.0.0.1:8765 --node-id node-a --data data/runtime/fl_client_shards/node-1.npz
+```
+
+```bash
+export SARA_FL_NODE_TOKEN='your-node-b-secret'
+python -m src.federated.client --coordinator http://127.0.0.1:8765 --node-id node-b --data data/runtime/fl_client_shards/node-2.npz
+```
+
+The API status is available at `http://127.0.0.1:8765/api/federated/networked/status`. Keep demo mode bound to loopback; do not use it as a substitute for the SARA gate on remote clients.
+
 #### Using separate computers
 
 Each client computer needs its own preprocessed NPZ containing `X_train` shaped `(N, 18)` and `y_train_multi` with labels encoded 0-5, using this project's same feature order, preprocessing, and class mapping. Real deployments should preprocess each node's own local data. For a controlled demo, the two shards above can be transferred to the respective client computers using a trusted channel.

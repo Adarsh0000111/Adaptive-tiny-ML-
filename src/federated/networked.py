@@ -41,7 +41,7 @@ class NetworkedFedAvgCoordinator:
         expected = _tokens().get(node_id, "")
         return bool(expected and token and hmac.compare_digest(expected, token))
 
-    def start(self, nodes: list[str], rounds: int, local_epochs: int, min_clients: int, timeout: int) -> dict:
+    def start(self, nodes: list[str], rounds: int, local_epochs: int, min_clients: int, timeout: int, local_demo: bool = False) -> dict:
         with self.lock:
             if self.run and self.run["status"] == "running":
                 raise RuntimeError("A networked FL run is already active")
@@ -62,7 +62,8 @@ class NetworkedFedAvgCoordinator:
             state = {key: val.detach().cpu().numpy().tolist() for key, val in model.state_dict().items()}
             self.run = {"status": "running", "round": 1, "rounds": rounds, "local_epochs": local_epochs,
                         "min_clients": min_clients, "timeout_seconds": timeout, "deadline": time.time()+timeout,
-                        "nodes": nodes, "global_state": state, "updates": {}, "history": [], "version": int(time.time())}
+                        "nodes": nodes, "global_state": state, "updates": {}, "history": [], "version": int(time.time()),
+                        "local_demo": local_demo}
             return self.status()
 
     def assignment(self, node_id: str, token: str | None) -> dict:

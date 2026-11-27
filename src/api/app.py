@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 import numpy as np
-from fastapi import FastAPI, Header, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Header, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -139,6 +139,7 @@ class NetworkedFederatedStartRequest(BaseModel):
     local_epochs: int = Field(default=1, ge=1, le=5)
     min_clients: int = Field(default=2, ge=2, le=32)
     timeout_seconds: int = Field(default=300, ge=30, le=3600)
+    local_demo: bool = False
 
 
 class NetworkedFederatedUpdate(BaseModel):
@@ -698,32 +699,49 @@ def networked_federated_status():
 
 
 @app.post("/api/federated/networked/start", status_code=202)
-def start_networked_federated(request: NetworkedFederatedStartRequest, authorization: str | None = Header(default=None)):
+def start_networked_federated(request: NetworkedFederatedStartRequest, http_request: Request, authorization: str | None = Header(default=None)):
     expected = os.getenv("SARA_FL_COORDINATOR_TOKEN", "")
     supplied = authorization.removeprefix("Bearer ") if authorization else ""
     import hmac
     if not expected or not hmac.compare_digest(expected, supplied):
         raise HTTPException(401, "Invalid coordinator credentials")
+    if request.local_demo:
+        try:
+            caller_is_loopback = ipaddress.ip_address(http_request.client.host).is_loopback
+        except (AttributeError, ValueError):
+            caller_is_loopback = False
+        if os.getenv("SARA_FL_ALLOW_LOCAL_DEMO", "false").lower() != "true" or not caller_is_loopback:
+            raise HTTPException(403, "Local demo mode must be explicitly enabled and called from this computer")
     resources = app.state.host_metrics.sample()
     schedule = app.state.sara.schedule_federated(resources, sensor_snapshot=app.state.usb_sensor_snapshot,
                                                  network_stats=list(app.state.network_stats.values()),
                                                  security_context=app.state.last_live_security_context,
-                                                 client_topology="networked")
+                                                 client_topology="simulated_host" if request.local_demo else "networked")
+    if request.local_demo:
+        schedule["client_topology"] = "networked_local_demo"
+        schedule["reason"] += "; loopback-only demo using local prepared training shards, with no live-security or external-link claim"
     app.state.federated_schedule_log.insert(0, {"timestamp": datetime.now(timezone.utc).isoformat(), **schedule})
     app.state.federated_schedule_log[:] = app.state.federated_schedule_log[:100]
     if not schedule["schedule"]:
         raise HTTPException(409, {"message": "SARA deferred networked federated training", "schedule_decision": schedule})
     try:
-        status = app.state.networked_federated.start(request.node_ids, request.rounds, request.local_epochs, request.min_clients, request.timeout_seconds)
+        status = app.state.networked_federated.start(request.node_ids, request.rounds, request.local_epochs,
+                                                     request.min_clients, request.timeout_seconds, request.local_demo)
     except (ValueError, RuntimeError) as exc:
         raise HTTPException(409 if isinstance(exc, RuntimeError) else 422, str(exc)) from exc
     return {"accepted": True, "status": status, "schedule_decision": schedule,
-            "message": "Network FedAvg started; clients train locally and upload parameter updates only."}
+            "message": "Network FedAvg started; clients train locally and upload parameter updates only.", "local_demo": request.local_demo}
 
 
 @app.get("/api/federated/networked/assignment/{node_id}")
-def networked_federated_assignment(node_id: str, authorization: str | None = Header(default=None)):
+def networked_federated_assignment(node_id: str, http_request: Request, authorization: str | None = Header(default=None)):
     from fastapi import HTTPException
+    if app.state.networked_federated.status().get("local_demo"):
+        try:
+            if not ipaddress.ip_address(http_request.client.host).is_loopback:
+                raise HTTPException(403, "Local FL demo clients must connect from this computer")
+        except (AttributeError, ValueError):
+            raise HTTPException(403, "Local FL demo clients must connect from this computer")
     try:
         return app.state.networked_federated.assignment(node_id, authorization.removeprefix("Bearer ") if authorization else None)
     except PermissionError as exc:
@@ -731,8 +749,14 @@ def networked_federated_assignment(node_id: str, authorization: str | None = Hea
 
 
 @app.post("/api/federated/networked/update/{node_id}")
-def networked_federated_update(node_id: str, request: NetworkedFederatedUpdate, authorization: str | None = Header(default=None)):
+def networked_federated_update(node_id: str, request: NetworkedFederatedUpdate, http_request: Request, authorization: str | None = Header(default=None)):
     from fastapi import HTTPException
+    if app.state.networked_federated.status().get("local_demo"):
+        try:
+            if not ipaddress.ip_address(http_request.client.host).is_loopback:
+                raise HTTPException(403, "Local FL demo clients must connect from this computer")
+        except (AttributeError, ValueError):
+            raise HTTPException(403, "Local FL demo clients must connect from this computer")
     try:
         return app.state.networked_federated.submit(node_id, authorization.removeprefix("Bearer ") if authorization else None,
                                                    request.round, request.sample_count, request.state_dict, request.local_loss)
