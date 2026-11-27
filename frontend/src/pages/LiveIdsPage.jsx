@@ -20,6 +20,10 @@ export default function LiveIdsPage({ backend }) {
   const [interfaceName, setInterfaceName] = useState("");
   const [authorized, setAuthorized] = useState(false);
   const [includeEndpointAddresses, setIncludeEndpointAddresses] = useState(false);
+  const [coordinatorToken, setCoordinatorToken] = useState("");
+  const connectedFederatedNodes = Object.entries(backend.networkedFederated?.node_status || {})
+    .filter(([, node]) => node.connected).map(([nodeId]) => nodeId).sort().slice(0, 2);
+  const networkedTrainingRunning = backend.networkedFederated?.status === "running";
   const result = backend.usbResult?.mode === "authorized_live_adaptive_packet_inference" ? backend.usbResult : null;
   const device = backend.usbDevice?.ports?.find((port) => port.accessible);
   const sensor = result?.device_telemetry || (backend.usbResult?.mode === "saved_test_replay_on_esp32" ? backend.usbResult.device_telemetry : null);
@@ -92,6 +96,20 @@ export default function LiveIdsPage({ backend }) {
     <div className="panel live-hardware-panel">
       <div className="section-heading"><div><h2>Networked federated learning</h2><p>Separate computer nodes train locally and exchange model updates. This does not alter the ESP32 sensor or USB inference path.</p></div><span className={`connection-badge ${backend.networkedFederated?.status === "running" ? "connected" : "checking"}`}><i />{backend.networkedFederated?.status || "API unavailable"}</span></div>
       {backend.networkedFederated?.status === "running" || backend.networkedFederated?.status === "complete" || backend.networkedFederated?.status === "timed_out" ? <div className="federated-rounds"><div><strong>{backend.networkedFederated.status === "running" ? `Round ${backend.networkedFederated.round}/${backend.networkedFederated.rounds}` : `Run ${backend.networkedFederated.status}`}</strong><span>Updates received {backend.networkedFederated.updates_received ?? 0}</span><span>Nodes {backend.networkedFederated.nodes?.join(", ")}</span><span>Checkpoint {backend.networkedFederated.model_path}</span>{Object.entries(backend.networkedFederated.node_status || {}).map(([nodeId, node]) => <span key={nodeId}>{nodeId}: {node.connected ? "connected" : node.state} · accepted updates {node.updates_accepted ?? 0}</span>)}</div>{backend.networkedFederated.history?.map((round) => <div key={round.round}><strong>Round {round.round}</strong><span>Participants {round.participating_nodes?.join(", ")}</span><span>Mean local loss {Number(round.mean_local_loss).toFixed(4)}</span><span>Samples {Object.values(round.samples_per_node || {}).reduce((sum, count) => sum + count, 0)}</span></div>)}</div> : <><p className="empty-note">No networked run is active. Start both authenticated client processes with <code>--wait-for-run</code>, then submit an authenticated start request. Clients poll the real coordinator over HTTP; SARA must approve fresh risk/confidence and measured link evidence before training begins. The button above remains the local simulation.</p>{Object.entries(backend.networkedFederated?.node_status || {}).length > 0 && <div className="federated-rounds">{Object.entries(backend.networkedFederated.node_status).map(([nodeId, node]) => <div key={nodeId}><strong>{nodeId}: {node.connected ? "connected" : node.state}</strong><span>Accepted updates {node.updates_accepted ?? 0}</span></div>)}</div>}</>}
+      <form className="federated-start-form" onSubmit={(event) => {
+        event.preventDefault();
+        if (connectedFederatedNodes.length >= 2 && coordinatorToken.trim()) {
+          backend.startNetworkedFederated(coordinatorToken.trim(), connectedFederatedNodes);
+          setCoordinatorToken("");
+        }
+      }}>
+        <label className="form-label">Coordinator token <span>used for this request only</span><input type="password" autoComplete="off" value={coordinatorToken} onChange={(event) => setCoordinatorToken(event.target.value)} /></label>
+        <p className="empty-note">Connected nodes selected: {connectedFederatedNodes.length ? connectedFederatedNodes.join(", ") : "waiting for two client heartbeats"}. The token stays in this page’s memory and is not saved.</p>
+        <button className="primary-button" type="submit" disabled={!coordinatorToken.trim() || connectedFederatedNodes.length < 2 || backend.networkedStartPending || networkedTrainingRunning || backend.status !== "connected"}>
+          <Activity size={15} />{backend.networkedStartPending ? "Requesting SARA approval…" : networkedTrainingRunning ? "Networked training running…" : "Start networked federated training"}
+        </button>
+      </form>
+      {backend.networkedStartMessage && <p className={`federated-start-message ${backend.networkedStartMessage.startsWith("Training was not started") || backend.networkedStartMessage.startsWith("Could not contact") ? "deferred" : "approved"}`} role="status">{backend.networkedStartMessage}</p>}
       {backend.federatedSchedule?.latest && <p className="empty-note">Latest SARA decision: {backend.federatedSchedule.latest.schedule ? "approved" : "deferred"} · {backend.federatedSchedule.latest.reason}</p>}
       {backend.networkedFederated?.promotion_reason && <p className="empty-note">Federated validation gate: {backend.networkedFederated.validation_gate_passed ? "passed" : "not passed or unavailable"}. Deployment: kept separate from all trained inference tiers.</p>}
       <p className="empty-note">Only weights and sample counts are sent. This implementation has no secure aggregation or differential privacy. The federated 1D CNN candidate is stored separately and never replaces the ESP32 Decision Tree, laptop Random Forest, or trained laptop high-tier CNN.</p>

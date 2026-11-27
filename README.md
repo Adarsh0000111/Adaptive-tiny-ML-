@@ -100,6 +100,8 @@ To verify the clients are separate OS processes, run this from PowerShell while 
 Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" | Where-Object { $_.CommandLine -like '*src.federated.client*' } | Select-Object ProcessId, CommandLine
 ```
 
+**Start from the dashboard:** after both clients appear as connected, open the Live IDS page, enter the coordinator token from the private credentials file, and click **Start networked federated training**. The token is held only in the page's memory for that request. The dashboard submits the authenticated networked start request for the two connected node IDs; it does not call the local simulated-training endpoint. The button remains disabled until the API is available, two clients have recent heartbeats, and no networked run is active. SARA still checks live risk/confidence, sensor context, and measured network evidence; if it defers, the dashboard displays the returned reason. The existing CLI start procedure below is also available.
+
 Before asking SARA to schedule training, use the dashboard's authorized live IDS action with the ESP32 connected to refresh sensor/security context, then collect measured link evidence from `/docs`: authorized passive capture on the actual adapter (Npcap/capture privileges may be required) and an ICMP probe to a destination you are authorized to probe, such as your own default gateway. These are measurements, not values to enter manually. The probe must be paired with fresh capture/link-utilization data. If SARA defers, the authenticated start endpoint returns HTTP 409 with the exact readiness reason; refresh the missing/expired evidence and retry. Do not start training until the decision says `schedule: true`.
 
 **Start only after approval:**

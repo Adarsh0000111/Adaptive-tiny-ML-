@@ -18,6 +18,8 @@ export default function useBackendApi() {
   const [ablationResult, setAblationResult] = useState(null);
   const [networkedFederated, setNetworkedFederated] = useState(null);
   const [federatedSchedule, setFederatedSchedule] = useState(null);
+  const [networkedStartPending, setNetworkedStartPending] = useState(false);
+  const [networkedStartMessage, setNetworkedStartMessage] = useState("");
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
@@ -103,5 +105,34 @@ export default function useBackendApi() {
     "/api/experiments/sensor-ablation", { count: 100, sample_start: 0 }, "Sensor ablation failed", false,
   ).then((result) => { if (result) setAblationResult(result); return result; });
 
-  return { status, health, models, usbDevice, usbResult, usbRunning, runUsbLiveCapture, runUsbReplay, runSensorAblation, ablationResult, networkedFederated, federatedSchedule, error, refresh };
+  const startNetworkedFederated = async (coordinatorToken, nodeIds) => {
+    setNetworkedStartPending(true);
+    setNetworkedStartMessage("");
+    try {
+      const response = await fetch(`${API_BASE}/api/federated/networked/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${coordinatorToken}` },
+        body: JSON.stringify({ node_ids: nodeIds, rounds: 2, local_epochs: 1, min_clients: 2, timeout_seconds: 300 }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        const detail = result.detail;
+        const reason = typeof detail === "string" ? detail
+          : detail?.schedule_decision?.reason || detail?.message || `HTTP ${response.status} ${response.statusText}`;
+        setNetworkedStartMessage(`Training was not started: ${reason}`);
+        await refresh();
+        return null;
+      }
+      setNetworkedStartMessage(result.message || "SARA approved the run and the coordinator accepted it.");
+      await refresh();
+      return result;
+    } catch (fetchError) {
+      setNetworkedStartMessage(`Could not contact the coordinator: ${fetchError.message || "API unavailable"}`);
+      return null;
+    } finally {
+      setNetworkedStartPending(false);
+    }
+  };
+
+  return { status, health, models, usbDevice, usbResult, usbRunning, runUsbLiveCapture, runUsbReplay, runSensorAblation, ablationResult, networkedFederated, federatedSchedule, networkedStartPending, networkedStartMessage, startNetworkedFederated, error, refresh };
 }
