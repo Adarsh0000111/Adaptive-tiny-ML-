@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { Activity, ArrowRight, Cpu, Network, Radio, Server, ShieldCheck, Usb } from "lucide-react";
 
-const tierLabels = { lightweight: "Low · ESP32", medium: "Medium · laptop", heavy: "High · laptop" };
-const modelLabels = { DecisionTreeClassifier: "Decision tree", RandomForestClassifier: "Random forest", MLPClassifier: "MLP" };
-const modelLabel = (backend, tier) => {
-  const modelName = backend.models?.models?.[tier]?.name;
-  const friendlyName = modelLabels[modelName] || modelName || tierLabels[tier] || tier;
-  return `${friendlyName} · ${tier === "lightweight" ? "ESP32" : "laptop"}`;
-};
 const pct = (value) => value == null ? "—" : `${(value * 100).toFixed(1)}%`;
 const sensorDecisionSummary = (context) => {
   if (!context || context.electrical_quality === "unavailable") return "sensor context unavailable";
@@ -29,7 +22,6 @@ export default function LiveIdsPage({ backend }) {
   const [includeEndpointAddresses, setIncludeEndpointAddresses] = useState(false);
   const result = backend.usbResult?.mode === "authorized_live_adaptive_packet_inference" ? backend.usbResult : null;
   const device = backend.usbDevice?.ports?.find((port) => port.accessible);
-  const tierCounts = result?.selected_tier_counts || {};
   const sensor = result?.device_telemetry || (backend.usbResult?.mode === "saved_test_replay_on_esp32" ? backend.usbResult.device_telemetry : null);
   const sensorsComplete = sensor?.sensor_presence_quality === "complete"
     || (sensor?.sensor_status && Object.values(sensor.sensor_status).length > 0 && Object.values(sensor.sensor_status).every(Boolean));
@@ -57,7 +49,7 @@ export default function LiveIdsPage({ backend }) {
     </div>
 
     <div className="panel live-capture-panel">
-      <div className="section-heading"><div><h2>Monitor a live capture window</h2><p>Up to 100 packets or five seconds. Tier selection and inference happen inside the packet capture callback.</p></div><span className="connection-badge"><Radio size={13} /> Passive capture</span></div>
+      <div className="section-heading"><div><h2>Monitor a live capture window</h2><p>Process up to 100 packets or five seconds and review the resulting predictions and risk context.</p></div><span className="connection-badge"><Radio size={13} /> Passive capture</span></div>
       <form className="live-capture-form" onSubmit={(event) => { event.preventDefault(); backend.runUsbLiveCapture({ interfaceName, authorized, includeEndpointAddresses }); }}>
         <label className="form-label">Network interface <input value={interfaceName} onChange={(event) => setInterfaceName(event.target.value)} placeholder="Blank uses the operating system default" /></label>
         <label className="checkbox-label"><input type="checkbox" checked={authorized} onChange={(event) => setAuthorized(event.target.checked)} /> I am authorized to monitor this interface and approve this capture</label>
@@ -75,11 +67,8 @@ export default function LiveIdsPage({ backend }) {
       <div className="tier-grid live-tier-counts">
         <article className="panel sara-card"><small>Unconfirmed threat-like predictions</small><strong>{result.threat_prediction_count ?? result.predictions?.filter((item) => item.prediction !== "Normal").length ?? 0}</strong><p>Packets classified as non-Normal by the selected model; not ground-truth-confirmed</p>{Object.entries(result.threat_prediction_counts_by_class || {}).map(([label, count]) => <small key={label}>{label.replaceAll("_", " ")}: {count}</small>)}</article>
         <article className="panel sara-card"><small>Confirmed incidents</small><strong>Not verified</strong><p>Live packets have no ground-truth labels, so the IDS cannot confirm attacks.</p></article>
-        {Object.entries(tierLabels).map(([key, label]) => <article className="panel sara-card" key={key}><small>{label}</small><strong>{tierCounts[key] || 0}</strong><p>{key === "lightweight" ? "Inference ran on ESP32-S3" : "Inference ran on laptop"}</p></article>)}
-        <article className="panel sara-card"><small>Model switches</small><strong>{result.model_switches?.length || 0}</strong><p>Changes between decisions in this window</p></article>
       </div>
-      <div className="panel live-switch-panel"><h3>Model selection and tier changes</h3><p className="empty-note">Decision tree runs on the ESP32 when SARA selects Low. Random forest and MLP run on the laptop. A selected tier is not the same as a consensus vote.</p>{result.model_switches?.length ? result.model_switches.map((item, index) => <div className="live-switch-row" key={`${item.packet_index}-${index}`}><strong>Packet {item.packet_index + 1}</strong><span>{modelLabel(backend, item.from)} → {modelLabel(backend, item.to)}</span><small>Risk {pct(item.risk)} · {item.reason}</small></div>) : <p className="empty-note">No tier changes in this capture window. The selected tier is shown on each packet below.</p>}</div>
-      <div className="panel live-predictions-panel"><div className="section-heading"><div><h3>Packet decisions and model votes</h3><p>Compare each model’s class with the tier SARA selected for execution. Live non-Normal predictions remain unconfirmed without labels.</p></div></div><div className="live-prediction-list">{result.predictions?.map((item) => <article className="live-prediction-row" key={item.packet_index}><strong>#{item.packet_index + 1}</strong><span className="prediction-tier">Selected: {modelLabel(backend, item.selected_model)}</span><b>{item.prediction?.replaceAll("_", " ") || "—"}</b><span>Risk {pct(item.risk?.score)}</span>{item.network_location && <small>Captured endpoints: {item.network_location.source_ip || "unknown"}:{item.network_location.source_port ?? "—"} → {item.network_location.destination_ip || "unknown"}:{item.network_location.destination_port ?? "—"}</small>}<small>Model votes: {Object.entries(item.model_predictions || {}).map(([tier, label]) => `${modelLabel(backend, tier)}: ${label.replaceAll("_", " ")}`).join(" · ") || "not available"}</small><small>{item.inference_location === "esp32_usb" ? `${item.device_inference_us ?? "—"} µs on ESP32` : `${Number(item.inference_ms || 0).toFixed(3)} ms on laptop`}</small><small>Selected confidence {pct(item.confidence)} · host stress {pct(item.host_resources?.resource_stress)} · edge load {pct(item.decision?.network_load_vs_edge_capacity)}</small><small>{sensorDecisionSummary(item.decision?.sensor_context)}</small><small>{item.decision?.execution_reason || item.decision?.reason}</small></article>)}</div></div>
+      <div className="panel live-predictions-panel"><div className="section-heading"><div><h3>Packet predictions</h3><p>Live non-Normal predictions are unconfirmed until compared with independent ground-truth labels.</p></div></div><div className="live-prediction-list">{result.predictions?.map((item) => <article className="live-prediction-row" key={item.packet_index}><strong>#{item.packet_index + 1}</strong><b>{item.prediction?.replaceAll("_", " ") || "—"}</b><span>Risk {pct(item.risk?.score)}</span>{item.network_location && <small>Captured endpoints: {item.network_location.source_ip || "unknown"}:{item.network_location.source_port ?? "—"} → {item.network_location.destination_ip || "unknown"}:{item.network_location.destination_port ?? "—"}</small>}<small>{item.inference_location === "esp32_usb" ? `${item.device_inference_us ?? "—"} µs on ESP32` : `${Number(item.inference_ms || 0).toFixed(3)} ms on laptop`}</small><small>Confidence {pct(item.confidence)} · host stress {pct(item.host_resources?.resource_stress)} · edge load {pct(item.decision?.network_load_vs_edge_capacity)}</small><small>{sensorDecisionSummary(item.decision?.sensor_context)}</small><small>{item.decision?.execution_reason || item.decision?.reason}</small></article>)}</div></div>
     </>}
 
     <div className="panel live-hardware-panel">
