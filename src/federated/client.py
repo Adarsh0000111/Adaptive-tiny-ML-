@@ -16,15 +16,15 @@ from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.data.edge_packet_schema import SCHEMA_VERSION
-from src.federated.torch_fedavg import FEDERATED_ARCHITECTURE_VERSION, FederatedMLP
+from src.federated.torch_fedavg import NETWORKED_FEDERATED_ARCHITECTURE_VERSION, FederatedCNN
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def train_one_round(x: np.ndarray, y: np.ndarray, assignment: dict) -> tuple[dict, float]:
-    if assignment.get("architecture_version") != FEDERATED_ARCHITECTURE_VERSION:
-        raise ValueError("Coordinator requested an unsupported federated MLP architecture")
-    model = FederatedMLP(assignment["input_features"], assignment["class_count"])
+    if assignment.get("architecture_version") != NETWORKED_FEDERATED_ARCHITECTURE_VERSION:
+        raise ValueError("Coordinator requested an unsupported networked federated CNN architecture")
+    model = FederatedCNN(assignment["input_features"], assignment["class_count"])
     model.load_state_dict({key: torch.as_tensor(value, dtype=value_dtype(model, key)) for key, value in assignment["global_state"].items()})
     loader = DataLoader(TensorDataset(torch.from_numpy(x), torch.from_numpy(y)), batch_size=256, shuffle=True)
     class_weights = torch.as_tensor(assignment["class_weights"], dtype=torch.float32)
@@ -43,7 +43,7 @@ def train_one_round(x: np.ndarray, y: np.ndarray, assignment: dict) -> tuple[dic
     return {key: tensor.detach().cpu().tolist() for key, tensor in model.state_dict().items()}, float(np.mean(losses))
 
 
-def value_dtype(model: FederatedMLP, key: str):
+def value_dtype(model: FederatedCNN, key: str):
     return model.state_dict()[key].dtype
 
 

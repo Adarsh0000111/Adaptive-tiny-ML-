@@ -29,7 +29,7 @@ class TestNetworkedFederatedStatus(unittest.TestCase):
             coordinator.run = {
                 "status": "complete", "round": 1, "rounds": 1, "local_epochs": 1,
                 "min_clients": 2, "timeout_seconds": 60, "nodes": ["node-a", "node-b"],
-                "local_demo": True, "base_model_source": "existing_high_tier_mlp",
+                "local_demo": True, "base_model_source": "existing_high_tier_cnn",
                 "history": [{"round": 1, "timestamp": "2026-01-01T00:00:00+00:00",
                               "participating_nodes": ["node-a", "node-b"],
                               "samples_per_node": {"node-a": 5, "node-b": 6}}],

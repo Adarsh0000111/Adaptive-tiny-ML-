@@ -11,12 +11,12 @@ This audit records the checked-out code and artifacts, including the 2026-11-26 
 - **Frontend:** React + Vite in `frontend/`. The former `dashboard/app.py` Streamlit UI has been removed. The React dashboard is retained and now calls the Python API for inference, model profiles, resource readings, SARA state, offloading status, and FL simulation.
 - **Backend:** existing research code in `src/`; new FastAPI service in `src/api/`. The previous `demo_api.py` wrapper now starts that service.
 - **Data:** the current processed dataset has 25,579 train, 3,654 validation, and 7,309 test rows, with 18 packet features and six grouped labels. Provenance and source license are recorded in `results/experiments/data_provenance.json`.
-- **Artifacts:** current sklearn DecisionTreeClassifier (3,465 bytes), RandomForestClassifier (866,745 bytes), and MLPClassifier (217,608 bytes), each with 18 inputs and six classes. There is no CNN artifact.
+- **Artifacts at the original audit date (2026-11-26):** sklearn DecisionTreeClassifier (3,465 bytes), RandomForestClassifier (866,745 bytes), and MLPClassifier (217,608 bytes), each with 18 inputs and six classes. The 2026-11-27 update below records the CNN replacement.
 - **Preprocessing:** `src/preprocessing/` produces the versioned packet schema. The shared extractor maps captured TCP/UDP packet headers into this schema; sensor and aggregate network counters are not passed as substitutes.
 - **Hardware:** the regenerated fixed-point tree is compiled/flashed on the ESP32-S3 and validated with a 100-row USB replay. The live packet path is laptop capture → saved preprocessing → USB inference; local MQTT credentials remain separate.
 - **Previous code issues:** the original demo API assumed an incompatible binary/CNN interface; live sniffer had synthetic fallback data; hardware fields did not match trained features; historic docs overstated energy, TinyML, DP, and FL results. These findings motivated explicit schemas, provenance, and unavailable states.
 
-## Current implementation
+## Implementation snapshot at the original audit date
 
 | Component | Implemented behavior | Evidence and boundary |
 |---|---|---|
@@ -33,7 +33,7 @@ This audit records the checked-out code and artifacts, including the 2026-11-26 
 | Research evaluation | Fixed saved test split evaluation with per-class metrics, hashes, host latency, artifact sizes, plus full ESP32 USB replay | `results/experiments/artifact_validation.json` and `results/experiments/esp32_usb_replay.json`; board RAM and calibrated energy remain unmeasured. |
 | Literature | Focused review identifies close adaptive IDS, edge/cloud, and resource-aware FL work | `research/LITERATURE_REVIEW.md` is not a systematic review and does not establish novelty. |
 
-## Test and result snapshot
+## Test and result snapshot at the original audit date
 
 The prior API test run passed 31 tests before the packet-pipeline update. The current React production build succeeds (Vite reports a bundle-size advisory). PlatformIO compiled/flashed the packet-model firmware and the board returned its expected handshake. Current 100-row replay is recorded in `results/experiments/esp32_usb_replay.json`; INA219 calibration remains unverified.
 
@@ -62,3 +62,9 @@ The feature schema is `edge-iiotset-live-packet-18-v2`: 13 numeric packet fields
 The new fixed-point tree header was exported to `models/tinyml/esp32_model.h` and copied into both firmware folders. The fixed-point simulator matches the low model within 0.10 percentage points accuracy on the saved test split. PlatformIO compiled and flashed the regenerated firmware to the detected ESP32-S3 at `/dev/ttyACM0`; the board returned the expected 18-feature/six-class handshake and reported INA219, DHT22, MPU6500, and OLED available. A 100-row held-out replay reached 81.0% accuracy, macro-F1 0.5665, and 15 µs device p95 inference; see `results/experiments/esp32_usb_replay.json`. During authorized live capture, the API now evaluates and routes each packet from inside the capture callback; low inference uses USB/ESP32, while medium and high use laptop models. Capture remains explicit and predictions have no ground-truth metrics.
 
 The source dataset license is CC BY-NC-SA 4.0. Attribute Edge-IIoTset and keep derived dataset adaptations under the same terms; commercial use is not permitted by that license. See the provenance manifest for DOI/attribution details.
+
+## 2026-11-27 high-tier CNN update
+
+The previous high-tier MLP was retained as a baseline, then replaced after a 1D CNN passed the validation gate (each of validation accuracy, macro recall, and macro-F1 within two percentage points of the MLP). The CNN scored 91.08% accuracy, 89.08% macro recall, and 89.85% macro-F1 on the saved test split. Its validation-selected run and per-class results are recorded in `results/experiments/high_cnn_evaluation.json`; the refreshed fixed-test artifact report is `results/experiments/artifact_validation.json`.
+
+The CNN processes the 18 ordered packet fields along a feature axis; it does not consume temporal packet windows. Both the local FedAvg simulation and authenticated networked FedAvg now use the same CNN architecture as SARA's high tier. The previously recorded two-client demo used the older MLP architecture and shared local dataset shards; it is historical evidence and must not be described as a CNN FL run or independent-site validation.

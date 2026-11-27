@@ -1,4 +1,4 @@
-"""Evaluate the checked-in sklearn artifacts on the fixed saved test split.
+"""Evaluate the checked-in model artifacts on the fixed saved test split.
 
 This script does not retrain models or estimate physical energy.
 """
@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import platform
+import sys
 import time
 from pathlib import Path
 
@@ -17,6 +18,7 @@ import sklearn
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score, precision_score, recall_score
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 MODELS = {"lightweight": ROOT / "models/lightweight/model.joblib", "medium": ROOT / "models/medium/model.joblib", "heavy": ROOT / "models/heavy/model.joblib"}
 
 

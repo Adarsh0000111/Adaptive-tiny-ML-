@@ -41,14 +41,15 @@ def run_complete_pipeline():
     logger.info("[PHASE 3 & 4] Training & Benchmarking ML Models...")
     bench_results = run_benchmarking()
     
-    # ADVANCED FEATURE A: Knowledge Distillation (MLP -> Tiny Tree)
-    logger.info("[ADVANCED FEATURE A] Knowledge Distillation (Heavy MLP -> Tiny Tree)...")
+    # ADVANCED FEATURE A: Knowledge Distillation (CNN -> Tiny Tree)
+    logger.info("[ADVANCED FEATURE A] Knowledge Distillation (High 1D CNN -> Tiny Tree)...")
     from src.models.factory import get_model
-    teacher_mlp = get_model("heavy")
-    teacher_mlp.fit(data_dict["X_train"], data_dict["y_train_multi"])
+    teacher_cnn = get_model("heavy")
+    teacher_cnn.fit(data_dict["X_train"], data_dict["y_train_multi"],
+                    validation_data=(data_dict["X_val"], data_dict["y_val_multi"]))
     distiller = KnowledgeDistiller(temperature=2.5, student_max_depth=5)
     distill_results = distiller.distill(
-        teacher_mlp.model, 
+        teacher_cnn.model,
         data_dict["X_train"], data_dict["y_train_multi"], 
         data_dict["X_val"], data_dict["y_val_multi"]
     )

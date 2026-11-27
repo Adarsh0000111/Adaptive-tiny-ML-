@@ -8,7 +8,7 @@ Can an IDS choose among classifiers or trusted remote inference under changing r
 
 ## Current data and model evidence
 
-The processed dataset contains 25,579 training rows, 3,654 validation rows, and 7,309 held-out test rows; it has 18 ordered packet features and six grouped labels. Its source hash and filtering are recorded in [`results/experiments/data_provenance.json`](results/experiments/data_provenance.json). The current artifacts are a 3,465-byte DecisionTreeClassifier (lightweight), 866,745-byte RandomForestClassifier (medium), and 217,608-byte MLPClassifier (heavy). There is no CNN artifact.
+The processed dataset contains 25,579 training rows, 3,654 validation rows, and 7,309 held-out test rows; it has 18 ordered packet features and six grouped labels. Its source hash and filtering are recorded in [`results/experiments/data_provenance.json`](results/experiments/data_provenance.json). The current artifacts are a 3,465-byte DecisionTreeClassifier (lightweight), 866,745-byte RandomForestClassifier (medium), and a 378,666-byte PyTorch 1D CNN classifier (heavy). The CNN convolves across the ordered feature axis; this is not a time-series CNN over packet sequences.
 
 The report in [`results/experiments/artifact_validation.json`](results/experiments/artifact_validation.json) evaluates the existing artifacts on the saved test split without retraining:
 
@@ -16,7 +16,7 @@ The report in [`results/experiments/artifact_validation.json`](results/experimen
 |---|---:|---:|---:|---:|
 | Lightweight decision tree | 77.32% | 57.79% | 56.23% | 3.4 KB |
 | Medium random forest | 91.34% | 89.65% | 90.60% | 846 KB |
-| Heavy MLP classifier | 90.98% | 88.43% | 89.26% | 213 KB |
+| High 1D CNN classifier | 91.08% | 89.08% | 89.85% | 370 KB |
 
 The lightweight model has lower macro recall than the medium and high models, and especially weak Ransomware recall; overall accuracy is not a sufficient security criterion. The stratified split is at packet level and the source has no session identifier, so context leakage is possible. Metrics and latency are host-specific software measurements. RAM and physical energy were not measured. Test results do not establish robustness, generalization, or causal benefit from adaptation.
 
@@ -28,7 +28,7 @@ This is a deterministic rule, not a learned policy. Tier cost is an estimate der
 
 ## Federated learning and deployment status
 
-The current `/api/federated/train` route runs local CPU MLP FedAvg over simulated Dirichlet client partitions. It performs sample-weighted parameter averaging and a validation accuracy acceptance gate. It is a single-process simulation: there are no independent network clients, transmitted updates, secure aggregation, formal differential privacy, or measured communication energy. Any config-based battery and energy values are simulated estimates. They must not be reported as physical results or privacy guarantees.
+The current `/api/federated/train` route runs local CPU 1D CNN FedAvg over simulated Dirichlet client partitions. The authenticated networked coordinator and clients use the same CNN architecture as the high tier. The dashboard route performs sample-weighted parameter averaging and a validation accuracy acceptance gate; it is a single-process simulation, while the separate networked path requires independent clients for real multi-computer evidence. Neither provides secure aggregation, formal differential privacy, or measured communication energy. Config-based battery and energy values remain simulated estimates.
 
 The React frontend replaces the former Streamlit dashboard. The USB-only ESP32-S3 sketch runs the exported fixed-point tree on laptop-supplied scaled packet vectors and returns physical sensor telemetry; this path needs no Wi-Fi or MQTT. Sensor readings remain separate from the model's 18 network features. A separate unchecked-by-default capture action extracts TCP/UDP packet metadata on the laptop, applies the training transform, and sends predictions to the board; this is packet-level inference, not flow reconstruction.
 

@@ -101,7 +101,9 @@ class InferenceService:
 
     def _load_federated_artifact_status(self) -> None:
         """Report separate FL artifacts without ever replacing a trained inference tier."""
-        paths = [ROOT / "models/federated/sara_mlp_networked_candidate.pt",
+        paths = [ROOT / "models/federated/sara_cnn_networked_candidate.pt",
+                 ROOT / "models/federated/sara_cnn_networked.pt",
+                 ROOT / "models/federated/sara_mlp_networked_candidate.pt",
                  ROOT / "models/federated/sara_mlp_networked.pt"]
         artifact = next((path for path in paths if path.exists()), None)
         if artifact is None:
@@ -109,7 +111,7 @@ class InferenceService:
             return
         self.federated_model_status = {
             "status": "isolated",
-            "message": "Federated MLP is stored separately and is never loaded into or used to replace the Decision Tree, Random Forest, or laptop MLP.",
+            "message": "Federated model candidate is stored separately and is never loaded into or used to replace the trained inference tiers.",
             "artifact": str(artifact.relative_to(ROOT)),
         }
 

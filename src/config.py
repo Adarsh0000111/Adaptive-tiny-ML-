@@ -58,9 +58,9 @@ _FALLBACK_CONFIG: Dict[str, Any] = {
             "est_energy_uJ_per_inf": 62.0,
         },
         "heavy": {
-            "type": "MLPClassifier",
-            "params": {"hidden_layer_sizes": [128, 64, 32], "max_iter": 100, "activation": "relu", "solver": "adam", "random_state": 42},
-            "est_inference_latency_ms": 8.70,
+            "type": "PacketCNNClassifier",
+            "params": {"epochs": 60, "batch_size": 256, "learning_rate": 0.0005, "patience": 8, "random_state": 42},
+            "est_inference_latency_ms": 0.42,
             "est_ram_kb": 320.0,
             "est_energy_uJ_per_inf": 340.0,
         },

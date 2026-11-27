@@ -157,7 +157,12 @@ def packet_features_from_scapy(packet, scapy, protocol_state: dict, *, include_e
         except ImportError:
             pass
 
-    dns_name_flag = int(packet.haslayer(DNSQR))
+    dns_query_name_length = 0
+    if packet.haslayer(DNSQR):
+        query_name = getattr(packet[DNSQR], "qname", b"")
+        if isinstance(query_name, str):
+            query_name = query_name.encode("utf-8", errors="ignore")
+        dns_query_name_length = len(bytes(query_name).rstrip(b".\x00"))
     mqtt_message_type = 0
     mqtt_length = 0
     is_mqtt = source_port == 1883 or destination_port == 1883
@@ -186,7 +191,7 @@ def packet_features_from_scapy(packet, scapy, protocol_state: dict, *, include_e
         "tcp.len": len(bytes(tcp.payload)) if tcp is not None else 0,
         "tcp.dstport": int(tcp.dport) if tcp is not None else 0,
         "udp.time_delta": udp_delta,
-        "dns.qry.name.len": dns_name_flag,
+        "dns.qry.name.len": dns_query_name_length,
         "http.response": http_response,
         "mqtt.msgtype": mqtt_message_type,
         "mqtt.len": mqtt_length,

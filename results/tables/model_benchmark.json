@@ -34,20 +34,20 @@
     "training_time_s": 0.17
   },
   "heavy": {
-    "model_name": "Heavy Deep MLP",
+    "model_name": "High 1D CNN",
     "model_level": "heavy",
-    "accuracy": 0.9098,
-    "precision_macro": 0.911,
-    "recall_macro": 0.8843,
-    "f1_macro": 0.8926,
-    "f1_weighted": 0.9059,
-    "false_positive_rate": 0.0193,
-    "false_negative_rate": 0.1157,
-    "measured_latency_ms": 0.0085,
-    "estimated_latency_ms": 8.7,
-    "model_size_kb": 212.51,
+    "accuracy": 0.9108,
+    "precision_macro": 0.9164,
+    "recall_macro": 0.8908,
+    "f1_macro": 0.8985,
+    "f1_weighted": 0.9071,
+    "false_positive_rate": 0.0192,
+    "false_negative_rate": 0.1092,
+    "measured_latency_ms": 0.419878,
+    "estimated_latency_ms": 0.42,
+    "model_size_kb": 369.79,
     "est_ram_kb": 320.0,
     "est_energy_uJ": 340.0,
-    "training_time_s": 48.81
+    "training_time_s": 29.35
   }
 }

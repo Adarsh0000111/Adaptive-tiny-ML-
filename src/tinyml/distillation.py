@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class KnowledgeDistiller:
     """
     Knowledge Distillation pipeline:
-    Transfers dark knowledge & decision boundaries from a Heavy Deep MLP teacher
+    Transfers dark knowledge & decision boundaries from the high-tier 1D CNN teacher
     into a lightweight TinyML Decision Tree student.
     """
     def __init__(self, temperature=2.0, student_max_depth=5):
@@ -54,7 +54,7 @@ class KnowledgeDistiller:
         teacher_acc = np.mean(teacher_val_pred == y_val)
 
         logger.info(f"Knowledge Distillation Complete!")
-        logger.info(f"Teacher MLP Accuracy: {teacher_acc * 100:.2f}% | Distilled Student Tree Accuracy: {student_acc * 100:.2f}%")
+        logger.info(f"Teacher 1D CNN Accuracy: {teacher_acc * 100:.2f}% | Distilled Student Tree Accuracy: {student_acc * 100:.2f}%")
 
         return {
             "teacher_acc": round(float(teacher_acc), 4),

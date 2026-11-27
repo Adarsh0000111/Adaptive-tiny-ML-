@@ -49,7 +49,10 @@ class ModelBenchmarker:
             
             # Train model
             start_train = time.time()
-            model.fit(X_train, y_train)
+            if level == "heavy":
+                model.fit(X_train, y_train, validation_data=(X_val, y_val))
+            else:
+                model.fit(X_train, y_train)
             train_duration_s = time.time() - start_train
             
             # Save model

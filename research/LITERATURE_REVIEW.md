@@ -56,7 +56,7 @@ Searches covered energy-aware TinyML IDS, adaptive model selection under edge co
 - **Citation:** Haonan Peng, Chunming Wu, and Yanfeng Xiao, “FD-IDS: Federated Learning with Knowledge Distillation for Intrusion Detection in Non-IID IoT Environments,” *Sensors*, vol. 25, no. 14, article 4309, 2025. [DOI: 10.3390/s25144309](https://doi.org/10.3390/s25144309)
 - **Method:** uses mutual-information feature selection, a proximal term, and round-wise knowledge distillation, evaluated on Edge-IIoTset and N-BaIoT.
 - **Limitations/relevance:** it addresses federated training heterogeneity rather than the SARA inference/offloading policy. Dataset preprocessing and partition details must be compared before importing reported results.
-- **Overlap/open question:** FL, Non-IID partitions, and distillation are already explored together. This repository's prior DP/Krum/FL claims should not be presented as novel; its new CPU MLP FedAvg path is a reproducible software simulation, not an independent-node system.
+- **Overlap/open question:** FL, Non-IID partitions, and distillation are already explored together. This repository's prior DP/Krum/FL claims should not be presented as novel; its CPU CNN FedAvg path is a reproducible software simulation, not an independent-node system.
 
 ### 8. Trust-aware FL IDS
 
@@ -79,7 +79,7 @@ Searches covered energy-aware TinyML IDS, adaptive model selection under edge co
 | Resource-aware model selection | EdgeAdaptor; Forough et al.; SecuEdge-DRL | Validation-macro-recall floors with estimated energy costs and host stress; no full baselines yet | Does a hard per-class security floor reduce attack false negatives under benign and malicious stress at acceptable measured cost? |
 | Edge/cloud inference offload | Ahmad et al. (CSCN 2025) and collaborative edge inference literature | Authenticated HTTPS peer call with timeout and local fallback; no multi-node evaluation yet | Under measured loss/latency/battery conditions, when is remote inference preferable to local fallback? |
 | Physical cross-layer telemetry | Tekin et al.; resource-aware IIoT testbeds | ESP32 telemetry and host resource API; device not connected or calibrated in this environment | What synchronized signals predict feasibility, and do they add value beyond network and model uncertainty without treating benign load as attack? |
-| Federated IDS | Ferrag et al.; FD-IDS; Asad et al.; Baghalzadeh et al. | Local simulated CPU MLP FedAvg with Dirichlet partitions, validation gate, checkpoints; no separate network clients | How does resource-aware participation affect per-client minority-attack recall, convergence, and measured energy on independent clients? |
+| Federated IDS | Ferrag et al.; FD-IDS; Asad et al.; Baghalzadeh et al. | Local simulated CPU CNN FedAvg with Dirichlet partitions, validation gate, checkpoints; separate network client path exists but independent clients remain unverified | How does resource-aware participation affect per-client minority-attack recall, convergence, and measured energy on independent clients? |
 | Dataset/feature compatibility | Edge-IIoTset paper | Reduced 23-column local CSV; 18 ordered preprocessed features | Can the raw-data provenance be verified and can live extraction reproduce the exact schema without leakage or semantic mismatch? |
 
 ## Novelty assessment and decision

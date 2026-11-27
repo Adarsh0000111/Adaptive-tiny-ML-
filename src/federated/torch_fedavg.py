@@ -1,4 +1,4 @@
-"""Reproducible CPU FedAvg simulation using one shared small MLP architecture.
+"""Reproducible CPU FedAvg simulation using the high-tier 1D CNN architecture.
 
 Raw client arrays remain in process-local partitions. This is a local simulation,
 not a networked or authenticated multi-machine FL deployment.
@@ -18,23 +18,18 @@ from pathlib import Path
 
 import numpy as np
 import torch
+import joblib
 from sklearn.metrics import accuracy_score, f1_score
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 from src.config import load_config
+from src.models.cnn import CNN_ARCHITECTURE_VERSION, PacketCNN
 
 ROOT = Path(__file__).resolve().parents[2]
-FEDERATED_ARCHITECTURE_VERSION = "mlp18-128-64-32-6-v3"
+NETWORKED_FEDERATED_ARCHITECTURE_VERSION = f"networked-{CNN_ARCHITECTURE_VERSION}"
 
-
-class FederatedMLP(nn.Module):
-    def __init__(self, input_size: int = 18, classes: int = 6):
-        super().__init__()
-        self.layers = nn.Sequential(nn.Linear(input_size, 128), nn.ReLU(), nn.Linear(128, 64), nn.ReLU(),
-                                    nn.Linear(64, 32), nn.ReLU(), nn.Linear(32, classes))
-
-    def forward(self, x):
-        return self.layers(x)
+# Networked FedAvg uses the exact same CNN architecture as SARA's high tier.
+FederatedCNN = PacketCNN
 
 
 def _partition_dirichlet(y: np.ndarray, clients: int, alpha: float, seed: int) -> list[np.ndarray]:
@@ -56,11 +51,11 @@ class TorchFedAvgExperiment:
         self.thread: threading.Thread | None = None
         self.status_data = {"running": False, "round": 0, "rounds": 0, "history": [], "version": None, "message": "No federated training has run."}
         self.history_path = ROOT / "results/experiments/federated_sara_history.json"
-        self.model_path = ROOT / "models/federated/sara_mlp_global.pt"
+        self.model_path = ROOT / "models/federated/sara_cnn_global.pt"
 
     def status(self) -> dict:
         with self.lock:
-            return {"available": True, "algorithm": "sample-weighted parameter FedAvg over a shared CPU MLP", "simulated": True, "networked_clients": False, "raw_data_exchange": False, **copy.deepcopy(self.status_data)}
+            return {"available": True, "algorithm": "sample-weighted parameter FedAvg over the high-tier 1D CNN", "simulated": True, "networked_clients": False, "raw_data_exchange": False, **copy.deepcopy(self.status_data)}
 
     def rounds(self) -> list[dict]:
         with self.lock:
@@ -97,7 +92,11 @@ class TorchFedAvgExperiment:
             y_test = data["y_test_multi"].astype(np.int64)
             indices = _partition_dirichlet(y_train, clients, alpha, 42)
             test_indices = _partition_dirichlet(y_test, clients, alpha, 43)
-            model = FederatedMLP(x_train.shape[1], int(np.max(y_train)) + 1)
+            model = FederatedCNN(x_train.shape[1], int(np.max(y_train)) + 1)
+            baseline = joblib.load(ROOT / "models/heavy/model.joblib")
+            if not hasattr(baseline, "model") or not hasattr(baseline.model, "state_dict"):
+                raise ValueError("The active high-tier artifact is not compatible with the federated CNN")
+            model.load_state_dict(baseline.model.state_dict())
             best_acc, best_f1 = self._evaluate(model, x_val, y_val)
             best_state = copy.deepcopy(model.state_dict())
             base_version = int(time.time())
@@ -123,7 +122,7 @@ class TorchFedAvgExperiment:
                 local_times = []
                 local_losses = []
                 for client_id in selected_ids:
-                    local = FederatedMLP(x_train.shape[1], int(np.max(y_train)) + 1)
+                    local = FederatedCNN(x_train.shape[1], int(np.max(y_train)) + 1)
                     local.load_state_dict(model.state_dict())
                     client_x = torch.from_numpy(x_train[indices[client_id]])
                     client_y = torch.from_numpy(y_train[indices[client_id]])
@@ -151,7 +150,7 @@ class TorchFedAvgExperiment:
                 aggregated = {}
                 for key in model.state_dict():
                     aggregated[key] = sum(local_states[i][key] * (sample_counts[i] / total) for i in range(len(local_states)))
-                candidate = FederatedMLP(x_train.shape[1], int(np.max(y_train)) + 1)
+                candidate = FederatedCNN(x_train.shape[1], int(np.max(y_train)) + 1)
                 candidate.load_state_dict(aggregated)
                 accuracy, macro_f1 = self._evaluate(candidate, x_val, y_val)
                 accepted = accuracy + 1e-4 >= best_acc
@@ -172,7 +171,7 @@ class TorchFedAvgExperiment:
                     best_acc, best_f1 = accuracy, macro_f1
                     global_version = base_version + round_id
                     self.model_path.parent.mkdir(parents=True, exist_ok=True)
-                    checkpoint = {"state_dict": best_state, "input_features": int(x_train.shape[1]), "class_count": int(np.max(y_train)) + 1, "version": base_version + round_id, "validation_accuracy": accuracy, "validation_macro_f1": macro_f1}
+                    checkpoint = {"state_dict": best_state, "input_features": int(x_train.shape[1]), "class_count": int(np.max(y_train)) + 1, "architecture_version": NETWORKED_FEDERATED_ARCHITECTURE_VERSION, "version": base_version + round_id, "validation_accuracy": accuracy, "validation_macro_f1": macro_f1}
                     temporary = self.model_path.with_suffix(".tmp")
                     torch.save(checkpoint, temporary)
                     backup = self.model_path.with_suffix(".previous.pt")

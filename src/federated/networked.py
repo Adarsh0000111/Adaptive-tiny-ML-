@@ -21,7 +21,7 @@ import joblib
 from sklearn.metrics import accuracy_score, f1_score, recall_score
 
 from src.data.edge_packet_schema import SCHEMA_VERSION
-from src.federated.torch_fedavg import FEDERATED_ARCHITECTURE_VERSION, FederatedMLP
+from src.federated.torch_fedavg import NETWORKED_FEDERATED_ARCHITECTURE_VERSION, FederatedCNN
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -39,7 +39,7 @@ class NetworkedFedAvgCoordinator:
         self.lock = threading.RLock()
         self.run: dict | None = None
         self.history: list[dict] = []
-        self.model_path = Path(model_path) if model_path else ROOT / "models/federated/sara_mlp_networked.pt"
+        self.model_path = Path(model_path) if model_path else ROOT / "models/federated/sara_cnn_networked.pt"
         self.candidate_path = self.model_path.with_name(f"{self.model_path.stem}_candidate.pt")
         self.history_path = self.model_path.with_name(f"{self.model_path.stem}_history.json")
         self.last_completed = self._load_last_completed()
@@ -120,7 +120,7 @@ class NetworkedFedAvgCoordinator:
             "macro_f1": float(f1_score(labels, predictions, average="macro", zero_division=0)),
         }
 
-    def _evaluate(self, model: FederatedMLP) -> dict[str, float] | None:
+    def _evaluate(self, model: FederatedCNN) -> dict[str, float] | None:
         if self.validation_x is None or self.validation_y is None:
             return None
         model.eval()
@@ -154,29 +154,25 @@ class NetworkedFedAvgCoordinator:
                 raise ValueError("Provide 2-32 unique configured node IDs")
             if not 2 <= min_clients <= len(nodes):
                 raise ValueError("min_clients must be between 2 and the number of nodes")
-            model = FederatedMLP()
-            base_source = "validated_federated_checkpoint" if self.model_path.exists() else "existing_high_tier_mlp"
+            model = FederatedCNN()
+            base_source = "validated_federated_checkpoint" if self.model_path.exists() else "existing_high_tier_cnn"
             checkpoint = self.model_path
             if checkpoint.exists():
                 saved = torch.load(checkpoint, map_location="cpu", weights_only=True)
                 if (saved.get("promotion_approved") is True
                         and saved.get("input_features") == 18 and saved.get("class_count") == 6
                         and saved.get("schema_version") == SCHEMA_VERSION
-                        and saved.get("architecture_version") == FEDERATED_ARCHITECTURE_VERSION):
+                        and saved.get("architecture_version") == NETWORKED_FEDERATED_ARCHITECTURE_VERSION):
                     model.load_state_dict(saved["state_dict"])
                 else:
-                    base_source = "existing_high_tier_mlp"
-            if base_source == "existing_high_tier_mlp":
+                    base_source = "existing_high_tier_cnn"
+            if base_source == "existing_high_tier_cnn":
                 baseline = joblib.load(ROOT / "models/heavy/model.joblib")
-                linear_layers = [layer for layer in model.layers if isinstance(layer, torch.nn.Linear)]
-                if (not hasattr(baseline, "coefs_") or len(baseline.coefs_) != len(linear_layers)
-                        or [weight.shape for weight in baseline.coefs_] != [(18, 128), (128, 64), (64, 32), (32, 6)]
+                if (not hasattr(baseline, "model") or not hasattr(baseline.model, "state_dict")
                         or not np.array_equal(np.asarray(baseline.classes_), np.arange(6))):
-                    raise ValueError("The deployed high-tier model is not compatible with this federated MLP architecture/class mapping")
+                    raise ValueError("The deployed high-tier model is not compatible with this federated CNN architecture/class mapping")
                 with torch.no_grad():
-                    for layer, weights, biases in zip(linear_layers, baseline.coefs_, baseline.intercepts_):
-                        layer.weight.copy_(torch.as_tensor(weights.T, dtype=layer.weight.dtype))
-                        layer.bias.copy_(torch.as_tensor(biases, dtype=layer.bias.dtype))
+                    model.load_state_dict(baseline.model.state_dict())
             state = {key: val.detach().cpu().numpy().tolist() for key, val in model.state_dict().items()}
             self.run = {"status": "running", "round": 1, "rounds": rounds, "local_epochs": local_epochs,
                         "min_clients": min_clients, "timeout_seconds": timeout, "deadline": time.time()+timeout,
@@ -208,7 +204,7 @@ class NetworkedFedAvgCoordinator:
                 return {"status": "waiting", "round": run["round"]}
             node["state"] = "assigned"
             return {"status": "train", "round": run["round"], "local_epochs": run["local_epochs"],
-                    "input_features": 18, "class_count": 6, "architecture_version": FEDERATED_ARCHITECTURE_VERSION,
+                    "input_features": 18, "class_count": 6, "architecture_version": NETWORKED_FEDERATED_ARCHITECTURE_VERSION,
                     "schema_version": SCHEMA_VERSION, "feature_names": self.feature_names,
                     "class_names": self.class_names, "preprocessing_sha256": self.preprocessing_sha256,
                     "class_weights": self.class_weights,
@@ -225,7 +221,7 @@ class NetworkedFedAvgCoordinator:
                 raise ValueError("No active assignment for this node")
             if round_id != run["round"] or node_id in run["updates"]:
                 raise ValueError("Stale round or duplicate client update")
-            expected_model = FederatedMLP()
+            expected_model = FederatedCNN()
             expected = expected_model.state_dict()
             if set(state_dict) != set(expected):
                 raise ValueError("Model parameter names do not match")
@@ -261,13 +257,13 @@ class NetworkedFedAvgCoordinator:
                   "raw_training_data_uploaded": False}
         run["history"].append(record)
         self.history.append(record)
-        model = FederatedMLP()
+        model = FederatedCNN()
         model.load_state_dict({k: torch.tensor(v) for k, v in averaged.items()})
         validation_metrics = self._evaluate(model)
         validation_gate_passed, _ = self._promotion_decision(validation_metrics)
         record.update({"validation_metrics": validation_metrics, "validation_gate_passed": validation_gate_passed,
                        "promotion_approved": False,
-                       "promotion_reason": "Automatic replacement of trained inference models is disabled; the federated MLP remains isolated."})
+                       "promotion_reason": "Automatic replacement of trained inference models is disabled; the federated CNN remains isolated."})
         best = run["best_candidate"]
         if validation_metrics is not None and (best is None or
                 (validation_metrics["macro_recall"], validation_metrics["macro_f1"]) >
@@ -280,14 +276,14 @@ class NetworkedFedAvgCoordinator:
             validation_gate_passed, _ = self._promotion_decision(final_metrics)
             run["promotion_approved"] = False
             run["validation_gate_passed"] = validation_gate_passed
-            run["promotion_reason"] = "Automatic replacement of the Decision Tree, Random Forest, and laptop MLP is disabled. The federated MLP is saved as a separate artifact."
+            run["promotion_reason"] = "Automatic replacement of the Decision Tree, Random Forest, and laptop MLP is disabled. The federated 1D CNN is saved as a separate artifact."
             if best:
-                final_model = FederatedMLP()
+                final_model = FederatedCNN()
                 final_model.load_state_dict({key: torch.as_tensor(value) for key, value in best["state_dict"].items()})
                 checkpoint = {"state_dict": final_model.state_dict(), "input_features": 18, "class_count": 6,
                               "schema_version": SCHEMA_VERSION, "feature_names": self.feature_names,
                               "class_names": self.class_names, "preprocessing_sha256": self.preprocessing_sha256,
-                              "architecture_version": FEDERATED_ARCHITECTURE_VERSION,
+                              "architecture_version": NETWORKED_FEDERATED_ARCHITECTURE_VERSION,
                               "version": run["version"] + run["round"], "federated": True,
                               "promotion_approved": False, "validation_gate_passed": validation_gate_passed,
                               "promotion_reason": run["promotion_reason"],
