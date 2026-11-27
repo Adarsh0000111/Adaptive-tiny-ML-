@@ -53,6 +53,7 @@ def main() -> int:
     parser.add_argument("--node-id", required=True)
     parser.add_argument("--data", required=True, help="Local preprocessed NPZ containing X_train and y_train_multi")
     parser.add_argument("--poll-seconds", type=float, default=3.0)
+    parser.add_argument("--wait-for-run", action="store_true", help="Keep polling while the coordinator is idle; useful to launch clients before SARA approves a run")
     args = parser.parse_args()
     token = os.getenv("SARA_FL_NODE_TOKEN", "")
     if not token:
@@ -91,7 +92,10 @@ def main() -> int:
         response.raise_for_status()
         assignment = response.json()
         if assignment["status"] == "idle":
-            print("No active networked FL run; exiting.")
+            if args.wait_for_run:
+                time.sleep(args.poll_seconds)
+                continue
+            print("No active networked FL run; exiting. Use --wait-for-run to remain connected until a run starts.")
             return 0
         if assignment["status"] in {"complete", "timed_out"}:
             print(f"Networked FL {assignment['status']}.")

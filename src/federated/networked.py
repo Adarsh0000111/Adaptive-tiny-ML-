@@ -35,12 +35,17 @@ def _tokens() -> dict[str, str]:
 
 
 class NetworkedFedAvgCoordinator:
-    def __init__(self):
+    def __init__(self, model_path: Path | None = None):
         self.lock = threading.RLock()
         self.run: dict | None = None
         self.history: list[dict] = []
-        self.model_path = ROOT / "models/federated/sara_mlp_networked.pt"
-        self.candidate_path = ROOT / "models/federated/sara_mlp_networked_candidate.pt"
+        self.model_path = Path(model_path) if model_path else ROOT / "models/federated/sara_mlp_networked.pt"
+        self.candidate_path = self.model_path.with_name(f"{self.model_path.stem}_candidate.pt")
+        self.history_path = self.model_path.with_name(f"{self.model_path.stem}_history.json")
+        self.last_completed = self._load_last_completed()
+        self.node_status: dict[str, dict] = copy.deepcopy(self.last_completed.get("node_status", {})) if self.last_completed else {}
+        if self.last_completed:
+            self.history = copy.deepcopy(self.last_completed.get("all_history", self.last_completed.get("history", [])))
         self.validation_x = None
         self.validation_y = None
         self.feature_names: list[str] = []
@@ -67,6 +72,45 @@ class NetworkedFedAvgCoordinator:
             # Training remains possible when the coordinator has no validation set,
             # but that run cannot be promoted into live SARA inference.
             pass
+
+    def _load_last_completed(self) -> dict | None:
+        try:
+            saved = json.loads(self.history_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        if (not isinstance(saved, dict) or saved.get("status") != "complete"
+                or not isinstance(saved.get("history"), list) or not saved["history"]
+                or not isinstance(saved.get("nodes"), list)):
+            return None
+        return saved
+
+    def _persist_completed_run(self) -> None:
+        run = self.run
+        if not run or run.get("status") != "complete":
+            return
+        summary = {
+            "status": "complete", "round": run["round"], "rounds": run["rounds"],
+            "local_epochs": run["local_epochs"], "min_clients": run["min_clients"],
+            "timeout_seconds": run["timeout_seconds"], "nodes": list(run["nodes"]),
+            "local_demo": run.get("local_demo", False),
+            "base_model_source": run.get("base_model_source"),
+            "history": copy.deepcopy(run["history"]),
+            "all_history": copy.deepcopy(self.history),
+            "node_status": {node: {"connected": False, "last_seen": None, "state": "complete",
+                                    "updates_accepted": self.node_status.get(node, {}).get("updates_accepted", 0)}
+                            for node in run["nodes"]},
+            "updates_received": len(run["updates"]),
+            "promotion_approved": run.get("promotion_approved", False),
+            "promotion_reason": run.get("promotion_reason"),
+            "validation_metrics": (run.get("best_candidate") or {}).get("validation_metrics"),
+            "model_path": str(self.model_path), "candidate_model_path": str(self.candidate_path),
+            "completed_at": run["history"][-1]["timestamp"],
+        }
+        self.history_path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = self.history_path.with_suffix(".tmp")
+        temporary.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        os.replace(temporary, self.history_path)
+        self.last_completed = summary
 
     def _metrics(self, predictions: np.ndarray, labels: np.ndarray) -> dict[str, float]:
         return {
@@ -138,22 +182,30 @@ class NetworkedFedAvgCoordinator:
                         "nodes": nodes, "global_state": state, "updates": {}, "history": [], "version": int(time.time()),
                         "local_demo": local_demo, "base_model_source": base_source, "best_candidate": None,
                         "promotion_approved": False, "promotion_reason": "Training run has not completed validation."}
+            self.node_status = {node: {"connected": False, "last_seen": None, "state": "awaiting_client", "updates_accepted": 0}
+                                for node in nodes}
             return self.status()
 
     def assignment(self, node_id: str, token: str | None) -> dict:
         if not self._node(node_id, token):
             raise PermissionError("Invalid federated node credentials")
         with self.lock:
+            node = self.node_status.setdefault(node_id, {"connected": False, "last_seen": None, "state": "idle", "updates_accepted": 0})
+            node.update({"connected": True, "last_seen": datetime.now(timezone.utc).isoformat()})
             run = self.run
             if not run or node_id not in run["nodes"]:
+                node["state"] = "idle"
                 return {"status": "idle"}
             if run["status"] != "running":
+                node["state"] = run["status"]
                 return {"status": run["status"]}
             self._expire_if_needed()
             if run["status"] != "running":
                 return {"status": run["status"]}
             if node_id in run["updates"]:
+                node["state"] = "update_accepted_waiting_for_peers"
                 return {"status": "waiting", "round": run["round"]}
+            node["state"] = "assigned"
             return {"status": "train", "round": run["round"], "local_epochs": run["local_epochs"],
                     "input_features": 18, "class_count": 6, "architecture_version": FEDERATED_ARCHITECTURE_VERSION,
                     "schema_version": SCHEMA_VERSION, "feature_names": self.feature_names,
@@ -183,6 +235,8 @@ class NetworkedFedAvgCoordinator:
                     raise ValueError(f"Invalid model tensor: {key}")
                 clean[key] = value
             run["updates"][node_id] = {"state": clean, "samples": sample_count, "loss": float(loss)}
+            node = self.node_status.setdefault(node_id, {"updates_accepted": 0})
+            node.update({"state": "update_accepted", "updates_accepted": node.get("updates_accepted", 0) + 1})
             self._aggregate_if_ready()
             return {"accepted": True, "status": run["status"], "round": run.get("round", round_id),
                     "updates_received": len(run.get("updates", {})),
@@ -247,6 +301,9 @@ class NetworkedFedAvgCoordinator:
                     torch.save(checkpoint, active_temporary)
                     os.replace(active_temporary, self.model_path)
             run["status"] = "complete"
+            for node in run["nodes"]:
+                self.node_status.setdefault(node, {}).update({"state": "complete"})
+            self._persist_completed_run()
         else:
             run["round"] += 1
             run["updates"] = {}
@@ -262,11 +319,27 @@ class NetworkedFedAvgCoordinator:
 
     def status(self) -> dict:
         with self.lock:
+            nodes = copy.deepcopy(self.node_status)
+            now = datetime.now(timezone.utc)
+            for item in nodes.values():
+                try:
+                    seen = datetime.fromisoformat(item["last_seen"])
+                    item["connected"] = 0 <= (now - seen).total_seconds() <= 10
+                except (KeyError, TypeError, ValueError):
+                    item["connected"] = False
+                if not item["connected"] and item.get("state") not in {"complete", "timed_out"}:
+                    item["state"] = "disconnected"
             if self.run:
                 self._expire_if_needed()
                 return {k: copy.deepcopy(v) for k, v in self.run.items() if k not in {"global_state", "updates", "deadline", "best_candidate"}} | {
                     "updates_received": len(self.run["updates"]), "model_path": str(self.model_path),
-                    "candidate_model_path": str(self.candidate_path)}
+                    "candidate_model_path": str(self.candidate_path),
+                    "node_status": {node: nodes.get(node, {}) for node in self.run["nodes"]}}
+            if self.last_completed:
+                return copy.deepcopy(self.last_completed) | {
+                    "model_path": str(self.model_path), "candidate_model_path": str(self.candidate_path),
+                    "node_status": nodes or copy.deepcopy(self.last_completed.get("node_status", {})),
+                }
             return {"status": "idle", "history": copy.deepcopy(self.history), "model_path": str(self.model_path),
-                    "candidate_model_path": str(self.candidate_path)}
+                    "candidate_model_path": str(self.candidate_path), "node_status": nodes}
 

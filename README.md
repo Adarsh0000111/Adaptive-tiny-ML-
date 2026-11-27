@@ -48,65 +48,70 @@ Trusted offloading is disabled until peers are configured. Configure `SARA_TRUST
 
 This is a separate backend path from the local FL simulation and the ESP32 USB path. The ESP32 sensor and USB inference flow are unchanged; the board is not an FL training client.
 
-#### Two-client demo on one Windows computer
+#### Two-client run on one Windows computer
 
-This verifies the coordinator/client protocol using two separate client processes and disjoint training shards. It still uses one computer, so it does not prove multi-computer connectivity.
+This uses the actual FastAPI coordinator over `http://127.0.0.1:8765`, with two separate Python processes, separate node identities/tokens, and disjoint local shards. Loopback proves HTTP update exchange on one computer; it does not prove multi-computer connectivity or independently collected site data.
 
-1. From the repository root, create two shards:
+Create two local shards once, from the project root:
 
-   ```powershell
-   python scripts/make_fl_shards.py --outdir .\fl-shards --nodes 2
-   ```
+```powershell
+python scripts/make_fl_shards.py --outdir .\fl-shards --nodes 2
+```
 
-   This reads `data/processed/processed_dataset.npz` and creates `node-1.npz` and `node-2.npz`. Keep the shard files private.
+Keep these shards local. Create an untracked `fl_credentials.json` in the project root with three distinct private values (the file is gitignored):
 
-2. In the PowerShell window that will run the API, set three different long random tokens. You can generate each with `python -c "import secrets; print(secrets.token_hex(32))"`. Keep the values somewhere private, then set them like this, replacing the examples:
+```json
+{"coordinator_token":"<private random token>","nodes":{"node-a":"<different private token>","node-b":"<another private token>"}}
+```
 
-   ```powershell
-   $env:SARA_FL_COORDINATOR_TOKEN = 'YOUR_COORDINATOR_TOKEN'
-   $env:SARA_FL_NODE_TOKENS = '{"node-a":"YOUR_NODE_A_TOKEN","node-b":"YOUR_NODE_B_TOKEN"}'
-   python -m src.api.app
-   ```
+**Coordinator terminal:**
 
-   Leave this API window running. The environment variables must be set in this window before starting the API.
+```powershell
+$c = Get-Content .\fl_credentials.json -Raw | ConvertFrom-Json
+$env:SARA_FL_COORDINATOR_TOKEN = $c.coordinator_token
+$env:SARA_FL_NODE_TOKENS = $c.nodes | ConvertTo-Json -Compress
+$env:ADAPTIVEML_HOST = "127.0.0.1"
+python -m src.api.app
+```
 
-3. Open the website and run **Start authorized live IDS window** with the ESP32 connected. This gives SARA fresh live IDS risk and confidence data. Then open `http://127.0.0.1:8765/docs` and, within 30 seconds:
+Leave this terminal running. Start the dashboard in a separate terminal with `cd frontend; npm run dev`, then open its shown local URL.
 
-   - Call `POST /api/network/capture` with `authorized: true`, `max_packets: 50`, `timeout_seconds: 5`, and the network interface name. The interface must work with Scapy and allow the API to determine link capacity. On Windows, packet capture may require Npcap and running the API with the required capture privileges.
-   - Call `POST /api/network/probe` with your own router's IP address (the **Default Gateway** shown by `ipconfig`) and `packets: 5`. Only probe a destination you are authorized to probe.
+**Node A terminal:**
 
-   SARA needs fresh link utilization as well as RTT/loss measurements. If the capture cannot measure link capacity, or the evidence is stale, SARA will defer the run with HTTP 409 and explain why in the response.
+```powershell
+$c = Get-Content .\fl_credentials.json -Raw | ConvertFrom-Json
+$env:SARA_FL_NODE_TOKEN = $c.nodes.'node-a'
+python -m src.federated.client --coordinator http://127.0.0.1:8765 --node-id node-a --data .\fl-shards\node-1.npz --wait-for-run
+```
 
-4. Start a two-round run from another PowerShell window. Replace the token with the coordinator token from step 2:
+**Node B terminal:**
 
-   ```powershell
-   $body = @{
-     node_ids = @("node-a", "node-b")
-     rounds = 2
-     local_epochs = 1
-     min_clients = 2
-     timeout_seconds = 300
-   } | ConvertTo-Json
+```powershell
+$c = Get-Content .\fl_credentials.json -Raw | ConvertFrom-Json
+$env:SARA_FL_NODE_TOKEN = $c.nodes.'node-b'
+python -m src.federated.client --coordinator http://127.0.0.1:8765 --node-id node-b --data .\fl-shards\node-2.npz --wait-for-run
+```
 
-   Invoke-RestMethod -Method Post `
-     -Uri "http://127.0.0.1:8765/api/federated/networked/start" `
-     -Headers @{ Authorization = "Bearer YOUR_COORDINATOR_TOKEN" } `
-     -ContentType "application/json" -Body $body
-   ```
+These are independent long-running processes. They poll the coordinator and appear in the dashboard/API status as separate nodes. Check **GET `http://127.0.0.1:8765/api/federated/networked/status`** or the Networked federated learning panel; `node_status` reports each node's connection and accepted update count. A heartbeat is considered connected for 10 seconds.
 
-5. In two separate PowerShell windows, run one client per window. Set each window's node token to the matching value from step 2:
+To verify the clients are separate OS processes, run this from PowerShell while they are waiting/running; it should show two Python command lines with different `--node-id` and `--data` arguments:
 
-   ```powershell
-   $env:SARA_FL_NODE_TOKEN = 'YOUR_NODE_A_TOKEN'
-   python -m src.federated.client --coordinator http://127.0.0.1:8765 --node-id node-a --data .\fl-shards\node-1.npz
-   ```
+```powershell
+Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" | Where-Object { $_.CommandLine -like '*src.federated.client*' } | Select-Object ProcessId, CommandLine
+```
 
-   ```powershell
-   $env:SARA_FL_NODE_TOKEN = 'YOUR_NODE_B_TOKEN'
-   python -m src.federated.client --coordinator http://127.0.0.1:8765 --node-id node-b --data .\fl-shards\node-2.npz
-   ```
+Before asking SARA to schedule training, use the dashboard's authorized live IDS action with the ESP32 connected to refresh sensor/security context, then collect measured link evidence from `/docs`: authorized passive capture on the actual adapter (Npcap/capture privileges may be required) and an ICMP probe to a destination you are authorized to probe, such as your own default gateway. These are measurements, not values to enter manually. The probe must be paired with fresh capture/link-utilization data. If SARA defers, the authenticated start endpoint returns HTTP 409 with the exact readiness reason; refresh the missing/expired evidence and retry. Do not start training until the decision says `schedule: true`.
 
-6. Watch the **Networked federated learning** panel on the website or query `GET /api/federated/networked/status`. A successful run reaches `complete` and records validation metrics for every round. The best candidate is saved as `models/federated/sara_mlp_networked_candidate.pt`. It replaces the laptop high tier only when held-out macro recall reaches at least 0.90, while accuracy and macro-F1 are each no more than 0.02 below the existing high model. Otherwise the current high model stays active. The ESP32 low tier is never replaced by this MLP.
+**Start only after approval:**
+
+```powershell
+$c = Get-Content .\fl_credentials.json -Raw | ConvertFrom-Json
+$body = @{ node_ids = @("node-a", "node-b"); rounds = 2; local_epochs = 1; min_clients = 2; timeout_seconds = 300 } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8765/api/federated/networked/start" `
+  -Headers @{ Authorization = "Bearer $($c.coordinator_token)" } -ContentType "application/json" -Body $body
+```
+
+The waiting clients receive assignments and train against their own shard. Confirm actual exchange by checking for `status: complete`, `updates_received`, both nodes in each round's `participating_nodes`, nonzero per-node `samples_per_node`, and each node's `updates_accepted` in coordinator status. These round records come from accepted HTTP update submissions and coordinator aggregation; check `GET http://127.0.0.1:8765/api/federated/networked/status` or the dashboard after the run. The coordinator persists a summary in the ignored `models/federated/sara_mlp_networked_history.json`; the API status endpoint returns the last completed run after restart. A run that merely has two processes connected is not a successful training run. The candidate is only promoted to the high tier if its held-out validation gate passes; the ESP32 low tier remains separate.
 
 #### One-computer network demo
 

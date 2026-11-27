@@ -7,6 +7,7 @@ import math
 import os
 import re
 import subprocess
+import sys
 import threading
 import time
 from collections import Counter, deque
@@ -614,7 +615,8 @@ def probe_network(request: NetworkProbeRequest):
         target = str(ipaddress.ip_address(request.target_ip))
     except ValueError as exc:
         raise HTTPException(422, "Use a literal IPv4 or IPv6 address; hostnames are not accepted") from exc
-    command = ["ping", "-n", "-c", str(request.packets), "-W", "2", target]
+    command = (["ping", "-n", str(request.packets), "-w", "2000", target]
+               if sys.platform == "win32" else ["ping", "-n", "-c", str(request.packets), "-W", "2", target])
     started = time.perf_counter()
     try:
         completed = subprocess.run(command, capture_output=True, text=True, timeout=request.packets * 2 + 3, check=False, env={**os.environ, "LC_ALL": "C"})
@@ -625,7 +627,9 @@ def probe_network(request: NetworkProbeRequest):
     elapsed_ms = (time.perf_counter() - started) * 1000.0
     output = completed.stdout + "\n" + completed.stderr
     times = [float(value) for value in re.findall(r"time[=<]([0-9.]+)\s*ms", output)]
-    loss_match = re.search(r"([0-9.]+)%\s*packet loss", output)
+    loss_match = re.search(r"([0-9.]+)%\s*packet loss", output, re.IGNORECASE)
+    if not loss_match and sys.platform == "win32":
+        loss_match = re.search(r"\((\d+(?:\.\d+)?)%\s*loss\)", output, re.IGNORECASE)
     loss_pct = float(loss_match.group(1)) if loss_match else None
     deltas = [abs(times[index] - times[index - 1]) for index in range(1, len(times))]
     result = {
