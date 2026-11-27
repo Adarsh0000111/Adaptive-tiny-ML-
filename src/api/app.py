@@ -790,12 +790,6 @@ def networked_federated_update(node_id: str, request: NetworkedFederatedUpdate, 
         if result.get("status") == "complete":
             service = app.state.inference
             service._load_federated_artifact_status()
-            if result.get("promotion_approved") and service.federated_model_status.get("status") == "active":
-                high_profile = service.profiles["heavy"]
-                app.state.sara.profiles["heavy"].update({
-                    "macro_recall": high_profile["metrics"]["macro_recall"],
-                    "estimated_energy_uj": high_profile["energy"]["value_uj"] or 1e9,
-                })
         return result
     except PermissionError as exc:
         raise HTTPException(401, str(exc)) from exc

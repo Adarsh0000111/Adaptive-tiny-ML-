@@ -1,0 +1,101 @@
+{
+  "experiment": "networked_fedavg_cnn_local_demo",
+  "timestamp_utc": "2026-11-27T07:17:23.500014+00:00",
+  "setup": {
+    "coordinator": "same Linux computer, HTTP loopback",
+    "client_processes": 2,
+    "clients": [
+      "node-a",
+      "node-b"
+    ],
+    "rounds": 2,
+    "local_epochs": 1,
+    "all_clients_participated_every_round": true,
+    "local_demo": true,
+    "base_model_source": "existing_high_tier_cnn"
+  },
+  "data": {
+    "source": "project processed training split",
+    "distribution": "two non-IID Dirichlet shards, alpha=0.5, seed=42",
+    "samples_per_client": {
+      "node-a": 13462,
+      "node-b": 12117
+    },
+    "raw_training_rows_uploaded": false,
+    "independent_real_network_data": false
+  },
+  "candidate": {
+    "architecture": "networked-packet-feature-cnn1d-18-32-64-dense-128-64-6-v2",
+    "checkpoint": "models/federated/sara_cnn_networked_candidate.pt",
+    "rounds": [
+      {
+        "round": 1,
+        "timestamp": "2026-11-27T07:17:22.091820+00:00",
+        "participating_nodes": [
+          "node-b",
+          "node-a"
+        ],
+        "postponed_nodes": [],
+        "samples_per_node": {
+          "node-b": 12117,
+          "node-a": 13462
+        },
+        "mean_local_loss": 0.26409745245085925,
+        "raw_training_data_uploaded": false,
+        "validation_metrics": {
+          "accuracy": 0.8823207443897099,
+          "macro_recall": 0.8292995631778269,
+          "macro_f1": 0.8478943474327298
+        },
+        "promotion_approved": false,
+        "promotion_reason": "Not promoted: validation must reach macro recall 0.900, accuracy 0.884, and macro-F1 0.866."
+      },
+      {
+        "round": 2,
+        "timestamp": "2026-11-27T07:17:23.500014+00:00",
+        "participating_nodes": [
+          "node-a",
+          "node-b"
+        ],
+        "postponed_nodes": [],
+        "samples_per_node": {
+          "node-a": 13462,
+          "node-b": 12117
+        },
+        "mean_local_loss": 0.2579347705882513,
+        "raw_training_data_uploaded": false,
+        "validation_metrics": {
+          "accuracy": 0.8806787082649151,
+          "macro_recall": 0.8107721545058397,
+          "macro_f1": 0.8358567279317853
+        },
+        "promotion_approved": false,
+        "promotion_reason": "Not promoted: validation must reach macro recall 0.900, accuracy 0.884, and macro-F1 0.866."
+      }
+    ],
+    "best_validation": {
+      "accuracy": 0.8823207443897099,
+      "macro_recall": 0.8292995631778269,
+      "macro_f1": 0.8478943474327298
+    },
+    "test_evaluated": false,
+    "promoted_to_sara_high_tier": false,
+    "promotion_reason": "Not promoted: validation must reach macro recall 0.900, accuracy 0.884, and macro-F1 0.866.",
+    "promotion_gate": {
+      "min_macro_recall": 0.9,
+      "min_accuracy": 0.8836672140120416,
+      "min_macro_f1": 0.8657347912339474,
+      "baseline_heavy_validation": {
+        "accuracy": 0.9036672140120416,
+        "macro_recall": 0.8783209461188898,
+        "macro_f1": 0.8857347912339474
+      }
+    }
+  },
+  "aggregation": {
+    "algorithm": "sample-weighted FedAvg over model parameters",
+    "accepted_updates_total": 4,
+    "raw_training_rows_uploaded": false
+  },
+  "interpretation": "Two independent client processes completed two rounds of authenticated HTTP FedAvg on loopback. Each sent CNN parameter updates, sample count, and scalar local loss; raw feature rows remained local. The best validation candidate failed the configured gate and was saved separately. This demonstrates the software/network exchange between local processes, not two-computer communication, independent-site data, or generalization to a separate test split."
+}

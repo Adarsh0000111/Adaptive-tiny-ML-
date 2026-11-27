@@ -128,6 +128,7 @@ def build():
     cnn = json.loads((ROOT / "results/experiments/high_cnn_evaluation.json").read_text())
     validation = json.loads((ROOT / "results/experiments/artifact_validation.json").read_text())
     old_fl = json.loads((ROOT / "results/experiments/networked_federated_local_demo.json").read_text())
+    cnn_fl = json.loads((ROOT / "results/experiments/networked_federated_cnn_local_demo.json").read_text())
     dataset = np.load(ROOT / "data/processed/processed_dataset.npz", allow_pickle=False)
     names = [str(x) for x in dataset["feature_names"].tolist()]
     classes = [str(x) for x in dataset["class_names"].tolist()]
@@ -146,7 +147,7 @@ def build():
               P("Project, models, data and<br/>federated learning", "CoverTitle"),
               P("A plain-language technical brief for the current implementation | 27 November 2026", "CoverSub"),
               Spacer(1, 5 * mm),
-              callout("Current state: the high laptop tier is now a trained 1D CNN. The low ESP32 tree and medium Random Forest remain. Networked and local FedAvg code now use the same CNN architecture, but the completed 60-round two-client report in this repository is from the older MLP experiment; a CNN FedAvg run has not yet been completed."),
+              callout("Current state: the high laptop tier is a trained 1D CNN; the low ESP32 tree and medium Random Forest remain. A two-client CNN FedAvg run has completed for two rounds using separate local processes over HTTP loopback. Its candidate did not pass the validation gate and remains separate from the deployed tiers. This is not a two-computer or independent-site experiment."),
               Spacer(1, 7 * mm), P("What the project does", "H2x"),
               P("The IDS classifies packet-level network traffic into six broad labels. SARA (Security-Aware Resource Adaptation) chooses an execution tier using threat/model evidence and available resources. Low-tier inference runs on the ESP32-S3 over USB; medium and high inference run on the laptop. The sensors provide physical or electrical context to SARA and are not treated as cyberattack evidence.")]
     kpis = [
@@ -253,7 +254,7 @@ def build():
     story += [P("04  |  FedAvg: data segregation and aggregation", "H1x"),
               P("In the authenticated network path, each computer holds its own labeled client dataset and trains a local copy of the shared CNN. The coordinator starts from the current centrally trained high-tier CNN and returns model weights for each round. Client examples and labels stay on the client.")]
     story += [P("How the demo shards were made", "H2x"),
-              P("The previous two-client run partitioned the project's 25,579-row training split by class using a Dirichlet distribution. For each class c, draw client proportions p_c ~ Dirichlet(alpha * 1_K), with alpha = 0.5 and K = 2; shuffle that class's row indices, split them using p_c, then combine each client's class portions. Smaller alpha generally creates more unequal class shares. A fixed seed made the run reproducible.")]
+              P("The two-client demo partitions the project's 25,579-row training split by class using a Dirichlet distribution. For each class c, draw client proportions p_c ~ Dirichlet(alpha * 1_K), with alpha = 0.5 and K = 2; shuffle that class's row indices, split them using p_c, then combine each client's class portions. Smaller alpha generally creates more unequal class shares. A fixed seed made the run reproducible.")]
     story += [P("Recorded shared-data shard sizes: node-a = 13,462 rows; node-b = 12,117 rows. They are disjoint shards of the same training dataset, not independently collected site data.", "Callout"),
               Spacer(1, 3 * mm), P("One FedAvg round", "H2x"),
               table([
@@ -271,19 +272,23 @@ def build():
 
     # Page 6: evidence, what has/hasn't happened, runbook
     story += [P("05  |  Evidence and what remains", "H1x"),
-              P("Separate completed training evidence from code capability. The central high CNN is trained and active. Both FedAvg implementations have been changed to the same CNN architecture. The older saved networked FL experiment was completed with the previous MLP architecture and cannot be presented as CNN FedAvg evidence.")]
+              P("Separate completed training evidence from code capability. The central high CNN is trained and active. Both FedAvg implementations use the same CNN architecture. The recorded CNN FedAvg result below is a two-process loopback run; it does not establish communication between separate computers or independent-site performance.")]
     old_candidate = old_fl["candidate"]["validation"]
+    cnn_fl = json.loads((ROOT / "results/experiments/networked_federated_cnn_local_demo.json").read_text())
+    best_cnn_fl = cnn_fl["candidate"]["best_validation"]
+    round_rows = cnn_fl["candidate"]["rounds"]
     story += [table([
         ["Evidence item", "Status and exact scope"],
         ["High-tier 1D CNN", f"Trained centrally and active. Test: {metric_pct(cnn_test, 'accuracy')} accuracy, {metric_pct(cnn_test, 'macro_recall')} macro recall, {metric_pct(cnn_test, 'macro_f1')} macro-F1."],
-        ["CNN + FedAvg compatibility", "Code now shares the PacketCNN architecture and starts local/network clients from high-tier CNN weights. Client and coordinator schema checks require 18 features, six labels, and matching preprocessing hash."],
-        ["Recorded network FL run", f"Historical MLP run: 2 processes on one Linux host, 60 rounds, 1 local epoch, both clients participated. Candidate validation recall was {old_candidate['macro_recall']*100:.2f}%; it was not promoted. It used shared dataset shards."],
-        ["CNN FedAvg training result", "Not yet run. The historical MLP report is not a CNN FL result. A new run with two clients and the CNN architecture is needed."],
-        ["Independent-site data", "Not yet demonstrated. Each real client needs its own locally labeled packet data. Two shards of one dataset only test the software flow."],
+        ["CNN + FedAvg", "Two authenticated client processes completed 2 HTTP loopback rounds, one local epoch per round; both clients participated in both rounds (4 accepted updates)."],
+        ["Best FedAvg candidate", f"Validation: {metric_pct(best_cnn_fl, 'accuracy')} accuracy, {metric_pct(best_cnn_fl, 'macro_recall')} macro recall, {metric_pct(best_cnn_fl, 'macro_f1')} macro-F1. It failed the gate (required 90% macro recall) and was saved separately; the deployed high CNN was not replaced."],
+        ["Round validation", f"Round 1: {metric_pct(round_rows[0]['validation_metrics'], 'accuracy')} accuracy / {metric_pct(round_rows[0]['validation_metrics'], 'macro_recall')} macro recall / {metric_pct(round_rows[0]['validation_metrics'], 'macro_f1')} macro-F1. Round 2: {metric_pct(round_rows[1]['validation_metrics'], 'accuracy')} / {metric_pct(round_rows[1]['validation_metrics'], 'macro_recall')} / {metric_pct(round_rows[1]['validation_metrics'], 'macro_f1')}. Test set was not evaluated for this run."],
+        ["Older MLP run", f"Historical 60-round demo used MLP, not CNN; its candidate validation recall was {old_candidate['macro_recall']*100:.2f}%, and it was not promoted."],
+        ["Independent-site / multi-PC data", "Not demonstrated. Both local demo shards came from one training split on one host. Real clients need separate locally labeled packet data and a run across separate computers."],
         ["Generalization", "The dataset split is random at packet level and has no session/capture IDs. Independent labeled captures are needed to validate real network performance."],
     ], [43 * mm, 129 * mm], font="CellSmall"), Spacer(1, 4 * mm),
-              P("Run real networked CNN FedAvg", "H2x"),
-              P("On each client computer, prepare its own labeled CSV locally with the project's 18-feature pipeline. Keep the resulting NPZ private to that client. Set matching node IDs/tokens on the coordinator and each client. The coordinator must be reachable over HTTPS from remote computers; then launch one client process per node using the same repository revision and preprocessing artifact. Use the coordinator status endpoint to verify each round's participants and accepted updates.")]
+              P("Next: run across separate computers", "H2x"),
+              P("Prepare independently collected, locally labeled packet data on each client using the project's exact 18-feature pipeline. Configure authenticated node IDs/tokens. Put the coordinator behind HTTPS reachable by both clients, then run one client process on each separate computer. Verify every round's participants and accepted updates through the coordinator status endpoint.")]
     story += [table([
         ["Coordinator", "python -m src.api.app (configure SARA_FL_NODE_TOKENS and coordinator auth first)"],
         ["Client data", "python scripts/prepare_fl_client_data.py --csv client-labeled.csv --out node-a.npz"],
@@ -293,7 +298,7 @@ def build():
               Spacer(1, 4 * mm),
               P("Source dataset attribution", "H2x"),
               P("Mohamed Amine Ferrag et al., Edge-IIoTset, DOI 10.1109/ACCESS.2022.3165809. The project's provenance records the dataset license as CC BY-NC-SA 4.0; follow its attribution, share-alike, and non-commercial terms."),
-              P("Implementation sources: README.md; src/data/edge_packet_schema.py; src/preprocessing/pipeline.py; src/models/cnn.py; scripts/train_high_cnn.py; src/federated/client.py; src/federated/networked.py; results/experiments/high_cnn_evaluation.json; results/experiments/networked_federated_local_demo.json.", "Tinyx")]
+              P("Implementation sources: README.md; src/data/edge_packet_schema.py; src/preprocessing/pipeline.py; src/models/cnn.py; scripts/train_high_cnn.py; src/federated/client.py; src/federated/networked.py; results/experiments/high_cnn_evaluation.json; results/experiments/networked_federated_local_demo.json; results/experiments/networked_federated_cnn_local_demo.json.", "Tinyx")]
 
     doc.build(story)
     print(output.resolve())
