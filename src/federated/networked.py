@@ -101,6 +101,7 @@ class NetworkedFedAvgCoordinator:
                             for node in run["nodes"]},
             "updates_received": len(run["updates"]),
             "promotion_approved": run.get("promotion_approved", False),
+            "validation_gate_passed": run.get("validation_gate_passed", False),
             "promotion_reason": run.get("promotion_reason"),
             "validation_metrics": (run.get("best_candidate") or {}).get("validation_metrics"),
             "model_path": str(self.model_path), "candidate_model_path": str(self.candidate_path),
@@ -263,9 +264,10 @@ class NetworkedFedAvgCoordinator:
         model = FederatedMLP()
         model.load_state_dict({k: torch.tensor(v) for k, v in averaged.items()})
         validation_metrics = self._evaluate(model)
-        promotion_approved, promotion_reason = self._promotion_decision(validation_metrics)
-        record.update({"validation_metrics": validation_metrics, "promotion_approved": promotion_approved,
-                       "promotion_reason": promotion_reason})
+        validation_gate_passed, _ = self._promotion_decision(validation_metrics)
+        record.update({"validation_metrics": validation_metrics, "validation_gate_passed": validation_gate_passed,
+                       "promotion_approved": False,
+                       "promotion_reason": "Automatic replacement of trained inference models is disabled; the federated MLP remains isolated."})
         best = run["best_candidate"]
         if validation_metrics is not None and (best is None or
                 (validation_metrics["macro_recall"], validation_metrics["macro_f1"]) >
@@ -275,9 +277,10 @@ class NetworkedFedAvgCoordinator:
         if run["round"] >= run["rounds"]:
             best = run["best_candidate"]
             final_metrics = best["validation_metrics"] if best else None
-            approved, reason = self._promotion_decision(final_metrics)
-            run["promotion_approved"] = approved
-            run["promotion_reason"] = reason
+            validation_gate_passed, _ = self._promotion_decision(final_metrics)
+            run["promotion_approved"] = False
+            run["validation_gate_passed"] = validation_gate_passed
+            run["promotion_reason"] = "Automatic replacement of the Decision Tree, Random Forest, and laptop MLP is disabled. The federated MLP is saved as a separate artifact."
             if best:
                 final_model = FederatedMLP()
                 final_model.load_state_dict({key: torch.as_tensor(value) for key, value in best["state_dict"].items()})
@@ -286,7 +289,8 @@ class NetworkedFedAvgCoordinator:
                               "class_names": self.class_names, "preprocessing_sha256": self.preprocessing_sha256,
                               "architecture_version": FEDERATED_ARCHITECTURE_VERSION,
                               "version": run["version"] + run["round"], "federated": True,
-                              "promotion_approved": approved, "promotion_reason": reason,
+                              "promotion_approved": False, "validation_gate_passed": validation_gate_passed,
+                              "promotion_reason": run["promotion_reason"],
                               "validation_metrics": final_metrics, "validation_gate": {
                                   "min_macro_recall": max(0.90, self.baseline_heavy_validation.get("macro_recall", 0.90)),
                                   "min_accuracy": self.baseline_heavy_validation.get("accuracy", 1.0) - 0.02,
@@ -296,10 +300,6 @@ class NetworkedFedAvgCoordinator:
                 candidate_temporary = self.candidate_path.with_suffix(".tmp")
                 torch.save(checkpoint, candidate_temporary)
                 os.replace(candidate_temporary, self.candidate_path)
-                if approved:
-                    active_temporary = self.model_path.with_suffix(".tmp")
-                    torch.save(checkpoint, active_temporary)
-                    os.replace(active_temporary, self.model_path)
             run["status"] = "complete"
             for node in run["nodes"]:
                 self.node_status.setdefault(node, {}).update({"state": "complete"})

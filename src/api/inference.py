@@ -10,10 +10,8 @@ from typing import Any
 import joblib
 import numpy as np
 import pandas as pd
-import torch
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from src.data.edge_packet_schema import NUMERIC_FEATURES, PROTOCOL_CATEGORIES, PROTOCOL_FEATURE, SCHEMA_VERSION
-from src.federated.torch_fedavg import FEDERATED_ARCHITECTURE_VERSION, FederatedMLP
 
 ROOT = Path(__file__).resolve().parents[2]
 TIERS = {
@@ -21,21 +19,6 @@ TIERS = {
     "medium": ROOT / "models/medium/model.joblib",
     "heavy": ROOT / "models/heavy/model.joblib",
 }
-
-
-class FederatedMLPAdapter:
-    """Expose the validated torch MLP through the inference service's sklearn-like API."""
-    def __init__(self, model):
-        self.model = model.eval()
-        self.n_features_in_ = 18
-
-    def predict_proba(self, values):
-        with torch.no_grad():
-            logits = self.model(torch.as_tensor(np.asarray(values, dtype=np.float32)))
-            return torch.softmax(logits, dim=1).cpu().numpy()
-
-    def predict(self, values):
-        return self.predict_proba(values).argmax(axis=1)
 
 
 class InferenceService:
@@ -64,7 +47,7 @@ class InferenceService:
         self.profiles: dict[str, dict[str, Any]] = {}
         self.federated_model_status: dict[str, Any] = {"status": "missing", "message": "No federated checkpoint exists."}
         self._load_and_profile()
-        self._load_validated_federated_candidate()
+        self._load_federated_artifact_status()
 
     def _load_and_profile(self) -> None:
         for tier, path in TIERS.items():
@@ -116,75 +99,19 @@ class InferenceService:
                 "evaluation": {"split": "validation", "samples": int(len(self.y_val)), "source": "saved processed_dataset.npz"},
             }
 
-    def _load_validated_federated_candidate(self) -> None:
-        path = ROOT / "models/federated/sara_mlp_networked.pt"
-        candidate_path = ROOT / "models/federated/sara_mlp_networked_candidate.pt"
-        if not path.exists() and not candidate_path.exists():
+    def _load_federated_artifact_status(self) -> None:
+        """Report separate FL artifacts without ever replacing a trained inference tier."""
+        paths = [ROOT / "models/federated/sara_mlp_networked_candidate.pt",
+                 ROOT / "models/federated/sara_mlp_networked.pt"]
+        artifact = next((path for path in paths if path.exists()), None)
+        if artifact is None:
+            self.federated_model_status = {"status": "missing", "message": "No federated artifact exists; the three trained inference models remain active."}
             return
-        try:
-            checkpoint = torch.load(path, map_location="cpu", weights_only=True) if path.exists() else None
-            if checkpoint is None or checkpoint.get("promotion_approved") is not True:
-                if candidate_path.exists():
-                    latest_candidate = torch.load(candidate_path, map_location="cpu", weights_only=True)
-                    self.federated_model_status = {"status": "not_promoted", "message": latest_candidate.get("promotion_reason", "Candidate did not pass validation."),
-                                                   "validation_metrics": latest_candidate.get("validation_metrics")}
-                elif checkpoint is not None:
-                    self.federated_model_status = {"status": "not_promoted", "message": checkpoint.get("promotion_reason", "Candidate did not pass validation."),
-                                                   "validation_metrics": checkpoint.get("validation_metrics")}
-                return
-            if (checkpoint.get("schema_version") != self.schema_version
-                    or checkpoint.get("feature_names") != self.feature_names
-                    or checkpoint.get("class_names") != self.class_names
-                    or checkpoint.get("preprocessing_sha256") != self.preprocessing_sha256
-                    or checkpoint.get("architecture_version") != FEDERATED_ARCHITECTURE_VERSION):
-                self.federated_model_status = {"status": "rejected", "message": "Federated checkpoint schema or architecture does not match this API."}
-                return
-            model = FederatedMLP(input_size=len(self.feature_names), classes=len(self.class_names))
-            model.load_state_dict(checkpoint["state_dict"])
-            adapter = FederatedMLPAdapter(model)
-            validation_pred = adapter.predict(self.X_val)
-            val_metrics = {
-                "accuracy": float(accuracy_score(self.y_val, validation_pred)),
-                "macro_precision": float(precision_score(self.y_val, validation_pred, average="macro", zero_division=0)),
-                "macro_recall": float(recall_score(self.y_val, validation_pred, average="macro", zero_division=0)),
-                "macro_f1": float(f1_score(self.y_val, validation_pred, average="macro", zero_division=0)),
-            }
-            gate = checkpoint.get("validation_gate", {})
-            if (val_metrics["macro_recall"] < float(gate.get("min_macro_recall", 0.90))
-                    or val_metrics["accuracy"] < float(gate.get("min_accuracy", 1.0))
-                    or val_metrics["macro_f1"] < float(gate.get("min_macro_f1", 1.0))):
-                self.federated_model_status = {"status": "rejected", "message": "Recomputed validation metrics failed the promotion gate.", "validation_metrics": val_metrics}
-                return
-            # The test split is measured after validation-based promotion; it is not used for selection.
-            test_pred = adapter.predict(self.X_test)
-            test_metrics = {
-                "accuracy": float(accuracy_score(self.y_test, test_pred)),
-                "macro_precision": float(precision_score(self.y_test, test_pred, average="macro", zero_division=0)),
-                "macro_recall": float(recall_score(self.y_test, test_pred, average="macro", zero_division=0)),
-                "macro_f1": float(f1_score(self.y_test, test_pred, average="macro", zero_division=0)),
-            }
-            per_class = recall_score(self.y_val, validation_pred, labels=np.arange(len(self.class_names)), average=None, zero_division=0)
-            timings = []
-            for row in self.X_val[:min(300, len(self.X_val))]:
-                start = time.perf_counter_ns()
-                adapter.predict(row.reshape(1, -1))
-                timings.append((time.perf_counter_ns() - start) / 1_000_000)
-            self.models["heavy"] = adapter
-            self.profiles["heavy"] = {
-                **self.profiles["heavy"], "name": "FederatedMLP", "artifact": str(path.relative_to(ROOT)),
-                "artifact_size_bytes": path.stat().st_size, "metrics": val_metrics, "test_metrics": test_metrics,
-                "per_class_recall": {self.class_names[i]: float(per_class[i]) for i in range(len(self.class_names))},
-                "latency_ms": {"mean": float(np.mean(timings)), "median": float(np.median(timings)),
-                               "p95": float(np.percentile(timings, 95)), "source": "measured on API host after validation-gated FL promotion"},
-                "energy": {"value_uj": None, "source": "not measured for the federated MLP"},
-                "federated_promotion": {"status": "active", "checkpoint_version": checkpoint.get("version"),
-                                        "validation_gate": gate, "test_split_used_for_selection": False},
-            }
-            self.federated_model_status = {"status": "active", "message": "Validated federated model is serving as the SARA high laptop tier.",
-                                           "validation_metrics": val_metrics, "test_metrics": test_metrics,
-                                           "checkpoint_version": checkpoint.get("version")}
-        except (OSError, KeyError, TypeError, ValueError, RuntimeError) as exc:
-            self.federated_model_status = {"status": "rejected", "message": f"Could not load federated candidate: {type(exc).__name__}: {exc}"}
+        self.federated_model_status = {
+            "status": "isolated",
+            "message": "Federated MLP is stored separately and is never loaded into or used to replace the Decision Tree, Random Forest, or laptop MLP.",
+            "artifact": str(artifact.relative_to(ROOT)),
+        }
 
     def validate_vector(self, values: list[float], names: list[str]) -> np.ndarray:
         if names != self.feature_names:
