@@ -89,9 +89,9 @@ export default function useBackendApi() {
     }
   };
 
-  const runUsbLiveCapture = ({ interfaceName = "", authorized = false } = {}) => requestRun(
+  const runUsbLiveCapture = ({ interfaceName = "", authorized = false, includeEndpointAddresses = false } = {}) => requestRun(
     "/api/device/usb/live-capture",
-    { authorized, interface: interfaceName.trim() || null, max_packets: 100, timeout_seconds: 5 },
+    { authorized, include_endpoint_addresses: includeEndpointAddresses, interface: interfaceName.trim() || null, max_packets: 100, timeout_seconds: 5 },
     "Live IDS capture failed",
   );
 

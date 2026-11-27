@@ -1,8 +1,8 @@
 """Shared packet feature mapping for Edge-IIoTset training and live capture.
 
 The selected Edge-IIoTset ML CSV is packet-level. These fields are extracted
-from each observed packet; no flow labels, endpoints, or payload contents are
-retained by the live capture path.
+from each observed packet; payloads are never retained. Endpoint metadata is
+excluded by default and available only through the explicit live-report opt-in.
 """
 
 from __future__ import annotations
@@ -117,8 +117,8 @@ def prepare_official_rows(frame: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, 
     return rows, metadata
 
 
-def packet_features_from_scapy(packet, scapy, protocol_state: dict) -> dict[str, Any] | None:
-    """Extract one packet using the same fields used for training."""
+def packet_features_from_scapy(packet, scapy, protocol_state: dict, *, include_endpoint_metadata: bool = False) -> dict[str, Any] | None:
+    """Extract model fields and optionally endpoint metadata for the live report."""
     if packet is None or (not packet.haslayer(scapy.TCP) and not packet.haslayer(scapy.UDP)):
         return None
 
@@ -174,7 +174,7 @@ def packet_features_from_scapy(packet, scapy, protocol_state: dict) -> dict[str,
 
     is_http = http_response or source_port in (80, 8080) or destination_port in (80, 8080)
     protocol = "mqtt" if is_mqtt else "http" if is_http else "tcp" if tcp is not None else "udp"
-    return {
+    row = {
         "observed_at_epoch_s": packet_time,
         "packet_bytes": int(len(packet)),
         "tcp.connection.fin": int(fin),
@@ -192,3 +192,12 @@ def packet_features_from_scapy(packet, scapy, protocol_state: dict) -> dict[str,
         "mqtt.len": mqtt_length,
         "protocol": protocol,
     }
+    if include_endpoint_metadata:
+        ip_layer = next((layer for layer in (scapy.IP, scapy.IPv6) if packet.haslayer(layer)), None)
+        if ip_layer is not None:
+            ip_packet = packet[ip_layer]
+            row["endpoint_source_ip"] = str(ip_packet.src)
+            row["endpoint_destination_ip"] = str(ip_packet.dst)
+            row["endpoint_source_port"] = source_port
+            row["endpoint_destination_port"] = destination_port
+    return row

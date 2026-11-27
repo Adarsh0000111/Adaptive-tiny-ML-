@@ -105,7 +105,7 @@ class RealTimeNetworkSniffer:
         self.scapy.sniff(iface=self.interface, prn=process, count=max_packets, timeout=timeout, store=False)
         return rows
 
-    def capture_with_handler(self, handler, max_packets: int = 100, timeout: int = 5) -> dict:
+    def capture_with_handler(self, handler, max_packets: int = 100, timeout: int = 5, *, include_endpoint_metadata: bool = False) -> dict:
         """Extract and handle each packet inside Scapy's live callback, then discard it."""
         if not self.scapy_available:
             raise RuntimeError("Scapy is not installed; live capture is unavailable.")
@@ -121,7 +121,7 @@ class RealTimeNetworkSniffer:
             if failures:
                 return
             try:
-                row = packet_features_from_scapy(packet, self.scapy, state)
+                row = packet_features_from_scapy(packet, self.scapy, state, include_endpoint_metadata=include_endpoint_metadata)
                 if row is not None:
                     handler(row)
                     captured += 1

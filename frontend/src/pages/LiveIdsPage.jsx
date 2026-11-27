@@ -20,6 +20,7 @@ const sensorDecisionSummary = (context) => {
 export default function LiveIdsPage({ backend }) {
   const [interfaceName, setInterfaceName] = useState("");
   const [authorized, setAuthorized] = useState(false);
+  const [includeEndpointAddresses, setIncludeEndpointAddresses] = useState(false);
   const result = backend.usbResult?.mode === "authorized_live_adaptive_packet_inference" ? backend.usbResult : null;
   const device = backend.usbDevice?.ports?.find((port) => port.accessible);
   const tierCounts = result?.selected_tier_counts || {};
@@ -51,25 +52,27 @@ export default function LiveIdsPage({ backend }) {
 
     <div className="panel live-capture-panel">
       <div className="section-heading"><div><h2>Monitor a live capture window</h2><p>Up to 100 packets or five seconds. Tier selection and inference happen inside the packet capture callback.</p></div><span className="connection-badge"><Radio size={13} /> Passive capture</span></div>
-      <form className="live-capture-form" onSubmit={(event) => { event.preventDefault(); backend.runUsbLiveCapture({ interfaceName, authorized }); }}>
+      <form className="live-capture-form" onSubmit={(event) => { event.preventDefault(); backend.runUsbLiveCapture({ interfaceName, authorized, includeEndpointAddresses }); }}>
         <label className="form-label">Network interface <input value={interfaceName} onChange={(event) => setInterfaceName(event.target.value)} placeholder="Blank uses the operating system default" /></label>
         <label className="checkbox-label"><input type="checkbox" checked={authorized} onChange={(event) => setAuthorized(event.target.checked)} /> I am authorized to monitor this interface and approve this capture</label>
+        <label className="checkbox-label"><input type="checkbox" checked={includeEndpointAddresses} onChange={(event) => setIncludeEndpointAddresses(event.target.checked)} /> Include source and destination IP/port for packets classified as threats in this live report</label>
         <button className="primary-button live-start-button" type="submit" disabled={!authorized || backend.usbRunning || backend.status !== "connected" || !device}>
           <Activity size={16} />{backend.usbRunning ? "Processing arriving packets…" : "Start authorized live IDS window"}
         </button>
       </form>
-      <p className="empty-note">Packet payloads and IP addresses are not stored. Live predictions have no ground-truth labels, so the dashboard reports predictions and model switches, not accuracy. USB inference can slow capture; very high packet rates may be missed.</p>
+      <p className="empty-note">Packet payloads are never retained. Endpoint addresses are omitted unless you select the separate option above; when included, they appear only in the current in-memory run report and are not written to the inference database. These are model predictions without ground-truth confirmation, not verified incidents.</p>
       {backend.error && <p className="form-error" role="status">{backend.error}</p>}
     </div>
 
     {result && <>
       <div className="section-heading live-results-heading"><div><h2>Latest live window</h2><p>{result.samples} packets processed in {Number(result.capture_window_seconds || 0).toFixed(2)} s · {new Date(result.completed_at_unix * 1000).toLocaleTimeString()}</p></div><span className="connection-badge connected"><i />Adaptive routing active</span></div>
       <div className="tier-grid live-tier-counts">
+        <article className="panel sara-card"><small>Threat predictions</small><strong>{result.threat_prediction_count ?? result.predictions?.filter((item) => item.prediction !== "Normal").length ?? 0}</strong><p>Non-Normal packets in this capture window · unconfirmed</p>{Object.entries(result.threat_prediction_counts_by_class || {}).map(([label, count]) => <small key={label}>{label.replaceAll("_", " ")}: {count}</small>)}</article>
         {Object.entries(tierLabels).map(([key, label]) => <article className="panel sara-card" key={key}><small>{label}</small><strong>{tierCounts[key] || 0}</strong><p>{key === "lightweight" ? "Inference ran on ESP32-S3" : "Inference ran on laptop"}</p></article>)}
         <article className="panel sara-card"><small>Model switches</small><strong>{result.model_switches?.length || 0}</strong><p>Changes between decisions in this window</p></article>
       </div>
       {result.model_switches?.length > 0 && <div className="panel live-switch-panel"><h3>Automatic tier changes</h3>{result.model_switches.map((item, index) => <div className="live-switch-row" key={`${item.packet_index}-${index}`}><strong>Packet {item.packet_index + 1}</strong><span>{tierLabels[item.from] || item.from} → {tierLabels[item.to] || item.to}</span><small>Risk {pct(item.risk)} · {item.reason}</small></div>)}</div>}
-      <div className="panel live-predictions-panel"><div className="section-heading"><div><h3>Packet decisions and influence log</h3><p>Each row records packet evidence, model confidence, host pressure, sensor quality, network load, selected model, and execution location.</p></div></div><div className="live-prediction-list">{result.predictions?.map((item) => <article className="live-prediction-row" key={item.packet_index}><strong>#{item.packet_index + 1}</strong><span className="prediction-tier">{tierLabels[item.selected_model] || item.selected_model}</span><b>{item.prediction?.replaceAll("_", " ") || "—"}</b><span>Risk {pct(item.risk?.score)}</span><small>{item.inference_location === "esp32_usb" ? `${item.device_inference_us ?? "—"} µs on ESP32` : `${Number(item.inference_ms || 0).toFixed(3)} ms on laptop`}</small><small>Confidence {pct(item.confidence)} · host stress {pct(item.host_resources?.resource_stress)} · edge load {pct(item.decision?.network_load_vs_edge_capacity)}</small><small>{sensorDecisionSummary(item.decision?.sensor_context)}</small><small>{item.decision?.execution_reason || item.decision?.reason}</small></article>)}</div></div>
+      <div className="panel live-predictions-panel"><div className="section-heading"><div><h3>Packet decisions and influence log</h3><p>Each row records packet evidence, model confidence, host pressure, sensor quality, network load, selected model, and execution location. The threat total counts model predictions, not confirmed attacks.</p></div></div><div className="live-prediction-list">{result.predictions?.map((item) => <article className="live-prediction-row" key={item.packet_index}><strong>#{item.packet_index + 1}</strong><span className="prediction-tier">{tierLabels[item.selected_model] || item.selected_model}</span><b>{item.prediction?.replaceAll("_", " ") || "—"}</b><span>Risk {pct(item.risk?.score)}</span>{item.network_location && <small>Captured endpoints: {item.network_location.source_ip || "unknown"}:{item.network_location.source_port ?? "—"} → {item.network_location.destination_ip || "unknown"}:{item.network_location.destination_port ?? "—"}</small>}<small>{item.inference_location === "esp32_usb" ? `${item.device_inference_us ?? "—"} µs on ESP32` : `${Number(item.inference_ms || 0).toFixed(3)} ms on laptop`}</small><small>Confidence {pct(item.confidence)} · host stress {pct(item.host_resources?.resource_stress)} · edge load {pct(item.decision?.network_load_vs_edge_capacity)}</small><small>{sensorDecisionSummary(item.decision?.sensor_context)}</small><small>{item.decision?.execution_reason || item.decision?.reason}</small></article>)}</div></div>
     </>}
 
     <div className="panel live-hardware-panel">

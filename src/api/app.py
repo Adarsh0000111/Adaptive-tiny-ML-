@@ -161,10 +161,17 @@ class USBReplayRequest(BaseModel):
 class USBLiveCaptureRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     authorized: bool = False
+    include_endpoint_addresses: bool = False
     port: str | None = Field(default=None, min_length=1, max_length=128)
     interface: str | None = Field(default=None, max_length=128)
     max_packets: int = Field(default=100, ge=1, le=500)
     timeout_seconds: int = Field(default=5, ge=1, le=30)
+
+
+def live_threat_summary(predictions: list[dict[str, Any]]) -> dict[str, Any]:
+    counts = Counter(item.get("prediction") for item in predictions
+                     if item.get("prediction") and item.get("prediction") != "Normal")
+    return {"threat_prediction_count": sum(counts.values()), "threat_prediction_counts_by_class": dict(counts)}
 
 
 @app.on_event("startup")
@@ -456,6 +463,7 @@ async def usb_device_live_capture(request: USBLiveCaptureRequest):
                 edge_blocked = (electrical_context.get("edge_execution_allowed") is False
                                 or (tier == "lightweight" and decision.get("execution_target") == "local_host"))
                 device_result = device.infer(feature_row) if tier == "lightweight" and not edge_blocked else None
+                prediction_label = remote_result["prediction"] if remote_result else device_result["prediction"] if device_result else prediction["prediction"]
                 decision["execution_target"] = "trusted_remote" if remote_result else "esp32_usb" if device_result else "local_host"
                 if edge_blocked:
                     decision["execution_reason"] = decision.get("execution_reason") or "Qualified INA219 supply voltage is below the configured 3.0 V ESP32 execution floor; the selected tier ran on the laptop."
@@ -463,30 +471,43 @@ async def usb_device_live_capture(request: USBLiveCaptureRequest):
                     decision["execution_reason"] = "ESP32 low-tier inference used; no qualified undervoltage was reported."
                 else:
                     decision["execution_reason"] = "Selected medium/high tier is executed on the laptop; no trusted remote node was available."
-                selected_packets.append({
+                packet_result = {
                     "packet_index": len(selected_packets), "selected_model": tier,
-                    "prediction": remote_result["prediction"] if remote_result else device_result["prediction"] if device_result else prediction["prediction"],
+                    "prediction": prediction_label,
                     "confidence": remote_result.get("confidence", prediction.get("confidence")) if remote_result else prediction.get("confidence"),
                     "inference_ms": remote_status.get("latency_ms") if remote_result else prediction.get("inference_ms") if device_result is None else None,
                     "device_inference_us": device_result.get("inference_us") if device_result else None,
                     "inference_location": "esp32_usb" if device_result else "laptop",
                     "model_predictions": model_predictions, "risk": risk, "decision": decision,
                     "host_resources": packet_resources,
-                })
+                }
+                if request.include_endpoint_addresses and prediction_label != "Normal":
+                    packet_result["network_location"] = {
+                        "source_ip": raw_row.get("endpoint_source_ip"),
+                        "source_port": raw_row.get("endpoint_source_port"),
+                        "destination_ip": raw_row.get("endpoint_destination_ip"),
+                        "destination_port": raw_row.get("endpoint_destination_port"),
+                    }
+                selected_packets.append(packet_result)
                 if app.state.sara.history:
                     app.state.sara.history[0] = decision.copy()
 
-            capture = sniffer.capture_with_handler(process_packet, request.max_packets, request.timeout_seconds)
+            capture = sniffer.capture_with_handler(process_packet, request.max_packets, request.timeout_seconds,
+                                                   include_endpoint_metadata=request.include_endpoint_addresses)
             if not selected_packets:
                 raise ValueError("No TCP/UDP packets were observed in the authorized capture window")
             device_summary = device.summary()
         if device_summary["device_telemetry"] is not None:
             app.state.usb_sensor_snapshot = device_summary["device_telemetry"]
+        threat_summary = live_threat_summary(selected_packets)
         return {
             "transport": "USB serial plus laptop inference", "port": device_summary["port"],
             "firmware": device_summary["firmware"], "feature_schema": service.schema_version,
             "mode": "authorized_live_adaptive_packet_inference", "wifi_used": False,
             "samples": len(selected_packets), "capture_window_seconds": capture["window_seconds"],
+            **threat_summary,
+            "endpoint_addresses_included": request.include_endpoint_addresses,
+            "endpoint_address_retention": "Current in-memory run result only; not written to the inference database." if request.include_endpoint_addresses else "not collected",
             "accuracy": None, "macro_f1": None, "selected_tier_counts": dict(tier_counts),
             "model_switches": changes, "predictions": selected_packets,
             "device_inference_us": device_summary["device_inference_us"],
