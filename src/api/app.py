@@ -211,7 +211,9 @@ def health():
 
 @app.get("/api/models")
 def models():
-    return {"feature_schema": {"version": SCHEMA_VERSION, "feature_names": app.state.inference.feature_names, "class_names": app.state.inference.class_names}, "models": app.state.inference.profiles, "model_count": len(app.state.inference.models)}
+    return {"feature_schema": {"version": SCHEMA_VERSION, "feature_names": app.state.inference.feature_names, "class_names": app.state.inference.class_names},
+            "models": app.state.inference.profiles, "model_count": len(app.state.inference.models),
+            "federated_promotion": app.state.inference.federated_model_status}
 
 
 @app.post("/api/inference")
@@ -758,8 +760,18 @@ def networked_federated_update(node_id: str, request: NetworkedFederatedUpdate, 
         except (AttributeError, ValueError):
             raise HTTPException(403, "Local FL demo clients must connect from this computer")
     try:
-        return app.state.networked_federated.submit(node_id, authorization.removeprefix("Bearer ") if authorization else None,
-                                                   request.round, request.sample_count, request.state_dict, request.local_loss)
+        result = app.state.networked_federated.submit(node_id, authorization.removeprefix("Bearer ") if authorization else None,
+                                                     request.round, request.sample_count, request.state_dict, request.local_loss)
+        if result.get("status") == "complete":
+            service = app.state.inference
+            service._load_validated_federated_candidate()
+            if result.get("promotion_approved") and service.federated_model_status.get("status") == "active":
+                high_profile = service.profiles["heavy"]
+                app.state.sara.profiles["heavy"].update({
+                    "macro_recall": high_profile["metrics"]["macro_recall"],
+                    "estimated_energy_uj": high_profile["energy"]["value_uj"] or 1e9,
+                })
+        return result
     except PermissionError as exc:
         raise HTTPException(401, str(exc)) from exc
     except ValueError as exc:

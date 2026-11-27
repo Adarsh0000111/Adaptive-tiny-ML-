@@ -1,0 +1,90 @@
+{
+  "experiment": "networked_fedavg_local_demo",
+  "timestamp_utc": "2026-11-27T02:34:57.749730+00:00",
+  "setup": {
+    "coordinator": "same Linux computer, HTTP loopback",
+    "client_processes": 2,
+    "clients": [
+      "node-a",
+      "node-b"
+    ],
+    "rounds": 60,
+    "local_epochs": 1,
+    "all_clients_participated_every_round": true
+  },
+  "data": {
+    "source": "project processed training split",
+    "distribution": "two non-IID Dirichlet shards, alpha=0.5, seed=42",
+    "samples_per_client": {
+      "node-a": 13462,
+      "node-b": 12117
+    },
+    "raw_training_rows_uploaded": false,
+    "independent_real_network_data": false
+  },
+  "candidate": {
+    "architecture": "mlp18-128-64-32-6-v3",
+    "validation": {
+      "samples": 3654,
+      "accuracy": 0.9080459770114943,
+      "macro_precision": 0.9102146678073364,
+      "macro_recall": 0.8819359244920705,
+      "macro_f1": 0.8893428452760853
+    },
+    "test": {
+      "samples": 7309,
+      "accuracy": 0.9146258038035299,
+      "macro_precision": 0.9202430680484456,
+      "macro_recall": 0.8926300392010019,
+      "macro_f1": 0.9004100380881424
+    },
+    "validation_best_round": 49,
+    "promoted_to_sara_high_tier": false,
+    "promotion_reason": "Not promoted: validation must reach macro recall 0.900, accuracy 0.882, and macro-F1 0.858.",
+    "promotion_gate": {
+      "min_macro_recall": 0.9,
+      "min_accuracy": 0.8817515051997811,
+      "min_macro_f1": 0.8577769789093725,
+      "baseline_heavy_validation": {
+        "accuracy": 0.9017515051997811,
+        "macro_recall": 0.8665292577760222,
+        "macro_f1": 0.8777769789093726
+      }
+    }
+  },
+  "baselines": {
+    "medium": {
+      "validation": {
+        "samples": 3654,
+        "accuracy": 0.914887794198139,
+        "macro_precision": 0.9242536103252799,
+        "macro_recall": 0.8930355363678729,
+        "macro_f1": 0.905122144924588
+      },
+      "test": {
+        "samples": 7309,
+        "accuracy": 0.9133944452045424,
+        "macro_precision": 0.921890616804465,
+        "macro_recall": 0.8964687098496266,
+        "macro_f1": 0.9059946293262667
+      }
+    },
+    "heavy": {
+      "validation": {
+        "samples": 3654,
+        "accuracy": 0.9017515051997811,
+        "macro_precision": 0.9010057759606491,
+        "macro_recall": 0.8665292577760222,
+        "macro_f1": 0.8777769789093726
+      },
+      "test": {
+        "samples": 7309,
+        "accuracy": 0.9098371870296894,
+        "macro_precision": 0.9109852181942669,
+        "macro_recall": 0.8842799402271689,
+        "macro_f1": 0.8925840229093366
+      }
+    }
+  },
+  "interpretation": "The network FedAvg transport and round aggregation worked, but the candidate did not meet the validation gate. Existing high-tier MLP remains active. This is not evidence of multi-computer networking or independent site data."
+}

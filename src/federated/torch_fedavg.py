@@ -24,12 +24,14 @@ from torch.utils.data import DataLoader, TensorDataset
 from src.config import load_config
 
 ROOT = Path(__file__).resolve().parents[2]
+FEDERATED_ARCHITECTURE_VERSION = "mlp18-128-64-32-6-v3"
 
 
 class FederatedMLP(nn.Module):
     def __init__(self, input_size: int = 18, classes: int = 6):
         super().__init__()
-        self.layers = nn.Sequential(nn.Linear(input_size, 32), nn.ReLU(), nn.Linear(32, 16), nn.ReLU(), nn.Linear(16, classes))
+        self.layers = nn.Sequential(nn.Linear(input_size, 128), nn.ReLU(), nn.Linear(128, 64), nn.ReLU(),
+                                    nn.Linear(64, 32), nn.ReLU(), nn.Linear(32, classes))
 
     def forward(self, x):
         return self.layers(x)

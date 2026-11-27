@@ -47,7 +47,7 @@ class USBReplayService:
             "baud_rate": BAUD_RATE,
             "ports": enumerate_ports(),
             "firmware_contract": "SARA-ESP32-USB; exact READY handshake required",
-            "input_source": "saved test split replay or explicitly authorized per-packet SARA capture with USB low-tier inference",
+            "input_source": "saved preprocessed test split replay or explicitly authorized per-packet SARA capture with USB low-tier inference",
             "last_run": self._last_run,
         }
 

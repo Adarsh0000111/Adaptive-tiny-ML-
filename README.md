@@ -106,7 +106,7 @@ This verifies the coordinator/client protocol using two separate client processe
    python -m src.federated.client --coordinator http://127.0.0.1:8765 --node-id node-b --data .\fl-shards\node-2.npz
    ```
 
-6. Watch the **Networked federated learning** panel on the website or query `GET /api/federated/networked/status`. A successful run reaches `complete`, records both participants for each round, and saves `models/federated/sara_mlp_networked.pt`. The checkpoint is separate; SARA does not automatically load it into its low/medium/high inference tiers.
+6. Watch the **Networked federated learning** panel on the website or query `GET /api/federated/networked/status`. A successful run reaches `complete` and records validation metrics for every round. The best candidate is saved as `models/federated/sara_mlp_networked_candidate.pt`. It replaces the laptop high tier only when held-out macro recall reaches at least 0.90, while accuracy and macro-F1 are each no more than 0.02 below the existing high model. Otherwise the current high model stays active. The ESP32 low tier is never replaced by this MLP.
 
 #### One-computer network demo
 
@@ -151,7 +151,13 @@ The API status is available at `http://127.0.0.1:8765/api/federated/networked/st
 
 #### Using separate computers
 
-Each client computer needs its own preprocessed NPZ containing `X_train` shaped `(N, 18)` and `y_train_multi` with labels encoded 0-5, using this project's same feature order, preprocessing, and class mapping. Real deployments should preprocess each node's own local data. For a controlled demo, the two shards above can be transferred to the respective client computers using a trusted channel.
+Each client computer needs its own locally labeled CSV with the packet fields and a trustworthy `Attack_type` ground-truth column. Unlabeled live packets or the IDS's own predictions are not supervised training labels. Keep the CSV on that node and prepare its local NPZ with the project's exact scaler/encoder:
+
+```bash
+python scripts/prepare_fl_client_data.py --csv /secure/local/labeled_packets.csv --out data/runtime/client_train.npz
+```
+
+This NPZ includes the 18-feature order, six-class mapping, schema version, and preprocessing artifact hash; clients reject mismatches. For a controlled demo, the two generated shards above can instead be transferred to the computers over a trusted channel, but those shards are from one shared dataset and are not independent local site data.
 
 Set `SARA_FL_COORDINATOR_TOKEN` and `SARA_FL_NODE_TOKENS` in the coordinator's environment. Bind the API to a reachable interface and put it behind a TLS reverse proxy; do not expose the development server directly to the public internet. Remote clients must use the HTTPS coordinator URL. Start the run with authenticated `POST /api/federated/networked/start`, then run this command on each client, setting that client's unique `SARA_FL_NODE_TOKEN` first:
 
@@ -159,7 +165,7 @@ Set `SARA_FL_COORDINATOR_TOKEN` and `SARA_FL_NODE_TOKENS` in the coordinator's e
 python -m src.federated.client --coordinator https://COORDINATOR --node-id node-a --data /path/to/local_processed_dataset.npz
 ```
 
-The coordinator receives model parameters and sample counts, not packet rows. This protocol has no secure aggregation or differential privacy, and model updates may still reveal information. It currently reports local loss and participation rather than global accuracy. The networked global model is not automatically used for tier selection.
+The coordinator receives model parameters and sample counts, not packet rows. This protocol has no secure aggregation or differential privacy, and model updates may still reveal information. The global MLP starts from the deployed high-tier MLP weights. The coordinator evaluates each round on its held-out validation split; the best candidate becomes the SARA high laptop tier only if it reaches macro recall 0.90, with accuracy and macro-F1 each no more than 0.02 below the existing high model. Otherwise it remains an unpromoted candidate and the deployed model is unchanged. Test data is not used for promotion. The recorded one-computer run is in [networked_federated_local_demo.json](results/experiments/networked_federated_local_demo.json); it uses shared dataset shards, not independent local site data.
 
 ## Hardware
 

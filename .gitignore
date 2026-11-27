@@ -32,4 +32,5 @@ hardware/esp32_ids/secrets.h
 models/federated/sara_mlp_global.pt
 models/federated/sara_mlp_global.previous.pt
 models/federated/sara_mlp_networked.pt
+models/federated/sara_mlp_networked_candidate.pt
 results/experiments/federated_sara_history.json
