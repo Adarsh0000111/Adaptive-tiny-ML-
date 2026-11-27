@@ -8,7 +8,7 @@ import torch
 
 from src.api import inference
 from src.federated.networked import NetworkedFedAvgCoordinator
-from src.federated.torch_fedavg import FederatedMLP
+from src.federated.torch_fedavg import FederatedCNN
 
 
 class TestFederatedModelIsolation(unittest.TestCase):
@@ -17,14 +17,14 @@ class TestFederatedModelIsolation(unittest.TestCase):
             model_path = Path(directory) / "networked_global.pt"
             model_path.write_bytes(b"keep-existing-global-artifact")
             coordinator = NetworkedFedAvgCoordinator(model_path)
-            architecture = FederatedMLP().state_dict()
+            architecture = FederatedCNN().state_dict()
             state = {key: np.zeros(tuple(value.shape), dtype=np.float32) for key, value in architecture.items()}
             coordinator.run = {
                 "status": "running", "round": 1, "rounds": 1, "min_clients": 2,
                 "timeout_seconds": 60, "local_epochs": 1, "nodes": ["node-a", "node-b"], "global_state": {},
                 "updates": {node: {"state": state, "samples": 2, "loss": 0.1} for node in ("node-a", "node-b")},
                 "history": [], "version": 10, "local_demo": False,
-                "base_model_source": "existing_high_tier_mlp", "best_candidate": None,
+                "base_model_source": "existing_high_tier_cnn", "best_candidate": None,
             }
             coordinator.node_status = {node: {"updates_accepted": 1} for node in ("node-a", "node-b")}
             metrics = {"accuracy": 0.95, "macro_recall": 0.95, "macro_f1": 0.95}
@@ -42,7 +42,7 @@ class TestFederatedModelIsolation(unittest.TestCase):
     def test_inference_tiers_are_never_replaced_by_federated_artifacts(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            artifact = root / "models/federated/sara_mlp_networked_candidate.pt"
+            artifact = root / "models/federated/sara_cnn_networked_candidate.pt"
             artifact.parent.mkdir(parents=True)
             artifact.write_bytes(b"placeholder-isolation-checkpoint")
             service = inference.InferenceService.__new__(inference.InferenceService)

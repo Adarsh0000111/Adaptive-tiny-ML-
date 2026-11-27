@@ -789,7 +789,7 @@ def networked_federated_update(node_id: str, request: NetworkedFederatedUpdate, 
                                                      request.round, request.sample_count, request.state_dict, request.local_loss)
         if result.get("status") == "complete":
             service = app.state.inference
-            service._load_validated_federated_candidate()
+            service._load_federated_artifact_status()
             if result.get("promotion_approved") and service.federated_model_status.get("status") == "active":
                 high_profile = service.profiles["heavy"]
                 app.state.sara.profiles["heavy"].update({
